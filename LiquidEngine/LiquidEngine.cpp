@@ -4,7 +4,9 @@
 #include "framework.h"
 #include "LiquidEngine.h"
 #include <iostream>
-#include "WorldManager.h"
+
+#include "World/WorldManager.h"
+#include "World/Model.h"
 
 #define MAX_LOADSTRING 100
 
@@ -28,7 +30,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: 在此处放置代码。
+
+    //Test code
+    //WorldManager Test
     WorldManager wm;
+    //wm.load("Resources\\json\\test1.json");
+    //wm.changeItem("i", wm.GetInt("i")+1);
+
+    //Model Test
+    Model mModel{"box"};
+    mModel.importFromDisk("C:\\Users\\LiYU\\Desktop\\box.fbx");
     
 
     // 初始化全局字符串

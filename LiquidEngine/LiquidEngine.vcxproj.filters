@@ -39,19 +39,19 @@
     <ClInclude Include="LiquidEngine.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WorldManager.h">
+    <ClInclude Include="World\WorldManager.h">
       <Filter>World</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
+    <ClInclude Include="World\Model.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Translation.h">
+    <ClInclude Include="Components\Translation.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="JSONHandler.h">
+    <ClInclude Include="Tools\JSONHandler.h">
       <Filter>Tools</Filter>
     </ClInclude>
-    <ClInclude Include="ISerializable.h">
+    <ClInclude Include="Interface\ISerializable.h">
       <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="Global.h">
@@ -62,19 +62,19 @@
     <ClCompile Include="LiquidEngine.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WorldManager.cpp">
+    <ClCompile Include="World\WorldManager.cpp">
       <Filter>World</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
+    <ClCompile Include="World\Model.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Translation.cpp">
+    <ClCompile Include="Components\Translation.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="JSONHandler.cpp">
+    <ClCompile Include="Tools\JSONHandler.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
-    <ClCompile Include="ISerializable.cpp">
+    <ClCompile Include="Interface\ISerializable.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
     <ClCompile Include="Global.cpp">
@@ -93,5 +93,9 @@
     <Image Include="LiquidEngine.ico">
       <Filter>资源文件</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\json\test.json" />
+    <None Include="Resources\json\test1.json" />
   </ItemGroup>
 </Project>

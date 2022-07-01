@@ -102,7 +102,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -129,23 +129,23 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="Global.h" />
-    <ClInclude Include="ISerializable.h" />
-    <ClInclude Include="JSONHandler.h" />
+    <ClInclude Include="Interface\ISerializable.h" />
+    <ClInclude Include="Tools\JSONHandler.h" />
     <ClInclude Include="LiquidEngine.h" />
-    <ClInclude Include="Model.h" />
+    <ClInclude Include="World\Model.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Translation.h" />
-    <ClInclude Include="WorldManager.h" />
+    <ClInclude Include="Components\Translation.h" />
+    <ClInclude Include="World\WorldManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Global.cpp" />
-    <ClCompile Include="ISerializable.cpp" />
-    <ClCompile Include="JSONHandler.cpp" />
+    <ClCompile Include="Interface\ISerializable.cpp" />
+    <ClCompile Include="Tools\JSONHandler.cpp" />
     <ClCompile Include="LiquidEngine.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Translation.cpp" />
-    <ClCompile Include="WorldManager.cpp" />
+    <ClCompile Include="World\Model.cpp" />
+    <ClCompile Include="Components\Translation.cpp" />
+    <ClCompile Include="World\WorldManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LiquidEngine.rc" />
@@ -153,6 +153,10 @@
   <ItemGroup>
     <Image Include="LiquidEngine.ico" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\json\test.json" />
+    <None Include="Resources\json\test1.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,7 +13,7 @@
 class ISerializable
 {
 public:
-	virtual bool read(std::string path) = 0;
-	virtual bool write(std::string path)  = 0;
+	virtual bool load(std::string path) = 0;
+	virtual bool save(std::string path) = 0;
 };
 

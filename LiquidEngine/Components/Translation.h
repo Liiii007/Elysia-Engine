@@ -1,5 +1,5 @@
 #pragma once
-#include "ISerializable.h"
+#include "../Interface/ISerializable.h"
 
 class Translation
 {
