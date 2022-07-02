@@ -20,9 +20,7 @@ bool WorldManager::load(std::string path) {
 	return true;
 }
 bool WorldManager::save(std::string path) {
-	//FIXED
-	JSONHandler::save(path, config);
-	return true;
+	return JSONHandler::save(path, config);;
 }
 
 void WorldManager::changeItem(std::string name, int value) {

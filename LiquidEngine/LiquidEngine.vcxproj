@@ -103,12 +103,18 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <FxCompile>
+      <ShaderType>
+      </ShaderType>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -127,36 +133,66 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="Global.h" />
+    <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Tools\Singleton.h" />
+    <ClInclude Include="Renderer\Camera.h" />
+    <ClInclude Include="Tools\Common\d3dUtil.h" />
+    <ClInclude Include="Tools\Common\d3dx12.h" />
+    <ClInclude Include="Tools\Common\DDSTextureLoader.h" />
+    <ClInclude Include="Tools\Common\GameTimer.h" />
+    <ClInclude Include="Tools\Common\GeometryGenerator.h" />
+    <ClInclude Include="Tools\Common\MathHelper.h" />
+    <ClInclude Include="Tools\Common\UploadBuffer.h" />
+    <ClInclude Include="Tools\Delegate.h" />
+    <ClInclude Include="LiquidEngine\framework.h" />
+    <ClInclude Include="Interface\ICommand.h" />
+    <ClInclude Include="Tools\Publisher.h" />
+    <ClInclude Include="System\InputSystem.h" />
     <ClInclude Include="Interface\ISerializable.h" />
     <ClInclude Include="Tools\JSONHandler.h" />
-    <ClInclude Include="LiquidEngine.h" />
+    <ClInclude Include="LiquidEngine\LiquidEngine.h" />
     <ClInclude Include="World\Model.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="LiquidEngine\targetver.h" />
     <ClInclude Include="Components\Translation.h" />
     <ClInclude Include="World\WorldManager.h" />
+    <ClInclude Include="Renderer\XIIRenderer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Global.cpp" />
+    <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="Tools\Singleton.cpp" />
+    <ClCompile Include="Renderer\Camera.cpp" />
+    <ClCompile Include="Tools\Common\d3dUtil.cpp" />
+    <ClCompile Include="Tools\Common\DDSTextureLoader.cpp" />
+    <ClCompile Include="Tools\Common\GameTimer.cpp" />
+    <ClCompile Include="Tools\Common\GeometryGenerator.cpp" />
+    <ClCompile Include="Tools\Common\MathHelper.cpp" />
+    <ClCompile Include="Tools\Delegate.cpp" />
+    <ClCompile Include="Interface\ICommand.cpp" />
+    <ClCompile Include="Tools\Publisher.cpp" />
+    <ClCompile Include="System\InputSystem.cpp" />
     <ClCompile Include="Interface\ISerializable.cpp" />
     <ClCompile Include="Tools\JSONHandler.cpp" />
-    <ClCompile Include="LiquidEngine.cpp" />
+    <ClCompile Include="LiquidEngine\LiquidEngine.cpp" />
     <ClCompile Include="World\Model.cpp" />
     <ClCompile Include="Components\Translation.cpp" />
     <ClCompile Include="World\WorldManager.cpp" />
+    <ClCompile Include="Renderer\XIIRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="LiquidEngine.rc" />
+    <Image Include="Resources\icon\LiquidEngine.ico" />
+    <Image Include="Resources\icon\small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="LiquidEngine.ico" />
-    <Image Include="small.ico" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="Resources\Shaders\color_ps.cso" />
+    <None Include="Resources\Shaders\color_vs.cso" />
     <None Include="Resources\json\test.json" />
     <None Include="Resources\json\test1.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\color.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

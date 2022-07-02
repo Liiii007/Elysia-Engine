@@ -27,16 +27,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
+    <ClInclude Include="LiquidEngine\framework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
+    <ClInclude Include="LiquidEngine\targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="LiquidEngine.h">
+    <ClInclude Include="LiquidEngine\LiquidEngine.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="World\WorldManager.h">
@@ -54,12 +54,54 @@
     <ClInclude Include="Interface\ISerializable.h">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Global.h">
+    <ClInclude Include="System\InputSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ICommand.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Delegate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Publisher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\XIIRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Common\d3dUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Common\d3dx12.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Common\DDSTextureLoader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Common\GameTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Common\GeometryGenerator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Common\MathHelper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Common\UploadBuffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Singleton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LiquidEngine.cpp">
+    <ClCompile Include="LiquidEngine\LiquidEngine.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="World\WorldManager.cpp">
@@ -77,25 +119,59 @@
     <ClCompile Include="Interface\ISerializable.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Global.cpp">
+    <ClCompile Include="System\InputSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface\ICommand.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Delegate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Publisher.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\XIIRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Camera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Common\d3dUtil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Common\DDSTextureLoader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Common\GameTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Common\GeometryGenerator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Common\MathHelper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Singleton.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="LiquidEngine.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="small.ico">
+    <Image Include="Resources\icon\small.ico">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="LiquidEngine.ico">
+    <Image Include="Resources\icon\LiquidEngine.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\json\test.json" />
     <None Include="Resources\json\test1.json" />
+    <None Include="Resources\Shaders\color_vs.cso" />
+    <None Include="Resources\Shaders\color_ps.cso" />
+    <None Include="Resources\Shaders\color.hlsl" />
   </ItemGroup>
 </Project>
