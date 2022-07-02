@@ -37,22 +37,25 @@ using Microsoft::WRL::ComPtr;
 class XIIRenderer
 {
 public:
-	XIIRenderer() {};
+	XIIRenderer()  {};
 	~XIIRenderer() {};
 
 	bool Init(HINSTANCE);
 
 	int RenderTick();
 
-
-	//D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS qualityLevels;
-
 private:
+	//Init
 	bool InitWindow();
 	bool InitDirect3D();
 	void CreateSwapChain();
 	void CreateRtvAndDsvDescHeap();
 	void OnResize();
+
+	//Render Tick
+	void ClearForNextFrame();
+	void CommitRenderCommand();
+	void RenderNextFrame();
 	void FlushCommandQueue();
 	ID3D12Resource* CurrentBackBuffer()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView()const;
@@ -89,7 +92,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[mSwapChainBufferCount];
 	Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencilBuffer;
 
-	//Desc and view
+	//Descriptor and view
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
 	UINT mRtvDescriptorSize = 0;

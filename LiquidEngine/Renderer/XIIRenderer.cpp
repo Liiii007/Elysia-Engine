@@ -319,8 +319,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE XIIRenderer::DepthStencilView()const {
 	return mDsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
-int XIIRenderer::RenderTick() {
-
+void XIIRenderer::ClearForNextFrame() {
 	ThrowIfFailed(mCommandAllocator->Reset());
 	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), nullptr));
 
@@ -338,7 +337,13 @@ int XIIRenderer::RenderTick() {
 
 	// Specify the buffers we are going to render to.
 	mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
+}
 
+void XIIRenderer::CommitRenderCommand() {
+
+}
+
+void XIIRenderer::RenderNextFrame() {
 	// Indicate a state transition on the resource usage.
 	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
@@ -358,6 +363,13 @@ int XIIRenderer::RenderTick() {
 	// done for simplicity.  Later we will show how to organize our rendering code
 	// so we do not have to wait per frame.
 	FlushCommandQueue();
+}
+
+int XIIRenderer::RenderTick() {
+
+	ClearForNextFrame();
+	CommitRenderCommand();
+	RenderNextFrame();
 
 	return 0;
 }

@@ -15,9 +15,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     try
     {
+        //Initialization
         if (!Singleton<XIIRenderer>::Get()->Init(hInstance))
             return 0;
 
+        //Tick
         while (true) {
             Singleton<XIIRenderer>::Get()->RenderTick();
         }
@@ -27,4 +29,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
         return 0;
     }
+
+    return 0;
 }
