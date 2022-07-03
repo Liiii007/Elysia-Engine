@@ -22,6 +22,8 @@ public:
 
 	std::vector<SingleItem> items;
 
+	bool Init();
+
 	void appendItem();
 	void removeItem();
 	void changeItem(std::string name, int value);

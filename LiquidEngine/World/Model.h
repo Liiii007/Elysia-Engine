@@ -6,43 +6,32 @@
 #include <assimp/scene.h>
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/LogStream.hpp>
+#include "../DataStructures.h"
 
-using UINT = unsigned int;
-
-
-struct TEXCOORD {
-	float x, y;
-};
-
-struct VERTEX {
-	float x, y, z;
-};
-
-struct Texture {
-	std::string type;
-	std::string path;
-	UINT texture;
-
-	void Release() {
-		//SafeRelease(texture);
-	}
-};
-
+using Microsoft::WRL::ComPtr;
 
 class Model
 {
 public:
-	Model(std::string name) :name(name) {};
+	Model(std::string name, std::string path) :name(name) {
+		importFromDisk(path);
+	
+	};
 
 	std::string name;
-
-	std::vector<VERTEX> vertices;
-	std::vector<VERTEX> normals;
-	std::vector<TEXCOORD> texcoords;
+	std::vector<Vertex1> vertices;
 	std::vector<UINT> indices;
 	
 	void processMesh(aiMesh* mesh, const aiScene* scene);
 	bool importFromDisk(std::string path);
 
+	//Vertex Buffer
+	D3D12_VERTEX_BUFFER_VIEW mVBV;
+	D3D12_INDEX_BUFFER_VIEW mIBV;
+
+	ComPtr<ID3D12Resource> VertexBufferGPU;
+	ComPtr<ID3D12Resource> VertexBufferUploader;
+	ComPtr<ID3D12Resource> IndexBufferGPU;
+	ComPtr<ID3D12Resource> IndexBufferUploader;
 
 };

@@ -1,6 +1,8 @@
 ﻿#include "framework.h"
 #include "LiquidEngine.h"
 #include "../Renderer/XIIRenderer.h"
+#include "../World/WorldManager.h"
+
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -16,8 +18,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     try
     {
         //Initialization
-        if (!Singleton<XIIRenderer>::Get()->Init(hInstance))
-            return 0;
+        if (!Singleton<XIIRenderer>::Get()->Init(hInstance)) return 0;
+        if (!Singleton<WorldManager>::Get()->Init()) return 0;
 
         //Tick
         while (true) {

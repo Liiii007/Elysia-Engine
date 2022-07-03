@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DataStructures.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Tools\Singleton.h" />
     <ClInclude Include="Renderer\Camera.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Renderer\XIIRenderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DataStructures.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Tools\Singleton.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
@@ -184,13 +186,12 @@
     <Image Include="Resources\icon\small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\color_ps.cso" />
-    <None Include="Resources\Shaders\color_vs.cso" />
     <None Include="Resources\json\test.json" />
     <None Include="Resources\json\test1.json" />
+    <None Include="Resources\Model\box.fbx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\color.hlsl">
+    <None Include="Renderer\Shaders\color.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

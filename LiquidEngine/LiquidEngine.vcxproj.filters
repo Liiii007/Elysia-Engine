@@ -99,6 +99,9 @@
     <ClInclude Include="Skybox.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DataStructures.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LiquidEngine\LiquidEngine.cpp">
@@ -158,6 +161,9 @@
     <ClCompile Include="Skybox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DataStructures.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\icon\small.ico">
@@ -170,8 +176,7 @@
   <ItemGroup>
     <None Include="Resources\json\test.json" />
     <None Include="Resources\json\test1.json" />
-    <None Include="Resources\Shaders\color_vs.cso" />
-    <None Include="Resources\Shaders\color_ps.cso" />
-    <None Include="Resources\Shaders\color.hlsl" />
+    <None Include="Renderer\Shaders\color.hlsl" />
+    <None Include="Resources\Model\box.fbx" />
   </ItemGroup>
 </Project>

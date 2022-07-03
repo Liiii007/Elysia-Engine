@@ -25,14 +25,18 @@
 #include <fstream>
 #include <sstream>
 #include <cassert>
+#include "../Tools/Common/d3dUtil.h"
+#include "../Tools/Common/UploadBuffer.h"
 #include "../Tools/Singleton.h"
 #include "../System/InputSystem.h"
-#include "../Tools/Common/d3dUtil.h"
+#include "../World/Model.h"
+#include "../DataStructures.h"
 
 using namespace DirectX;
 using namespace std;
 
 using Microsoft::WRL::ComPtr;
+
 
 class XIIRenderer
 {
@@ -40,8 +44,17 @@ public:
 	XIIRenderer()  {};
 	~XIIRenderer() {};
 
+
 	bool Init(HINSTANCE);
 
+	//Constant
+	
+
+	//Upload
+	void UploadVertices(Model* model);
+	void UploadIndices(Model* model);
+	void UploadConstant();
+	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	int RenderTick();
 
 private:
@@ -49,8 +62,17 @@ private:
 	bool InitWindow();
 	bool InitDirect3D();
 	void CreateSwapChain();
-	void CreateRtvAndDsvDescHeap();
+	void CreateDescHeaps();
+	void CreateConstantBuffer();
+	void CreateRootSignature();
+	void BuildShader();
+	void CreatePSO();
+	void UploadVertex();
 	void OnResize();
+	
+	void OnMouseDown(WPARAM btnState, int x, int y);
+	void OnMouseUp(WPARAM btnState, int x, int y);
+	void OnMouseMove(WPARAM btnState, int x, int y);
 
 	//Render Tick
 	void ClearForNextFrame();
@@ -93,16 +115,47 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencilBuffer;
 
 	//Descriptor and view
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
+	ComPtr<ID3D12DescriptorHeap> mRtvHeap;
+	ComPtr<ID3D12DescriptorHeap> mDsvHeap;
+	ComPtr<ID3D12DescriptorHeap> mCbvHeap;
+	
 	UINT mRtvDescriptorSize = 0;
 	UINT mDsvDescriptorSize = 0;
 	UINT mCbvSrvUavDescriptorSize = 0;
 	D3D12_VIEWPORT mScreenViewport;
 	D3D12_RECT mScissorRect;
 
+	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
 
+	//Constant Buffer
+	std::unique_ptr<UploadBuffer<ObjectConstants>> mObjectCB = nullptr;
+	ComPtr<ID3D12Resource> mUploadCBuffer;
+	UINT mCBVSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+	UINT mElementNums{ 1 };
+
+	//Root Signature
+	ComPtr<ID3D12RootSignature> mRootSignature;
+
+	//Shader
+	ComPtr<ID3DBlob> mvsByteCode;
+	ComPtr<ID3DBlob> mpsByteCode;
+
+	//PSO
+	ComPtr<ID3D12PipelineState> mPSO;
+
+	//Model
+	std::unique_ptr<Model> mModel{std::make_unique<Model>("box", "C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\box.fbx")};
+	std::unique_ptr<MeshGeometry> mBoxGeo;
+
+	XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
+	XMFLOAT4X4 mView = MathHelper::Identity4x4();
+	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+
+	float mTheta = 1.5f * XM_PI;
+	float mPhi = XM_PIDIV4;
+	float mRadius = 5.0f;
+
+	POINT mLastMousePos;
 };
-
 
 

@@ -1,5 +1,10 @@
 #include "WorldManager.h"
 
+bool WorldManager::Init() {
+	//FIXED:¼ÓÔØÄ£ĞÍ
+	return true;
+}
+
 inline void WorldManager::appendItem() {
 	//FIXED
 }
