@@ -1,11 +1,11 @@
 #include "XIIRenderer.h"
 
-
-LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK
+MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	// Forward hwnd on because we can get messages (e.g., WM_CREATE)
 	// before CreateWindow returns, and thus before mhMainWnd is valid.
-	return Singleton<XIIRenderer>::Get()->MsgProc(hwnd, msg, wParam, lParam);
+	return Singleton<InputSystem>::Get()->MsgProc(hwnd, msg, wParam, lParam);
 }
 
 bool XIIRenderer::Init(HINSTANCE hInstance) {
@@ -14,13 +14,32 @@ bool XIIRenderer::Init(HINSTANCE hInstance) {
 	if (!InitWindow())   { return false; }
 	if (!InitDirect3D()) { return false; }
 
-	
+	// Do the initial resize code.
+	OnResize();
+
+	// Reset the command list to prep for initialization commands.
+	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), nullptr));
+
+	CreateConstantBuffer();
+	CreateRootSignature();
+	BuildShader();
+	UploadVertices();
+	CreatePSO();
+
+	// Execute the initialization commands.
+	ThrowIfFailed(mCommandList->Close());
+	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
+	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	// Wait until initialization is complete.
+	FlushCommandQueue();
+
 
 	return true;
 }
 
 bool XIIRenderer::InitWindow() {
-	WNDCLASS wc{};
+	WNDCLASS wc;
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = MainWndProc;
 	wc.cbClsExtra = 0;
@@ -54,26 +73,31 @@ bool XIIRenderer::InitWindow() {
 
 	ShowWindow(mhMainWnd, SW_SHOW);
 	UpdateWindow(mhMainWnd);
+
 	return true;
 }
 
 bool XIIRenderer::InitDirect3D() {
-
-
-	// Enable the debug layer.
-	#if defined(DEBUG) || defined(_DEBUG) 
+#if defined(DEBUG) || defined(_DEBUG) 
+	// Enable the D3D12 debug layer.
 	{
 		ComPtr<ID3D12Debug> debugController;
 		ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
 		debugController->EnableDebugLayer();
 	}
-	#endif
+#endif
 
-
-	//Create DXGI and device
 	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&mdxgiFactory)));
 
-	if (FAILED(D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&md3dDevice)))) {
+	// Try to create hardware device.
+	HRESULT hardwareResult = D3D12CreateDevice(
+		nullptr,             // default adapter
+		D3D_FEATURE_LEVEL_11_0,
+		IID_PPV_ARGS(&md3dDevice));
+
+	// Fallback to WARP device.
+	if (FAILED(hardwareResult))
+	{
 		ComPtr<IDXGIAdapter> pWarpAdapter;
 		ThrowIfFailed(mdxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&pWarpAdapter)));
 
@@ -83,17 +107,14 @@ bool XIIRenderer::InitDirect3D() {
 			IID_PPV_ARGS(&md3dDevice)));
 	}
 
-
-	//Create Fence and get DescHeap
 	ThrowIfFailed(md3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE,
 		IID_PPV_ARGS(&mFence)));
 
-	//Get Descriptor Size
 	mRtvDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	mDsvDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	mCbvSrvUavDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	//Check MSAA
+	// Check 4X MSAA quality support for our back buffer format.
 	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msQualityLevels;
 	msQualityLevels.Format = mBackBufferFormat;
 	msQualityLevels.SampleCount = 4;
@@ -107,7 +128,14 @@ bool XIIRenderer::InitDirect3D() {
 	m4xMsaaQuality = msQualityLevels.NumQualityLevels;
 	assert(m4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
 
-	//Create Command List/Allocator/Queue
+	CreateCommandObjects();
+	CreateSwapChain();
+	CreateDescHeaps();
+
+	return true;
+}
+
+void XIIRenderer::CreateCommandObjects() {
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -128,37 +156,6 @@ bool XIIRenderer::InitDirect3D() {
 	// to the command list we will Reset it, and it needs to be closed before
 	// calling Reset.
 	mCommandList->Close();
-
-	CreateSwapChain();
-
-	CreateDescHeaps();
-
-	OnResize();
-	//Init d3dAPP.h end
-
-
-	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), nullptr));
-
-	CreateConstantBuffer();
-
-	CreateRootSignature();
-
-	BuildShader();
-
-	UploadVertices(mModel.get());
-
-	CreatePSO();
-
-
-	// Execute the initialization commands.
-	ThrowIfFailed(mCommandList->Close());
-	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
-	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-
-	// Wait until initialization is complete.
-	FlushCommandQueue();
-
-	return true;
 }
 
 void XIIRenderer::CreateSwapChain() {
@@ -268,7 +265,7 @@ void XIIRenderer::BuildShader() {
 	mpsByteCode = d3dUtil::CompileShader(L"Renderer\\Shaders\\color.hlsl", nullptr, "PS", "ps_5_0");
 
 	mInputLayout.push_back({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	mInputLayout.push_back({ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	//mInputLayout.push_back({ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 }
 
 void XIIRenderer::CreatePSO() {
@@ -340,6 +337,11 @@ void XIIRenderer::OnResize() {
 	depthStencilDesc.DepthOrArraySize = 1;
 	depthStencilDesc.MipLevels = 1;
 
+	// Correction 11/12/2016: SSAO chapter requires an SRV to the depth buffer to read from 
+	// the depth buffer.  Therefore, because we need to create two views to the same resource:
+	//   1. SRV format: DXGI_FORMAT_R24_UNORM_X8_TYPELESS
+	//   2. DSV Format: DXGI_FORMAT_D24_UNORM_S8_UINT
+	// we need to create the depth buffer resource with a typeless format.  
 	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 
 	depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
@@ -365,10 +367,7 @@ void XIIRenderer::OnResize() {
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Format = mDepthStencilFormat;
 	dsvDesc.Texture2D.MipSlice = 0;
-	md3dDevice->CreateDepthStencilView(
-		mDepthStencilBuffer.Get(), 
-		&dsvDesc, 
-		mDsvHeap->GetCPUDescriptorHandleForHeapStart());
+	md3dDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), &dsvDesc, DepthStencilView());
 
 	// Transition the resource from its initial state to be used as a depth buffer.
 	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mDepthStencilBuffer.Get(),
@@ -391,6 +390,10 @@ void XIIRenderer::OnResize() {
 	mScreenViewport.MaxDepth = 1.0f;
 
 	mScissorRect = { 0, 0, mClientWidth, mClientHeight };
+
+	// The window resized, so update the aspect ratio and recompute the projection matrix.
+	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, mClientWidth / mClientHeight, 1.0f, 1000.0f);
+	XMStoreFloat4x4(&mProj, P);
 }
 
 void XIIRenderer::FlushCommandQueue()
@@ -455,7 +458,7 @@ void XIIRenderer::ClearForNextFrame() {
 	mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
 }
 
-void XIIRenderer::UploadVertices(Model* model) {
+void XIIRenderer::UploadVertices() {
 	std::array<Vertex, 8> vertices =
 	{
 		Vertex({ XMFLOAT3(-1.0f, -1.0f, -1.0f),  }),
@@ -507,7 +510,7 @@ void XIIRenderer::UploadVertices(Model* model) {
 	};
 
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
-	const UINT vbByteSize1 = (UINT)vertices1.size() * sizeof(Vertex);
+	//const UINT vbByteSize1 = (UINT)vertices1.size() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 
 	mBoxGeo = std::make_unique<MeshGeometry>();
@@ -516,8 +519,8 @@ void XIIRenderer::UploadVertices(Model* model) {
 	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mBoxGeo->VertexBufferCPU));
 	CopyMemory(mBoxGeo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
 
-	ThrowIfFailed(D3DCreateBlob(vbByteSize1, &mBoxGeo->VertexBuffer1CPU));
-	CopyMemory(mBoxGeo->VertexBuffer1CPU->GetBufferPointer(), vertices1.data(), vbByteSize1);
+	//ThrowIfFailed(D3DCreateBlob(vbByteSize1, &mBoxGeo->VertexBuffer1CPU));
+	//CopyMemory(mBoxGeo->VertexBuffer1CPU->GetBufferPointer(), vertices1.data(), vbByteSize1);
 
 	ThrowIfFailed(D3DCreateBlob(ibByteSize, &mBoxGeo->IndexBufferCPU));
 	CopyMemory(mBoxGeo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
@@ -525,16 +528,16 @@ void XIIRenderer::UploadVertices(Model* model) {
 	mBoxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
 		mCommandList.Get(), vertices.data(), vbByteSize, mBoxGeo->VertexBufferUploader);
 
-	mBoxGeo->VertexBuffer1GPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), vertices1.data(), vbByteSize1, mBoxGeo->VertexBuffer1Uploader);
+	//mBoxGeo->VertexBuffer1GPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		//mCommandList.Get(), vertices1.data(), vbByteSize1, mBoxGeo->VertexBuffer1Uploader);
 
 	mBoxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
 		mCommandList.Get(), indices.data(), ibByteSize, mBoxGeo->IndexBufferUploader);
 
 	mBoxGeo->VertexByteStride = sizeof(Vertex);
 	mBoxGeo->VertexBufferByteSize = vbByteSize;
-	mBoxGeo->VertexByteStride1 = sizeof(Vertex_C);
-	mBoxGeo->VertexBufferByteSize1 = vbByteSize1;
+	//mBoxGeo->VertexByteStride1 = sizeof(Vertex_C);
+	//mBoxGeo->VertexBufferByteSize1 = vbByteSize1;
 	mBoxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
 	mBoxGeo->IndexBufferByteSize = ibByteSize;
 
@@ -615,8 +618,28 @@ void XIIRenderer::RenderNextFrame() {
 	FlushCommandQueue();
 }
 
-int XIIRenderer::RenderTick() {
+void XIIRenderer::Update() {
+	// Build the view matrix.
+	XMVECTOR pos = XMVectorSet(10, 10, 0, 1.0f);
+	XMVECTOR target = XMVectorSet(-1, 0, 0, 1);
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
+	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+	XMStoreFloat4x4(&mView, view);
+
+
+	XMMATRIX world = XMLoadFloat4x4(&mWorld);
+	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+	XMMATRIX worldViewProj = world * view * proj;
+
+	// Update the constant buffer with the latest worldViewProj matrix.
+	ObjectConstants objConstants;
+	XMStoreFloat4x4(&objConstants.MVP, XMMatrixTranspose(worldViewProj));
+	mObjectCB->CopyData(0, objConstants);
+}
+
+int XIIRenderer::RenderTick() {
+	Update();
 	UploadConstant();
 
 	ClearForNextFrame();

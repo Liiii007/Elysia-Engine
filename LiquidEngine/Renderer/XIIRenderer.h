@@ -51,22 +51,25 @@ public:
 	
 
 	//Upload
-	void UploadVertices(Model* model);
+	void UploadVertices();
 	void UploadIndices(Model* model);
 	void UploadConstant();
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	int RenderTick();
+	void Update();
 
 private:
 	//Init
 	bool InitWindow();
 	bool InitDirect3D();
+	void CreateCommandObjects();
 	void CreateSwapChain();
 	void CreateDescHeaps();
 	void CreateConstantBuffer();
 	void CreateRootSignature();
 	void BuildShader();
 	void CreatePSO();
+	//void CreateBoxGeometry();
 	void UploadVertex();
 	void OnResize();
 	
@@ -75,6 +78,7 @@ private:
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
 	//Render Tick
+	
 	void ClearForNextFrame();
 	void CommitRenderCommand();
 	void RenderNextFrame();

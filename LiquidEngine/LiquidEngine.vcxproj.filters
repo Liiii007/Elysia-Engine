@@ -102,6 +102,9 @@
     <ClInclude Include="DataStructures.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Tools\Common\d3dApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LiquidEngine\LiquidEngine.cpp">
@@ -162,6 +165,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DataStructures.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Common\d3dApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -202,14 +202,14 @@ struct MeshGeometry
 		vbv.StrideInBytes = VertexByteStride;
 		vbv.SizeInBytes = VertexBufferByteSize;
 
-        D3D12_VERTEX_BUFFER_VIEW vbv1{};
-        vbv1.BufferLocation = VertexBuffer1GPU->GetGPUVirtualAddress();
-        vbv1.StrideInBytes = VertexByteStride1;
-        vbv1.SizeInBytes = VertexBufferByteSize1;
+        //D3D12_VERTEX_BUFFER_VIEW vbv1{};
+       // vbv1.BufferLocation = VertexBuffer1GPU->GetGPUVirtualAddress();
+        //vbv1.StrideInBytes = VertexByteStride1;
+        //vbv1.SizeInBytes = VertexBufferByteSize1;
 
 
         vbvs[0] = vbv;
-        vbvs[1] = vbv1;
+        //vbvs[1] = vbv1;
 
 
 		return vbvs;
