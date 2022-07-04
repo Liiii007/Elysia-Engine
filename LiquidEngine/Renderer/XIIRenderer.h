@@ -31,6 +31,7 @@
 #include "../System/InputSystem.h"
 #include "../World/Model.h"
 #include "../DataStructures.h"
+#include "../Renderer/Shader.h"
 
 using namespace DirectX;
 using namespace std;
@@ -129,7 +130,7 @@ private:
 	D3D12_VIEWPORT mScreenViewport;
 	D3D12_RECT mScissorRect;
 
-	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
+	//std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
 
 	//Constant Buffer
 	std::unique_ptr<UploadBuffer<ObjectConstants>> mObjectCB = nullptr;
@@ -141,8 +142,9 @@ private:
 	ComPtr<ID3D12RootSignature> mRootSignature;
 
 	//Shader
-	ComPtr<ID3DBlob> mvsByteCode;
-	ComPtr<ID3DBlob> mpsByteCode;
+	std::vector<Shader> mShaders;
+	//ComPtr<ID3DBlob> mvsByteCode;
+	//ComPtr<ID3DBlob> mpsByteCode;
 
 	//PSO
 	ComPtr<ID3D12PipelineState> mPSO;

@@ -135,8 +135,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DataStructures.h" />
+    <ClInclude Include="Renderer\Shader.h" />
     <ClInclude Include="Skybox.h" />
-    <ClInclude Include="Tools\Common\d3dApp.h" />
     <ClInclude Include="Tools\Singleton.h" />
     <ClInclude Include="Renderer\Camera.h" />
     <ClInclude Include="Tools\Common\d3dUtil.h" />
@@ -163,8 +163,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DataStructures.cpp" />
+    <ClCompile Include="Renderer\Shader.cpp" />
     <ClCompile Include="Skybox.cpp" />
-    <ClCompile Include="Tools\Common\d3dApp.cpp" />
     <ClCompile Include="Tools\Singleton.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Tools\Common\d3dUtil.cpp" />
