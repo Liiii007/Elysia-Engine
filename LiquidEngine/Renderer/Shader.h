@@ -35,6 +35,7 @@ public:
 		mvsByteCode = CompileShader(nullptr, "VS", "vs_5_0");
 		mpsByteCode = CompileShader(nullptr, "PS", "ps_5_0");
 
+		mInputLayout.clear();
 		mInputLayout.push_back({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	}
 

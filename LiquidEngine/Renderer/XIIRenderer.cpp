@@ -259,13 +259,7 @@ void XIIRenderer::CreateRootSignature() {
 }
 
 void XIIRenderer::BuildShader() {
-	Shader shader1(L"Renderer\\Shaders\\color.hlsl", "shader1");
-
-	mShaders.emplace_back(shader1);
-	
-	for (auto& shader : mShaders) {
-		shader.CompileShaders();
-	}
+	mShaders.emplace_back(Shader(L"Renderer\\Shaders\\color.hlsl", "shader1"));
 }
 
 void XIIRenderer::CreatePSO() {
@@ -447,129 +441,76 @@ D3D12_CPU_DESCRIPTOR_HANDLE XIIRenderer::DepthStencilView()const {
 void XIIRenderer::ClearForNextFrame() {
 	ThrowIfFailed(mCommandAllocator->Reset());
 
+	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
+	// Reusing the command list reuses memory.
 	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), mPSO.Get()));
 
 	mCommandList->RSSetViewports(1, &mScreenViewport);
 	mCommandList->RSSetScissorRects(1, &mScissorRect);
 
+	// Indicate a state transition on the resource usage.
 	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
+	// Clear the back buffer and depth buffer.
 	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::Black, 0, nullptr);
 	mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
+	// Specify the buffers we are going to render to.
 	mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
 }
 
 void XIIRenderer::UploadVertices() {
-	std::array<Vertex, 8> vertices =
-	{
-		Vertex({ XMFLOAT3(-1.0f, -1.0f, -1.0f),  }),
-		Vertex({ XMFLOAT3(-1.0f, +1.0f, -1.0f),  }),
-		Vertex({ XMFLOAT3(+1.0f, +1.0f, -1.0f),  }),
-		Vertex({ XMFLOAT3(+1.0f, -1.0f, -1.0f),  }),
-		Vertex({ XMFLOAT3(-1.0f, -1.0f, +1.0f),  }),
-		Vertex({ XMFLOAT3(-1.0f, +1.0f, +1.0f),  }),
-		Vertex({ XMFLOAT3(+1.0f, +1.0f, +1.0f),  }),
-		Vertex({ XMFLOAT3(+1.0f, -1.0f, +1.0f),  })
-	};
 
-	std::array<Vertex_C, 8> vertices1 = {
-		Vertex_C({XMFLOAT4(Colors::White)}),
-		Vertex_C({XMFLOAT4(Colors::Aqua)}),
-		Vertex_C({XMFLOAT4(Colors::White)}),
-		Vertex_C({XMFLOAT4(Colors::White)}),
-		Vertex_C({XMFLOAT4(Colors::BurlyWood)}),
-		Vertex_C({XMFLOAT4(Colors::White)}),
-		Vertex_C({XMFLOAT4(Colors::White)}),
-		Vertex_C({XMFLOAT4(Colors::White)}),
-	};
 
-	std::array<std::uint16_t, 36> indices =
-	{
-		// front face
-		0, 1, 2,
-		0, 2, 3,
+	const UINT vbByteSize = (UINT)mModel->vertices.size() * sizeof(mModel->vertices[0]);
 
-		// back face
-		4, 6, 5,
-		4, 7, 6,
+	const UINT ibByteSize = (UINT)mModel->indices.size() * sizeof(mModel->indices[0]);
 
-		// left face
-		4, 5, 1,
-		4, 1, 0,
 
-		// right face
-		3, 2, 6,
-		3, 6, 7,
+	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mModel->VertexBufferCPU));
+	CopyMemory(mModel->VertexBufferCPU->GetBufferPointer(), mModel->vertices.data(), vbByteSize);
 
-		// top face
-		1, 5, 6,
-		1, 6, 2,
+	ThrowIfFailed(D3DCreateBlob(ibByteSize, &mModel->IndexBufferCPU));
+	CopyMemory(mModel->IndexBufferCPU->GetBufferPointer(), mModel->indices.data(), ibByteSize);
 
-		// bottom face
-		4, 0, 3,
-		4, 3, 7
-	};
+	mModel->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		mCommandList.Get(), mModel->vertices.data(), vbByteSize, mModel->VertexBufferUploader);
 
-	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
-	//const UINT vbByteSize1 = (UINT)vertices1.size() * sizeof(Vertex);
-	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
+	mModel->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		mCommandList.Get(), mModel->indices.data(), ibByteSize, mModel->IndexBufferUploader);
 
-	mBoxGeo = std::make_unique<MeshGeometry>();
-	mBoxGeo->Name = "boxGeo";
-
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mBoxGeo->VertexBufferCPU));
-	CopyMemory(mBoxGeo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
-
-	//ThrowIfFailed(D3DCreateBlob(vbByteSize1, &mBoxGeo->VertexBuffer1CPU));
-	//CopyMemory(mBoxGeo->VertexBuffer1CPU->GetBufferPointer(), vertices1.data(), vbByteSize1);
-
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &mBoxGeo->IndexBufferCPU));
-	CopyMemory(mBoxGeo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
-
-	mBoxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), vertices.data(), vbByteSize, mBoxGeo->VertexBufferUploader);
-
-	//mBoxGeo->VertexBuffer1GPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		//mCommandList.Get(), vertices1.data(), vbByteSize1, mBoxGeo->VertexBuffer1Uploader);
-
-	mBoxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), indices.data(), ibByteSize, mBoxGeo->IndexBufferUploader);
-
-	mBoxGeo->VertexByteStride = sizeof(Vertex);
-	mBoxGeo->VertexBufferByteSize = vbByteSize;
-	//mBoxGeo->VertexByteStride1 = sizeof(Vertex_C);
-	//mBoxGeo->VertexBufferByteSize1 = vbByteSize1;
-	mBoxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	mBoxGeo->IndexBufferByteSize = ibByteSize;
-
-	SubmeshGeometry submesh;
-	submesh.IndexCount = (UINT)indices.size();
-	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;
-
-	mBoxGeo->DrawArgs["box"] = submesh;
+	mModel->SetView();
 }
 
 void XIIRenderer::UploadIndices(Model* model) {
 
 }
 
-void XIIRenderer::UploadConstant() {
-
-	// Convert Spherical to Cartesian coordinates.
-	float x = mRadius * sinf(mPhi) * cosf(mTheta);
-	float z = mRadius * sinf(mPhi) * sinf(mTheta);
-	float y = mRadius * cosf(mPhi);
-
+void XIIRenderer::Update() {
 	// Build the view matrix.
-	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
-	XMVECTOR target = XMVectorZero();
+	XMVECTOR pos = XMVectorSet(0, 0, 0, 1.0f);
+	XMVECTOR target = XMVectorSet(-1, 0, 0, 1);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
 	XMStoreFloat4x4(&mView, view);
+
+
+	XMMATRIX world = XMLoadFloat4x4(&mWorld);
+	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+	XMMATRIX worldViewProj = world * view * proj;
+
+	// Update the constant buffer with the latest worldViewProj matrix.
+	ObjectConstants objConstants;
+	XMStoreFloat4x4(&objConstants.MVP, XMMatrixTranspose(worldViewProj));
+	mObjectCB->CopyData(0, objConstants);
+}
+
+void XIIRenderer::UploadConstant() {
+
+
+	XMMATRIX view = mCamera.getViewMatrix();
 
 
 	XMMATRIX world = XMLoadFloat4x4(&mWorld);
@@ -588,14 +529,14 @@ void XIIRenderer::CommitRenderCommand() {
 
 	mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-	mCommandList->IASetVertexBuffers(0, 2, mBoxGeo->VertexBufferView());
-	mCommandList->IASetIndexBuffer(&mBoxGeo->IndexBufferView());
+	mCommandList->IASetVertexBuffers(0, 2, &mModel->mVBV);
+	mCommandList->IASetIndexBuffer(&mModel->mIBV);
 	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
 	mCommandList->DrawIndexedInstanced(
-		mBoxGeo->DrawArgs["box"].IndexCount,
+		mModel->getIndices()->size(),
 		1, 0, 0, 0);
 }
 
@@ -621,28 +562,10 @@ void XIIRenderer::RenderNextFrame() {
 	FlushCommandQueue();
 }
 
-void XIIRenderer::Update() {
-	// Build the view matrix.
-	XMVECTOR pos = XMVectorSet(10, 10, 0, 1.0f);
-	XMVECTOR target = XMVectorSet(-1, 0, 0, 1);
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&mView, view);
-
-
-	XMMATRIX world = XMLoadFloat4x4(&mWorld);
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-	XMMATRIX worldViewProj = world * view * proj;
-
-	// Update the constant buffer with the latest worldViewProj matrix.
-	ObjectConstants objConstants;
-	XMStoreFloat4x4(&objConstants.MVP, XMMatrixTranspose(worldViewProj));
-	mObjectCB->CopyData(0, objConstants);
-}
 
 int XIIRenderer::RenderTick() {
-	Update();
+	//Update();
 	UploadConstant();
 
 	ClearForNextFrame();

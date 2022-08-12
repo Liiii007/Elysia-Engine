@@ -2,7 +2,8 @@
 #include "LiquidEngine.h"
 #include "../Renderer/XIIRenderer.h"
 #include "../World/WorldManager.h"
-#include "../Renderer/BoxApp.h"
+
+#include"../ABox.h"
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -20,6 +21,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         //Initialization
         //if (!Singleton<XIIRenderer>::Get()->Init(hInstance)) return 0;
         //if (!Singleton<WorldManager>::Get()->Init()) return 0;
+        ABox testBox;
+        Singleton<WorldManager>::Get()->Init();
         Singleton<XIIRenderer>::Get()->Init(hInstance);
 
         //Tick

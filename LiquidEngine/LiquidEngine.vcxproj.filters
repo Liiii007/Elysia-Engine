@@ -69,9 +69,6 @@
     <ClInclude Include="Renderer\XIIRenderer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\Camera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Tools\Common\d3dUtil.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -103,6 +100,21 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Shader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="System\MeshRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\MeshRenderer\Mesh.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ABox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\SphereCamera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -140,9 +152,6 @@
     <ClCompile Include="Renderer\XIIRenderer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\Camera.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Tools\Common\d3dUtil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -168,6 +177,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Shader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="System\MeshRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\MeshRenderer\Mesh.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ABox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\SphereCamera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

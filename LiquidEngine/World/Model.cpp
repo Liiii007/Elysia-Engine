@@ -17,7 +17,7 @@ bool Model::importFromDisk(std::string path) {
 
 void Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	
-	Vertex1 vertex;
+	Vertex vertex;
 
 	// Walk through each of the mesh's vertices
 	for (UINT i = 0; i < mesh->mNumVertices; i++) {
@@ -25,18 +25,7 @@ void Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 		vertex.Pos.y = mesh->mVertices[i].y;
 		vertex.Pos.z = mesh->mVertices[i].z;
 
-		if (mesh->mTextureCoords[0]) {
-			vertex.Texcoord.x = (float)mesh->mTextureCoords[0][i].x;
-			vertex.Texcoord.y = (float)mesh->mTextureCoords[0][i].y;
-		}
-
-		if (mesh->mNormals) {
-			vertex.Normal.x = (float)mesh->mNormals[i].x;
-			vertex.Normal.y = (float)mesh->mNormals[i].y;
-			vertex.Normal.z = (float)mesh->mNormals[i].z;
-		}
-
-		vertices.push_back(vertex);
+		//vertices.push_back(vertex);
 	}
 
 	// Fill the indices
@@ -44,7 +33,22 @@ void Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 		aiFace face = mesh->mFaces[i];
 
 		for (UINT j = 0; j < face.mNumIndices; j++)
-			indices.push_back(face.mIndices[j]);
+			//indices.push_back(face.mIndices[j]);
+			;
 	}
+	//SetView();
+}
 
+void Model::SetToBox() {
+	//SetView();
+}
+
+void Model::SetView() {
+	mVBV.BufferLocation = VertexBufferGPU->GetGPUVirtualAddress();
+	mVBV.StrideInBytes = sizeof(Vertex);
+	mVBV.SizeInBytes = sizeof(Vertex) * vertices.size();
+
+	mIBV.BufferLocation = IndexBufferGPU->GetGPUVirtualAddress();
+	mIBV.Format = DXGI_FORMAT_R16_UINT;
+	mIBV.SizeInBytes = sizeof(UINT) * indices.size();
 }

@@ -134,11 +134,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ABox.h" />
     <ClInclude Include="DataStructures.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Renderer\SphereCamera.h" />
+    <ClInclude Include="System\MeshRenderer.h" />
+    <ClInclude Include="Components\MeshRenderer\Mesh.h" />
     <ClInclude Include="Renderer\Shader.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Tools\Singleton.h" />
-    <ClInclude Include="Renderer\Camera.h" />
     <ClInclude Include="Tools\Common\d3dUtil.h" />
     <ClInclude Include="Tools\Common\d3dx12.h" />
     <ClInclude Include="Tools\Common\DDSTextureLoader.h" />
@@ -162,11 +166,15 @@
     <ClInclude Include="Renderer\XIIRenderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ABox.cpp" />
     <ClCompile Include="DataStructures.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Renderer\SphereCamera.cpp" />
+    <ClCompile Include="System\MeshRenderer.cpp" />
+    <ClCompile Include="Components\MeshRenderer\Mesh.cpp" />
     <ClCompile Include="Renderer\Shader.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Tools\Singleton.cpp" />
-    <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Tools\Common\d3dUtil.cpp" />
     <ClCompile Include="Tools\Common\DDSTextureLoader.cpp" />
     <ClCompile Include="Tools\Common\GameTimer.cpp" />

@@ -23,10 +23,8 @@ struct ObjectConstants {
 	DirectX::XMFLOAT4X4 MVP;
 };
 
-struct Vertex
-{
+struct Vertex {
 	DirectX::XMFLOAT3 Pos;
-
 };
 
 struct Vertex_C {

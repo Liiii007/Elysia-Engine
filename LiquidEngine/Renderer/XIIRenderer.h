@@ -32,6 +32,8 @@
 #include "../World/Model.h"
 #include "../DataStructures.h"
 #include "../Renderer/Shader.h"
+#include "../System/MeshRenderer.h" 
+#include "../Renderer/SphereCamera.h"
 
 using namespace DirectX;
 using namespace std;
@@ -42,22 +44,20 @@ using Microsoft::WRL::ComPtr;
 class XIIRenderer
 {
 public:
-	XIIRenderer()  {};
-	~XIIRenderer() {};
-
 
 	bool Init(HINSTANCE);
-
-	//Constant
-	
 
 	//Upload
 	void UploadVertices();
 	void UploadIndices(Model* model);
 	void UploadConstant();
+
+	//Tick
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	int RenderTick();
 	void Update();
+
+	
 
 private:
 	//Init
@@ -70,7 +70,6 @@ private:
 	void CreateRootSignature();
 	void BuildShader();
 	void CreatePSO();
-	//void CreateBoxGeometry();
 	void UploadVertex();
 	void OnResize();
 	
@@ -106,7 +105,7 @@ private:
 	DXGI_FORMAT mBackBufferFormat{ DXGI_FORMAT_R8G8B8A8_UNORM };
 	DXGI_FORMAT mDepthStencilFormat{ DXGI_FORMAT_D24_UNORM_S8_UINT };
 
-	//something about Command
+	//Command Objects
 	ComPtr<ID3D12CommandAllocator> mCommandAllocator;
 	ComPtr<ID3D12CommandQueue> mCommandQueue;
 	ComPtr<ID3D12GraphicsCommandList> mCommandList;
@@ -130,8 +129,6 @@ private:
 	D3D12_VIEWPORT mScreenViewport;
 	D3D12_RECT mScissorRect;
 
-	//std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
-
 	//Constant Buffer
 	std::unique_ptr<UploadBuffer<ObjectConstants>> mObjectCB = nullptr;
 	ComPtr<ID3D12Resource> mUploadCBuffer;
@@ -143,17 +140,16 @@ private:
 
 	//Shader
 	std::vector<Shader> mShaders;
-	//ComPtr<ID3DBlob> mvsByteCode;
-	//ComPtr<ID3DBlob> mpsByteCode;
 
 	//PSO
 	ComPtr<ID3D12PipelineState> mPSO;
 
 	//Model
-	std::unique_ptr<Model> mModel{std::make_unique<Model>("box", "C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\box.fbx")};
-	std::unique_ptr<MeshGeometry> mBoxGeo;
+	//std::unique_ptr<Model> mModel{std::make_unique<Model>("box", "C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\box.fbx")};
+	Mesh* mModel = MeshRenderer::getMeshList()->data()[0];
+	//std::unique_ptr<MeshGeometry> mBoxGeo;
 
-	XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
+	//XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
 	XMFLOAT4X4 mView = MathHelper::Identity4x4();
 	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 
@@ -162,6 +158,8 @@ private:
 	float mRadius = 5.0f;
 
 	POINT mLastMousePos;
+
+	SphereCamera mCamera;
 };
 
 
