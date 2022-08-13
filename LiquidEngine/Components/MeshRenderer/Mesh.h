@@ -10,7 +10,17 @@
 #include <assimp/scene.h>
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/LogStream.hpp>
-#include "../../DataStructures.h"
+#include "../../Components/Translation.h"
+
+#include <DirectXColors.h>
+#include <windows.h>
+#include <WindowsX.h>
+#include <wrl.h>
+#include <dxgi1_4.h>
+#include <d3d12.h>
+
+
+using UINT = unsigned int;
 
 using Microsoft::WRL::ComPtr;
 
@@ -19,14 +29,22 @@ class MeshRenderer;
 class Mesh
 {
 public:
+	Mesh(Translation* ptr);
+	Mesh::Mesh(Translation* ptr, std::string meshPath);
+	Mesh::~Mesh();
 
+	const Translation* translation;
 	std::vector<float> vertices;
 	std::vector<uint16_t> indices;
 
-	Mesh();
 	std::vector<float>* getVertices();
 	std::vector<uint16_t>* getIndices();
-	void SetView();
+	XMMATRIX getWorldMatrix();
+
+
+	void SetBufferView();
+	void SetToBox();
+	void Mesh::LoadFromDisk();
 
 	//Vertex Buffer
 	D3D12_VERTEX_BUFFER_VIEW mVBV;

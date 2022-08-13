@@ -9,8 +9,8 @@ public:
 	XMVECTOR target;
 	XMVECTOR up;
 
-	float mTheta = 1.5f * XM_PI;
-	float mPhi = XM_PIDIV4;
+	float mTheta = 0.0f * XM_PI;
+	float mPhi = 1.5 * XM_PIDIV4;
 	float mRadius = 5.0f;
 
 	XMMATRIX getViewMatrix() {

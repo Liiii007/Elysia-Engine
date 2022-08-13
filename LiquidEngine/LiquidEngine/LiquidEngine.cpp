@@ -3,7 +3,8 @@
 #include "../Renderer/XIIRenderer.h"
 #include "../World/WorldManager.h"
 
-#include"../ABox.h"
+#include "../World/Entity.h"
+#include "../Tools/Logger.h"
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -19,15 +20,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     try
     {
         //Initialization
-        //if (!Singleton<XIIRenderer>::Get()->Init(hInstance)) return 0;
         //if (!Singleton<WorldManager>::Get()->Init()) return 0;
-        ABox testBox;
         Singleton<WorldManager>::Get()->Init();
+        Entity e1;
+        Entity e2;
+        e1.translation.rotation = XMVECTOR{ 45, 0, 0 };
+        //e2.translation.rotation = XMVECTOR{ 45, 0, 0 };
         Singleton<XIIRenderer>::Get()->Init(hInstance);
+
+        Log::Error("This is an error");
+        Log::Warning("This is a warning");
+
+        auto a = Log::getLogs();
 
         //Tick
         while (true) {
-            //Singleton<XIIRenderer>::Get()->RenderTick();
             Singleton<XIIRenderer>::Get()->RenderTick();
         }
     }

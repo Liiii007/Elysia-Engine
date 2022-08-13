@@ -2,6 +2,9 @@
 
 bool WorldManager::Init() {
 	//FIXED:¼ÓÔØÄ£ĞÍ
+	
+	//entities.emplace_back(Entity());
+	//entities.emplace_back(Entity());
 	return true;
 }
 

@@ -23,7 +23,11 @@ bool XIIRenderer::Init(HINSTANCE hInstance) {
 	CreateConstantBuffer();
 	CreateRootSignature();
 	BuildShader();
-	UploadVertices();
+
+	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
+		UploadVertices(*it);
+	}
+	
 	CreatePSO();
 
 	// Execute the initialization commands.
@@ -212,7 +216,7 @@ void XIIRenderer::CreateDescHeaps() {
 }
 
 void XIIRenderer::CreateConstantBuffer() {
-	mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 1, true);
+	mObjectCB = std::make_unique<UploadBuffer<XMFLOAT4X4>>(md3dDevice.Get(), 1, true);
 
 	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
 
@@ -460,87 +464,64 @@ void XIIRenderer::ClearForNextFrame() {
 	mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
 }
 
-void XIIRenderer::UploadVertices() {
+void XIIRenderer::UploadVertices(Mesh* mesh) {
+
+	const UINT vbByteSize = (UINT)mesh->vertices.size() * sizeof(mesh->vertices[0]);
+
+	const UINT ibByteSize = (UINT)mesh->indices.size() * sizeof(mesh->indices[0]);
 
 
-	const UINT vbByteSize = (UINT)mModel->vertices.size() * sizeof(mModel->vertices[0]);
+	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mesh->VertexBufferCPU));
+	CopyMemory(mesh->VertexBufferCPU->GetBufferPointer(), mesh->vertices.data(), vbByteSize);
 
-	const UINT ibByteSize = (UINT)mModel->indices.size() * sizeof(mModel->indices[0]);
+	ThrowIfFailed(D3DCreateBlob(ibByteSize, &mesh->IndexBufferCPU));
+	CopyMemory(mesh->IndexBufferCPU->GetBufferPointer(), mesh->indices.data(), ibByteSize);
 
+	mesh->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		mCommandList.Get(), mesh->vertices.data(), vbByteSize, mesh->VertexBufferUploader);
 
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mModel->VertexBufferCPU));
-	CopyMemory(mModel->VertexBufferCPU->GetBufferPointer(), mModel->vertices.data(), vbByteSize);
+	mesh->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		mCommandList.Get(), mesh->indices.data(), ibByteSize, mesh->IndexBufferUploader);
 
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &mModel->IndexBufferCPU));
-	CopyMemory(mModel->IndexBufferCPU->GetBufferPointer(), mModel->indices.data(), ibByteSize);
-
-	mModel->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), mModel->vertices.data(), vbByteSize, mModel->VertexBufferUploader);
-
-	mModel->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), mModel->indices.data(), ibByteSize, mModel->IndexBufferUploader);
-
-	mModel->SetView();
+	mesh->SetBufferView();
 }
 
-void XIIRenderer::UploadIndices(Model* model) {
-
-}
 
 void XIIRenderer::Update() {
-	// Build the view matrix.
-	XMVECTOR pos = XMVectorSet(0, 0, 0, 1.0f);
-	XMVECTOR target = XMVectorSet(-1, 0, 0, 1);
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&mView, view);
-
-
-	XMMATRIX world = XMLoadFloat4x4(&mWorld);
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-	XMMATRIX worldViewProj = world * view * proj;
-
-	// Update the constant buffer with the latest worldViewProj matrix.
-	ObjectConstants objConstants;
-	XMStoreFloat4x4(&objConstants.MVP, XMMatrixTranspose(worldViewProj));
-	mObjectCB->CopyData(0, objConstants);
 }
 
-void XIIRenderer::UploadConstant() {
-
-
+void XIIRenderer::UploadMVPMatrix(Mesh* mesh) {
 	XMMATRIX view = mCamera.getViewMatrix();
-
-
-	XMMATRIX world = XMLoadFloat4x4(&mWorld);
+	XMMATRIX world = mesh->getWorldMatrix();
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
 	XMMATRIX worldViewProj = world * view * proj;
 
 	// Update the constant buffer with the latest worldViewProj matrix.
-	ObjectConstants objConstants;
-	XMStoreFloat4x4(&objConstants.MVP, XMMatrixTranspose(worldViewProj));
-	mObjectCB->CopyData(0, objConstants);
+	XMFLOAT4X4 objMVP;
+	XMStoreFloat4x4(&objMVP, XMMatrixTranspose(worldViewProj));
+	mObjectCB->CopyData(0, objMVP);
 }
 
-void XIIRenderer::CommitRenderCommand() {
+void XIIRenderer::CommitRenderCommand(Mesh* mesh) {
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-	mCommandList->IASetVertexBuffers(0, 2, &mModel->mVBV);
-	mCommandList->IASetIndexBuffer(&mModel->mIBV);
+	mCommandList->IASetVertexBuffers(0, 2, &mesh->mVBV);
+	mCommandList->IASetIndexBuffer(&mesh->mIBV);
 	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
+	//FIXED:GPU Instancing
 	mCommandList->DrawIndexedInstanced(
-		mModel->getIndices()->size(),
+		mesh->getIndices()->size(),
 		1, 0, 0, 0);
 }
 
-void XIIRenderer::RenderNextFrame() {
+void XIIRenderer::RenderFrame() {
 	// Indicate a state transition on the resource usage.
 	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
@@ -565,12 +546,15 @@ void XIIRenderer::RenderNextFrame() {
 
 
 int XIIRenderer::RenderTick() {
-	//Update();
-	UploadConstant();
-
 	ClearForNextFrame();
-	CommitRenderCommand();
-	RenderNextFrame();
+	Update();
+
+	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
+		UploadMVPMatrix(*it);
+		CommitRenderCommand(*it);
+	}
+	
+	RenderFrame();
 
 	return 0;
 }
@@ -693,11 +677,11 @@ void XIIRenderer::OnMouseMove(WPARAM btnState, int x, int y)
 		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
 
 		// Update angles based on input to orbit camera around box.
-		mTheta += dx;
-		mPhi += dy;
+		//mTheta += dx;
+		//mPhi += dy;
 
 		// Restrict the angle mPhi.
-		mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
+		//mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
 	}
 	else if ((btnState & MK_RBUTTON) != 0)
 	{
@@ -706,10 +690,10 @@ void XIIRenderer::OnMouseMove(WPARAM btnState, int x, int y)
 		float dy = 0.005f * static_cast<float>(y - mLastMousePos.y);
 
 		// Update the camera radius based on input.
-		mRadius += dx - dy;
+		//mRadius += dx - dy;
 
 		// Restrict the radius.
-		mRadius = MathHelper::Clamp(mRadius, 3.0f, 15.0f);
+		//mRadius = MathHelper::Clamp(mRadius, 3.0f, 15.0f);
 	}
 
 	mLastMousePos.x = x;

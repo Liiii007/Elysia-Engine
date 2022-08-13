@@ -15,6 +15,20 @@
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <DirectXCollision.h>
+
+using UINT = unsigned int;
+
+#include <DirectXColors.h>
+#include <windows.h>
+#include <WindowsX.h>
+#include <wrl.h>
+#include <dxgi1_4.h>
+#include <d3d12.h>
+#include <D3Dcompiler.h>
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h>
+#include <DirectXColors.h>
+#include <DirectXCollision.h>
 #include <string>
 #include <memory>
 #include <algorithm>
@@ -29,17 +43,19 @@
 #include "../Tools/Common/UploadBuffer.h"
 #include "../Tools/Singleton.h"
 #include "../System/InputSystem.h"
-#include "../World/Model.h"
-#include "../DataStructures.h"
 #include "../Renderer/Shader.h"
 #include "../System/MeshRenderer.h" 
 #include "../Renderer/SphereCamera.h"
+#include "../World/Entity.h"
 
 using namespace DirectX;
 using namespace std;
 
 using Microsoft::WRL::ComPtr;
 
+struct ObjectConstants {
+	DirectX::XMFLOAT4X4 MVP;
+};
 
 class XIIRenderer
 {
@@ -48,9 +64,8 @@ public:
 	bool Init(HINSTANCE);
 
 	//Upload
-	void UploadVertices();
-	void UploadIndices(Model* model);
-	void UploadConstant();
+	void UploadVertices(Mesh* mesh);
+	void UploadMVPMatrix(Mesh* mesh);
 
 	//Tick
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -80,8 +95,8 @@ private:
 	//Render Tick
 	
 	void ClearForNextFrame();
-	void CommitRenderCommand();
-	void RenderNextFrame();
+	void CommitRenderCommand(Mesh* mesh);
+	void RenderFrame();
 	void FlushCommandQueue();
 	ID3D12Resource* CurrentBackBuffer()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView()const;
@@ -130,7 +145,7 @@ private:
 	D3D12_RECT mScissorRect;
 
 	//Constant Buffer
-	std::unique_ptr<UploadBuffer<ObjectConstants>> mObjectCB = nullptr;
+	std::unique_ptr<UploadBuffer<XMFLOAT4X4>> mObjectCB = nullptr;
 	ComPtr<ID3D12Resource> mUploadCBuffer;
 	UINT mCBVSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
 	UINT mElementNums{ 1 };
@@ -146,16 +161,14 @@ private:
 
 	//Model
 	//std::unique_ptr<Model> mModel{std::make_unique<Model>("box", "C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\box.fbx")};
-	Mesh* mModel = MeshRenderer::getMeshList()->data()[0];
+
+	//Mesh* mModel = MeshRenderer::getMeshList()->data()[0];
 	//std::unique_ptr<MeshGeometry> mBoxGeo;
 
 	//XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
-	XMFLOAT4X4 mView = MathHelper::Identity4x4();
+	//XMFLOAT4X4 mView = MathHelper::Identity4x4();
 	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 
-	float mTheta = 1.5f * XM_PI;
-	float mPhi = XM_PIDIV4;
-	float mRadius = 5.0f;
 
 	POINT mLastMousePos;
 

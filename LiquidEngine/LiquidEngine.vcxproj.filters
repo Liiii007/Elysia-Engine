@@ -42,9 +42,6 @@
     <ClInclude Include="World\WorldManager.h">
       <Filter>World</Filter>
     </ClInclude>
-    <ClInclude Include="World\Model.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Components\Translation.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -93,10 +90,7 @@
     <ClInclude Include="Tools\Singleton.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Skybox.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DataStructures.h">
+    <ClInclude Include="Renderer\Skybox.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Shader.h">
@@ -108,13 +102,16 @@
     <ClInclude Include="Components\MeshRenderer\Mesh.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ABox.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer\SphereCamera.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
+    <ClInclude Include="World\Entity.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Logger.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshImporter.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -124,9 +121,6 @@
     </ClCompile>
     <ClCompile Include="World\WorldManager.cpp">
       <Filter>World</Filter>
-    </ClCompile>
-    <ClCompile Include="World\Model.cpp">
-      <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Components\Translation.cpp">
       <Filter>Components</Filter>
@@ -170,10 +164,7 @@
     <ClCompile Include="Tools\Singleton.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Skybox.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DataStructures.cpp">
+    <ClCompile Include="Renderer\Skybox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Shader.cpp">
@@ -185,13 +176,16 @@
     <ClCompile Include="Components\MeshRenderer\Mesh.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ABox.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\SphereCamera.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
+    <ClCompile Include="World\Entity.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Logger.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshImporter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -204,8 +198,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\json\test.json" />
-    <None Include="Resources\json\test1.json" />
     <None Include="Renderer\Shaders\color.hlsl" />
     <None Include="Resources\Model\box.fbx" />
   </ItemGroup>

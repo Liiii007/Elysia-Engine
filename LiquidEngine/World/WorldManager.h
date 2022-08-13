@@ -3,14 +3,9 @@
 #include <string>
 #include "../Components/Translation.h"
 #include "../Interface/ISerializable.h"
-#include "Model.h"
 #include "../Tools/JSONHandler.h"
+#include "Entity.h"
 
-struct SingleItem
-{
-	Model model;
-	Translation translation;
-};
 
 class WorldManager : public ISerializable
 {
@@ -19,8 +14,8 @@ public:
 
 	std::string path;
 	std::string outputPath{"Resources\\json\\test1.json"};
-
-	std::vector<SingleItem> items;
+;
+	std::vector<Entity> entities;
 
 	bool Init();
 
