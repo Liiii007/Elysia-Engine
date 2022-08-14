@@ -70,6 +70,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>D:\Dependency\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Dependency\libs;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -109,6 +113,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>rttr_core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>
@@ -134,7 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="MeshImporter.h" />
+    <ClInclude Include="Tools\MeshImporter.h" />
     <ClInclude Include="Tools\Logger.h" />
     <ClInclude Include="World\Entity.h" />
     <ClInclude Include="Renderer\SphereCamera.h" />
@@ -165,7 +170,7 @@
     <ClInclude Include="Renderer\XIIRenderer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MeshImporter.cpp" />
+    <ClCompile Include="Tools\MeshImporter.cpp" />
     <ClCompile Include="Tools\Logger.cpp" />
     <ClCompile Include="World\Entity.cpp" />
     <ClCompile Include="Renderer\SphereCamera.cpp" />

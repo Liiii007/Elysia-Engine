@@ -111,7 +111,7 @@
     <ClInclude Include="Tools\Logger.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MeshImporter.h">
+    <ClInclude Include="Tools\MeshImporter.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -185,7 +185,7 @@
     <ClCompile Include="Tools\Logger.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MeshImporter.cpp">
+    <ClCompile Include="Tools\MeshImporter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
