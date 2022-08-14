@@ -250,13 +250,6 @@ void XIIRenderer::CreateConstantBuffer() {
 		&cbvDesc1,
 		handle1);
 
-
-	
-
-	//-----------------------
-
-	
-
 }
 
 void XIIRenderer::CreateRootSignature() {
@@ -532,6 +525,11 @@ void XIIRenderer::UploadMVPMatrix(Mesh* mesh) {
 	ObjectConstants ocb;
 	XMStoreFloat4x4(&ocb.MVP, XMMatrixTranspose(worldViewProj));
 	mObjectCB->CopyData(0, ocb);
+
+	PassConstants pcb;
+	XMStoreFloat4x4(&pcb.gView, XMMatrixTranspose(worldViewProj));
+	XMStoreFloat4x4(&pcb.gProj, XMMatrixTranspose(worldViewProj));
+	mPassCB->CopyData(0, pcb);
 }
 
 void XIIRenderer::CommitRenderCommand(Mesh* mesh) {
