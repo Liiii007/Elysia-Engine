@@ -18,10 +18,21 @@
 
 using Microsoft::WRL::ComPtr;
 
+struct PassConstants {
+	DirectX::XMFLOAT4X4 view;
+	DirectX::XMFLOAT4X4 proj;
+	DirectX::XMFLOAT4X4 viewProj;
+};
+
 class Shader {
+
 public:
 
-	Shader(const std::wstring& filename, const std::string& name) :filename(std::move(filename)), name(std::move(name)) {
+	ComPtr<ID3DBlob> mvsByteCode;
+	ComPtr<ID3DBlob> mpsByteCode;
+	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
+
+	Shader(const std::wstring& filename, const std::string& name) :filename(filename), name(std::move(name)) {
 		CompileShaders();
 		shaders[name] = this;
 	}
@@ -55,9 +66,7 @@ public:
 private:
 	std::wstring filename;
 
-	ComPtr<ID3DBlob> mvsByteCode;
-	ComPtr<ID3DBlob> mpsByteCode;
-	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
+	
 
 	ComPtr<ID3DBlob> CompileShader(const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target) {
 		UINT compileFlags = 0;

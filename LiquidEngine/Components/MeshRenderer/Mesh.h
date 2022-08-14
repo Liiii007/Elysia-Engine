@@ -23,11 +23,7 @@ struct ObjectConstants {
 	DirectX::XMFLOAT4X4 worldMatrix;
 };
 
-struct PassConstants {
-	DirectX::XMFLOAT4X4 view;
-	DirectX::XMFLOAT4X4 proj;
-	DirectX::XMFLOAT4X4 viewProj;
-};
+
 
 using UINT = unsigned int;
 
@@ -46,8 +42,8 @@ public:
 	std::vector<float> vertices;
 	std::vector<uint16_t> indices;
 
-	std::vector<float>* getVertices();
-	std::vector<uint16_t>* getIndices();
+	std::vector<float>& getVertices();
+	std::vector<uint16_t>& getIndices();
 	ObjectConstants getWorldMatrix();
 
 

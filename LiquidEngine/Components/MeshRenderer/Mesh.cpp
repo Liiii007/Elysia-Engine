@@ -1,12 +1,12 @@
 #include "Mesh.h"
 #include "../../System/MeshRenderer.h"
 
-std::vector<float>* Mesh::getVertices() {
-	return &vertices;
+std::vector<float>& Mesh::getVertices() {
+	return vertices;
 }
 
-std::vector<uint16_t>* Mesh::getIndices() {
-	return &indices;
+std::vector<uint16_t>& Mesh::getIndices() {
+	return indices;
 }
 
 Mesh::Mesh(Translation* ptr) {

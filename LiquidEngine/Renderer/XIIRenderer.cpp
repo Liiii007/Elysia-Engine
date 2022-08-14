@@ -215,12 +215,14 @@ void XIIRenderer::CreateDescHeaps() {
 }
 
 void XIIRenderer::CreateConstantBuffer() {
+	mPassCB = std::make_unique<UploadBuffer<PassConstants>>(md3dDevice.Get(), 1, true);
+	mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 1, true);
 
 	//Build PassCB
 	UINT passCBCount = 1;
 
 	for (int i = 0; i < passCBCount; i++) {
-		mPassCB = std::make_unique<UploadBuffer<PassConstants>>(md3dDevice.Get(), 1, true);
+		
 
 		UINT passCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
 		D3D12_GPU_VIRTUAL_ADDRESS passCBAddress = mPassCB->Resource()->GetGPUVirtualAddress();
@@ -248,8 +250,6 @@ void XIIRenderer::CreateConstantBuffer() {
 
 	//build object cb for every object
 	for (int i = 0; i < objectCount; i++) {
-		
-		mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 1, true);
 
 		UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
 		auto objectCB = mObjectCB->Resource();
@@ -274,14 +274,21 @@ void XIIRenderer::CreateConstantBuffer() {
 }
 
 void XIIRenderer::CreateRootSignature() {
+	
+	CD3DX12_DESCRIPTOR_RANGE cbvTable0;
+	CD3DX12_DESCRIPTOR_RANGE cbvTable1;
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+	cbvTable0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+	cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
 
-	CD3DX12_DESCRIPTOR_RANGE cbvTable;
-	cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable);
+	const UINT cbvTableCount = 2;
+	CD3DX12_ROOT_PARAMETER slotRootParameter[cbvTableCount];
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0, nullptr,
+	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable0);
+	slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
+
+
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(cbvTableCount, slotRootParameter, 0, nullptr,
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -310,17 +317,17 @@ void XIIRenderer::CreatePSO() {
 		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
 		//Needed change
-		psoDesc.InputLayout = { shader->GetInputLayout().data(), (UINT)shader->GetInputLayout().size()};
+		psoDesc.InputLayout = { shader->mInputLayout.data(), (UINT)shader->mInputLayout.size()};
 		psoDesc.pRootSignature = mRootSignature.Get();
 		psoDesc.VS =
 		{
-			reinterpret_cast<BYTE*>(shader->GetVertexShader()->GetBufferPointer()),
-			shader->GetVertexShader()->GetBufferSize()
+			reinterpret_cast<BYTE*>(shader->mvsByteCode->GetBufferPointer()),
+			shader->mvsByteCode->GetBufferSize()
 		};
 		psoDesc.PS =
 		{
-			reinterpret_cast<BYTE*>(shader->GetPixelShader()->GetBufferPointer()),
-			shader->GetPixelShader()->GetBufferSize()
+			reinterpret_cast<BYTE*>(shader->mpsByteCode->GetBufferPointer()),
+			shader->mpsByteCode->GetBufferSize()
 		};
 
 		//Set by default
@@ -528,6 +535,12 @@ void XIIRenderer::Update() {
 	auto view = mCamera.getViewMatrix();
 	auto proj = mProj;
 
+	PassConstants ocb;
+	ocb.proj = mProj;
+	ocb.view = mCamera.getViewMatrix();
+	ocb.viewProj = view;
+
+	mPassCB->CopyData(0, ocb);
 }
 
 void XIIRenderer::UploadMVPMatrix(Mesh* mesh) {
@@ -546,15 +559,15 @@ void XIIRenderer::CommitRenderCommand(Mesh* mesh) {
 
 	mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-	mCommandList->IASetVertexBuffers(0, 2, &mesh->mVBV);
-	mCommandList->IASetIndexBuffer(&mesh->mIBV);
+	mCommandList->IASetVertexBuffers(0, 2, &(mesh->mVBV));
+	mCommandList->IASetIndexBuffer(&(mesh->mIBV));
 	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
 	//FIXED:GPU Instancing
 	mCommandList->DrawIndexedInstanced(
-		mesh->getIndices()->size(),
+		mesh->getIndices().size(),
 		1, 0, 0, 0);
 }
 
