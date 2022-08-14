@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <vector>
 #include <array>
+#include <unordered_map>
 #include "../Tools/Common/d3dUtil.h"
 
 using Microsoft::WRL::ComPtr;
@@ -21,13 +22,15 @@ class Shader {
 public:
 	Shader(const std::wstring& filename, const std::string name) :filename(filename), name(name) {
 		CompileShaders();
+		shaders[name] = this;
 	}
+
+	static std::unordered_map<std::string, Shader*> shaders;
 	
 	std::string name;
-
-	struct InputLayout {
-
-	};
+	ComPtr<ID3D12PipelineState> mPSO;
+	
+	ComPtr<ID3D12RootSignature> mRootSignature;
 
 	void CompileShaders() {
 		HRESULT hr = S_OK;
@@ -37,6 +40,10 @@ public:
 
 		mInputLayout.clear();
 		mInputLayout.push_back({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	}
+
+	void BuildPSO() {
+
 	}
 
 	ComPtr<ID3DBlob> GetVertexShader() {

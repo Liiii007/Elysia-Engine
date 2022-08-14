@@ -57,6 +57,11 @@ struct ObjectConstants {
 	DirectX::XMFLOAT4X4 MVP;
 };
 
+struct PassConstants {
+	DirectX::XMFLOAT4X4 gView;
+	DirectX::XMFLOAT4X4 gProj;
+};
+
 class XIIRenderer
 {
 public:
@@ -145,28 +150,15 @@ private:
 	D3D12_RECT mScissorRect;
 
 	//Constant Buffer
-	std::unique_ptr<UploadBuffer<XMFLOAT4X4>> mObjectCB = nullptr;
-	ComPtr<ID3D12Resource> mUploadCBuffer;
-	UINT mCBVSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
-	UINT mElementNums{ 1 };
+	std::unique_ptr<UploadBuffer<ObjectConstants>> mObjectCB = nullptr;
+	std::unique_ptr<UploadBuffer<PassConstants>> mPassCB = nullptr;
 
 	//Root Signature
 	ComPtr<ID3D12RootSignature> mRootSignature;
 
-	//Shader
-	std::vector<Shader> mShaders;
-
 	//PSO
 	ComPtr<ID3D12PipelineState> mPSO;
 
-	//Model
-	//std::unique_ptr<Model> mModel{std::make_unique<Model>("box", "C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\box.fbx")};
-
-	//Mesh* mModel = MeshRenderer::getMeshList()->data()[0];
-	//std::unique_ptr<MeshGeometry> mBoxGeo;
-
-	//XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
-	//XMFLOAT4X4 mView = MathHelper::Identity4x4();
 	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 
 

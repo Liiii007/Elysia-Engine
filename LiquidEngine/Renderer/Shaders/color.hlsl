@@ -9,6 +9,12 @@ cbuffer cbPerObject : register(b0)
 	float4x4 gWorldViewProj;
 };
 
+cbuffer cbPerPass :register(b1)
+{
+	float4x4 gView;
+	float4x4 gProj;
+}
+
 struct VertexIn
 {
 	float3 PosL  : POSITION;

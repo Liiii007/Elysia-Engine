@@ -216,7 +216,8 @@ void XIIRenderer::CreateDescHeaps() {
 }
 
 void XIIRenderer::CreateConstantBuffer() {
-	mObjectCB = std::make_unique<UploadBuffer<XMFLOAT4X4>>(md3dDevice.Get(), 1, true);
+	mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 1, true);
+
 
 	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
 
@@ -236,13 +237,17 @@ void XIIRenderer::CreateConstantBuffer() {
 
 void XIIRenderer::CreateRootSignature() {
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
 
 	CD3DX12_DESCRIPTOR_RANGE cbvTable;
 	cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable);
+	CD3DX12_DESCRIPTOR_RANGE cbvTable1;
+	cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0, nullptr,
+	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable);
+	slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
+
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter, 0, nullptr,
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -263,26 +268,27 @@ void XIIRenderer::CreateRootSignature() {
 }
 
 void XIIRenderer::BuildShader() {
-	mShaders.emplace_back(Shader(L"Renderer\\Shaders\\color.hlsl", "shader1"));
+	//mShaders.emplace_back(Shader(L"Renderer\\Shaders\\color.hlsl", "shader1"));
 }
 
 void XIIRenderer::CreatePSO() {
-	for (auto& shader : mShaders) {
+	for (auto it : Shader::shaders) {
+		auto shader = it.second;
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
 		//Needed change
-		psoDesc.InputLayout = { shader.mInputLayout.data(), (UINT)shader.mInputLayout.size() };
+		psoDesc.InputLayout = { shader->mInputLayout.data(), (UINT)shader->mInputLayout.size() };
 		psoDesc.pRootSignature = mRootSignature.Get();
 		psoDesc.VS =
 		{
-			reinterpret_cast<BYTE*>(shader.mvsByteCode->GetBufferPointer()),
-			shader.mvsByteCode->GetBufferSize()
+			reinterpret_cast<BYTE*>(shader->mvsByteCode->GetBufferPointer()),
+			shader->mvsByteCode->GetBufferSize()
 		};
 		psoDesc.PS =
 		{
-			reinterpret_cast<BYTE*>(shader.mpsByteCode->GetBufferPointer()),
-			shader.mpsByteCode->GetBufferSize()
+			reinterpret_cast<BYTE*>(shader->mpsByteCode->GetBufferPointer()),
+			shader->mpsByteCode->GetBufferSize()
 		};
 
 		//Set by default
@@ -498,9 +504,9 @@ void XIIRenderer::UploadMVPMatrix(Mesh* mesh) {
 	XMMATRIX worldViewProj = world * view * proj;
 
 	// Update the constant buffer with the latest worldViewProj matrix.
-	XMFLOAT4X4 objMVP;
-	XMStoreFloat4x4(&objMVP, XMMatrixTranspose(worldViewProj));
-	mObjectCB->CopyData(0, objMVP);
+	ObjectConstants ocb;
+	XMStoreFloat4x4(&ocb.MVP, XMMatrixTranspose(worldViewProj));
+	mObjectCB->CopyData(0, ocb);
 }
 
 void XIIRenderer::CommitRenderCommand(Mesh* mesh) {
