@@ -1,12 +1,12 @@
 #include "Mesh.h"
 #include "../../System/MeshRenderer.h"
 
-std::vector<float>* Mesh::getVertices() {
-	return &vertices;
+std::vector<float>& Mesh::getVertices() {
+	return vertices;
 }
 
-std::vector<uint16_t>* Mesh::getIndices() {
-	return &indices;
+std::vector<uint16_t>& Mesh::getIndices() {
+	return indices;
 }
 
 Mesh::Mesh(Translation* ptr) {
@@ -84,9 +84,13 @@ void Mesh::SetBufferView() {
 	mIBV.SizeInBytes = sizeof(UINT) * indices.size();
 }
 
-XMMATRIX Mesh::getWorldMatrix() {
+ObjectConstants Mesh::getWorldMatrix() {
 	auto rotationMatrix = XMMatrixRotationRollPitchYawFromVector(translation->rotation);
 	auto scaleMatrix = XMMatrixScalingFromVector(translation->scale);
 	auto translationMatrix = XMMatrixTranslationFromVector(translation->position);
-	return translationMatrix * scaleMatrix * rotationMatrix;
+
+	//build the world matrix
+	ObjectConstants ocb{};
+	XMStoreFloat4x4(&ocb.worldMatrix, translationMatrix * scaleMatrix * rotationMatrix);
+	return ocb;
 }

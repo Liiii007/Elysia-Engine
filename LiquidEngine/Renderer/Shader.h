@@ -15,22 +15,36 @@
 #include <array>
 #include <unordered_map>
 #include "../Tools/Common/d3dUtil.h"
+#include <unordered_map>
 
 using Microsoft::WRL::ComPtr;
 
+struct PassConstants {
+	DirectX::XMFLOAT4X4 view;
+	DirectX::XMFLOAT4X4 proj;
+	DirectX::XMFLOAT4X4 viewProj;
+};
+
 class Shader {
+
 public:
-	Shader(const std::wstring& filename, const std::string name) :filename(filename), name(name) {
+
+	ComPtr<ID3DBlob> mvsByteCode;
+	ComPtr<ID3DBlob> mpsByteCode;
+	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
+
+	Shader(const std::wstring& filename, const std::string& name) :filename(filename), name(std::move(name)) {
 		CompileShaders();
 		shaders[name] = this;
 	}
 
 	static std::unordered_map<std::string, Shader*> shaders;
-	
+
 	std::string name;
 	ComPtr<ID3D12PipelineState> mPSO;
 	
 	ComPtr<ID3D12RootSignature> mRootSignature;
+
 
 	void CompileShaders() {
 		HRESULT hr = S_OK;
@@ -54,7 +68,7 @@ public:
 		return mpsByteCode;
 	}
 
-	auto GetInputLayout() {
+	auto& GetInputLayout() {
 		return mInputLayout;
 	}
 
@@ -71,8 +85,12 @@ public:
 	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
 
 
+
 private:
 	std::wstring filename;
+
+	
+
 	ComPtr<ID3DBlob> CompileShader(const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target) {
 		UINT compileFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG)  

@@ -4,18 +4,6 @@
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
 
-#include <DirectXColors.h>
-#include <windows.h>
-#include <WindowsX.h>
-#include <wrl.h>
-#include <dxgi1_4.h>
-#include <d3d12.h>
-#include <D3Dcompiler.h>
-#include <DirectXMath.h>
-#include <DirectXPackedVector.h>
-#include <DirectXColors.h>
-#include <DirectXCollision.h>
-
 using UINT = unsigned int;
 
 #include <DirectXColors.h>
@@ -53,9 +41,7 @@ using namespace std;
 
 using Microsoft::WRL::ComPtr;
 
-struct ObjectConstants {
-	DirectX::XMFLOAT4X4 MVP;
-};
+
 
 struct PassConstants {
 	DirectX::XMFLOAT4X4 gView;
@@ -77,8 +63,6 @@ public:
 	int RenderTick();
 	void Update();
 
-	
-
 private:
 	//Init
 	bool InitWindow();
@@ -88,7 +72,6 @@ private:
 	void CreateDescHeaps();
 	void CreateConstantBuffer();
 	void CreateRootSignature();
-	void BuildShader();
 	void CreatePSO();
 	void UploadVertex();
 	void OnResize();
@@ -97,12 +80,12 @@ private:
 	void OnMouseUp(WPARAM btnState, int x, int y);
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
-	//Render Tick
 	
 	void ClearForNextFrame();
 	void CommitRenderCommand(Mesh* mesh);
 	void RenderFrame();
 	void FlushCommandQueue();
+
 	ID3D12Resource* CurrentBackBuffer()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView()const;
@@ -153,14 +136,11 @@ private:
 	std::unique_ptr<UploadBuffer<ObjectConstants>> mObjectCB = nullptr;
 	std::unique_ptr<UploadBuffer<PassConstants>> mPassCB = nullptr;
 
+
 	//Root Signature
 	ComPtr<ID3D12RootSignature> mRootSignature;
 
-	//PSO
-	//ComPtr<ID3D12PipelineState> mPSO;
-
 	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
-
 
 	POINT mLastMousePos;
 

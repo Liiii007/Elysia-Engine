@@ -22,7 +22,6 @@ bool XIIRenderer::Init(HINSTANCE hInstance) {
 
 	CreateConstantBuffer();
 	CreateRootSignature();
-	BuildShader();
 
 	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
 		UploadVertices(*it);
@@ -207,7 +206,9 @@ void XIIRenderer::CreateDescHeaps() {
 		&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
 
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
+
 	cbvHeapDesc.NumDescriptors = 2;
+
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.NodeMask = 0;
@@ -216,9 +217,12 @@ void XIIRenderer::CreateDescHeaps() {
 }
 
 void XIIRenderer::CreateConstantBuffer() {
-	mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 1, true);
 
-	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+	mPassCB = std::make_unique<UploadBuffer<PassConstants>>(md3dDevice.Get(), 1, true);
+
+	//Build PassCB
+	UINT passCBCount = 1;
+
 
 	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
 
@@ -253,6 +257,12 @@ void XIIRenderer::CreateConstantBuffer() {
 }
 
 void XIIRenderer::CreateRootSignature() {
+	
+	CD3DX12_DESCRIPTOR_RANGE cbvTable0;
+	CD3DX12_DESCRIPTOR_RANGE cbvTable1;
+
+	cbvTable0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+	cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
 
 	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
 
@@ -265,6 +275,7 @@ void XIIRenderer::CreateRootSignature() {
 	slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
 
 	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter, 0, nullptr,
+
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -291,11 +302,14 @@ void XIIRenderer::BuildShader() {
 void XIIRenderer::CreatePSO() {
 	for (auto it : Shader::shaders) {
 		auto shader = it.second;
+
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
 		//Needed change
+
 		psoDesc.InputLayout = { shader->mInputLayout.data(), (UINT)shader->mInputLayout.size() };
+
 		psoDesc.pRootSignature = mRootSignature.Get();
 		psoDesc.VS =
 		{
@@ -494,7 +508,6 @@ void XIIRenderer::UploadVertices(Mesh* mesh) {
 
 	const UINT ibByteSize = (UINT)mesh->indices.size() * sizeof(mesh->indices[0]);
 
-
 	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mesh->VertexBufferCPU));
 	CopyMemory(mesh->VertexBufferCPU->GetBufferPointer(), mesh->vertices.data(), vbByteSize);
 
@@ -512,10 +525,19 @@ void XIIRenderer::UploadVertices(Mesh* mesh) {
 
 
 void XIIRenderer::Update() {
+	auto view = mCamera.getViewMatrix();
+	auto proj = mProj;
 
+	PassConstants ocb;
+	ocb.proj = mProj;
+	ocb.view = mCamera.getViewMatrix();
+	ocb.viewProj = view;
+
+	mPassCB->CopyData(0, ocb);
 }
 
 void XIIRenderer::UploadMVPMatrix(Mesh* mesh) {
+
 	XMMATRIX view = mCamera.getViewMatrix();
 	XMMATRIX world = mesh->getWorldMatrix();
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
@@ -530,6 +552,7 @@ void XIIRenderer::UploadMVPMatrix(Mesh* mesh) {
 	XMStoreFloat4x4(&pcb.gView, XMMatrixTranspose(worldViewProj));
 	XMStoreFloat4x4(&pcb.gProj, XMMatrixTranspose(worldViewProj));
 	mPassCB->CopyData(0, pcb);
+
 }
 
 void XIIRenderer::CommitRenderCommand(Mesh* mesh) {
@@ -538,15 +561,15 @@ void XIIRenderer::CommitRenderCommand(Mesh* mesh) {
 
 	mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-	mCommandList->IASetVertexBuffers(0, 2, &mesh->mVBV);
-	mCommandList->IASetIndexBuffer(&mesh->mIBV);
+	mCommandList->IASetVertexBuffers(0, 2, &(mesh->mVBV));
+	mCommandList->IASetIndexBuffer(&(mesh->mIBV));
 	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
 	//FIXED:GPU Instancing
 	mCommandList->DrawIndexedInstanced(
-		mesh->getIndices()->size(),
+		mesh->getIndices().size(),
 		1, 0, 0, 0);
 }
 

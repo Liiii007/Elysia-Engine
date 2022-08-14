@@ -13,7 +13,7 @@ public:
 	float mPhi = 1.5 * XM_PIDIV4;
 	float mRadius = 5.0f;
 
-	XMMATRIX getViewMatrix() {
+	XMFLOAT4X4 getViewMatrix() {
 		// Convert Spherical to Cartesian coordinates.
 		float x = mRadius * sinf(mPhi) * cosf(mTheta);
 		float z = mRadius * sinf(mPhi) * sinf(mTheta);
@@ -23,8 +23,10 @@ public:
 		pos = XMVectorSet(x, y, z, 1.0f);
 		target = XMVectorZero();
 		up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-		return XMMatrixLookAtLH(pos, target, up);
+		XMFLOAT4X4 result;
+		XMStoreFloat4x4(&result, XMMatrixLookAtLH(pos, target, up));
+		
+		return result;
 
 	}
 
