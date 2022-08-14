@@ -22,7 +22,6 @@ bool XIIRenderer::Init(HINSTANCE hInstance) {
 
 	CreateConstantBuffer();
 	CreateRootSignature();
-	BuildShader();
 
 	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
 		UploadVertices(*it);
@@ -262,27 +261,25 @@ void XIIRenderer::CreateRootSignature() {
 		IID_PPV_ARGS(&mRootSignature)));
 }
 
-void XIIRenderer::BuildShader() {
-	mShaders.emplace_back(Shader(L"Renderer\\Shaders\\color.hlsl", "shader1"));
-}
 
 void XIIRenderer::CreatePSO() {
-	for (auto& shader : mShaders) {
+	for (auto& shaderPair : Shader::shaders) {
+		auto shader = shaderPair.second;
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
 		//Needed change
-		psoDesc.InputLayout = { shader.mInputLayout.data(), (UINT)shader.mInputLayout.size() };
+		psoDesc.InputLayout = { shader->mInputLayout.data(), (UINT)shader->mInputLayout.size() };
 		psoDesc.pRootSignature = mRootSignature.Get();
 		psoDesc.VS =
 		{
-			reinterpret_cast<BYTE*>(shader.mvsByteCode->GetBufferPointer()),
-			shader.mvsByteCode->GetBufferSize()
+			reinterpret_cast<BYTE*>(shader->mvsByteCode->GetBufferPointer()),
+			shader->mvsByteCode->GetBufferSize()
 		};
 		psoDesc.PS =
 		{
-			reinterpret_cast<BYTE*>(shader.mpsByteCode->GetBufferPointer()),
-			shader.mpsByteCode->GetBufferSize()
+			reinterpret_cast<BYTE*>(shader->mpsByteCode->GetBufferPointer()),
+			shader->mpsByteCode->GetBufferSize()
 		};
 
 		//Set by default

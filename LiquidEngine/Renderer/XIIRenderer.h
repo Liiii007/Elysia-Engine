@@ -83,7 +83,6 @@ private:
 	void CreateDescHeaps();
 	void CreateConstantBuffer();
 	void CreateRootSignature();
-	void BuildShader();
 	void CreatePSO();
 	void UploadVertex();
 	void OnResize();

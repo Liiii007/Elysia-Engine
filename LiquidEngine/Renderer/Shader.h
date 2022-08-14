@@ -14,6 +14,7 @@
 #include <vector>
 #include <array>
 #include "../Tools/Common/d3dUtil.h"
+#include <unordered_map>
 
 using Microsoft::WRL::ComPtr;
 
@@ -21,7 +22,10 @@ class Shader {
 public:
 	Shader(const std::wstring& filename, const std::string name) :filename(filename), name(name) {
 		CompileShaders();
+		shaders[name] = this;
 	}
+
+	static std::unordered_map<std::string, Shader*> shaders;
 	
 	std::string name;
 
