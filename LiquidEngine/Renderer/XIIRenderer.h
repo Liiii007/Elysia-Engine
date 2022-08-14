@@ -4,18 +4,6 @@
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
 
-#include <DirectXColors.h>
-#include <windows.h>
-#include <WindowsX.h>
-#include <wrl.h>
-#include <dxgi1_4.h>
-#include <d3d12.h>
-#include <D3Dcompiler.h>
-#include <DirectXMath.h>
-#include <DirectXPackedVector.h>
-#include <DirectXColors.h>
-#include <DirectXCollision.h>
-
 using UINT = unsigned int;
 
 #include <DirectXColors.h>
@@ -53,9 +41,7 @@ using namespace std;
 
 using Microsoft::WRL::ComPtr;
 
-struct ObjectConstants {
-	DirectX::XMFLOAT4X4 MVP;
-};
+
 
 class XIIRenderer
 {
@@ -71,8 +57,6 @@ public:
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	int RenderTick();
 	void Update();
-
-	
 
 private:
 	//Init
@@ -91,12 +75,12 @@ private:
 	void OnMouseUp(WPARAM btnState, int x, int y);
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
-	//Render Tick
 	
 	void ClearForNextFrame();
 	void CommitRenderCommand(Mesh* mesh);
 	void RenderFrame();
 	void FlushCommandQueue();
+
 	ID3D12Resource* CurrentBackBuffer()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView()const;
@@ -144,28 +128,18 @@ private:
 	D3D12_RECT mScissorRect;
 
 	//Constant Buffer
-	std::unique_ptr<UploadBuffer<XMFLOAT4X4>> mObjectCB = nullptr;
-	ComPtr<ID3D12Resource> mUploadCBuffer;
-	UINT mCBVSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
-	UINT mElementNums{ 1 };
+	std::unique_ptr<UploadBuffer<ObjectConstants>> mObjectCB = nullptr;
+	std::unique_ptr<UploadBuffer<PassConstants>> mPassCB = nullptr;
+	//ComPtr<ID3D12Resource> mUploadCBuffer;
+	//UINT mCBVSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+	//UINT mElementNums{ 1 };
 
 	//Root Signature
 	ComPtr<ID3D12RootSignature> mRootSignature;
 
-	//Shader
-	std::vector<Shader> mShaders;
-
 	//PSO
 	ComPtr<ID3D12PipelineState> mPSO;
 
-	//Model
-	//std::unique_ptr<Model> mModel{std::make_unique<Model>("box", "C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\box.fbx")};
-
-	//Mesh* mModel = MeshRenderer::getMeshList()->data()[0];
-	//std::unique_ptr<MeshGeometry> mBoxGeo;
-
-	//XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
-	//XMFLOAT4X4 mView = MathHelper::Identity4x4();
 	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 
 

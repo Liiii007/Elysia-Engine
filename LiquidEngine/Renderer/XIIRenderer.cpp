@@ -206,7 +206,7 @@ void XIIRenderer::CreateDescHeaps() {
 		&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
 
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-	cbvHeapDesc.NumDescriptors = 1;
+	cbvHeapDesc.NumDescriptors = 2 + MeshRenderer::getMeshList()->size();
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.NodeMask = 0;
@@ -215,22 +215,62 @@ void XIIRenderer::CreateDescHeaps() {
 }
 
 void XIIRenderer::CreateConstantBuffer() {
-	mObjectCB = std::make_unique<UploadBuffer<XMFLOAT4X4>>(md3dDevice.Get(), 1, true);
 
-	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+	//Build PassCB
+	UINT passCBCount = 1;
 
-	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
-	// Offset to the ith object constant buffer in the buffer.
-	int boxCBufIndex = 0;
-	cbAddress += boxCBufIndex * objCBByteSize;
+	for (int i = 0; i < passCBCount; i++) {
+		mPassCB = std::make_unique<UploadBuffer<PassConstants>>(md3dDevice.Get(), 1, true);
 
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-	cbvDesc.BufferLocation = cbAddress;
-	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+		UINT passCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
+		D3D12_GPU_VIRTUAL_ADDRESS passCBAddress = mPassCB->Resource()->GetGPUVirtualAddress();
 
-	md3dDevice->CreateConstantBufferView(
-		&cbvDesc,
-		mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+		//offset to tail
+		int heapIndex = i;
+		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+		handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
+
+		//fill descriptor
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+		cbvDesc.BufferLocation = passCBAddress;
+		cbvDesc.SizeInBytes = passCBByteSize;
+
+		//create pass cb
+		md3dDevice->CreateConstantBufferView(
+			&cbvDesc,
+			handle);
+	}
+	//-------------------------------------------
+
+	//Build Object Constant buffer
+	UINT objectCount = MeshRenderer::getMeshList()->size();
+	objectCount = 1;
+
+	//build object cb for every object
+	for (int i = 0; i < objectCount; i++) {
+		
+		mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 1, true);
+
+		UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+		auto objectCB = mObjectCB->Resource();
+		D3D12_GPU_VIRTUAL_ADDRESS cbAddress = objectCB->GetGPUVirtualAddress();
+
+		// Offset to the ith object constant buffer in the buffer.
+		cbAddress += i * objCBByteSize;
+
+		int heapIndex = i + passCBCount;
+		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+		handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
+
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+		cbvDesc.BufferLocation = cbAddress;
+		cbvDesc.SizeInBytes = objCBByteSize;
+
+		md3dDevice->CreateConstantBufferView(
+			&cbvDesc,
+			handle);
+	}
+
 }
 
 void XIIRenderer::CreateRootSignature() {
@@ -265,21 +305,22 @@ void XIIRenderer::CreateRootSignature() {
 void XIIRenderer::CreatePSO() {
 	for (auto& shaderPair : Shader::shaders) {
 		auto shader = shaderPair.second;
+
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
 		//Needed change
-		psoDesc.InputLayout = { shader->mInputLayout.data(), (UINT)shader->mInputLayout.size() };
+		psoDesc.InputLayout = { shader->GetInputLayout().data(), (UINT)shader->GetInputLayout().size()};
 		psoDesc.pRootSignature = mRootSignature.Get();
 		psoDesc.VS =
 		{
-			reinterpret_cast<BYTE*>(shader->mvsByteCode->GetBufferPointer()),
-			shader->mvsByteCode->GetBufferSize()
+			reinterpret_cast<BYTE*>(shader->GetVertexShader()->GetBufferPointer()),
+			shader->GetVertexShader()->GetBufferSize()
 		};
 		psoDesc.PS =
 		{
-			reinterpret_cast<BYTE*>(shader->mpsByteCode->GetBufferPointer()),
-			shader->mpsByteCode->GetBufferSize()
+			reinterpret_cast<BYTE*>(shader->GetPixelShader()->GetBufferPointer()),
+			shader->GetPixelShader()->GetBufferSize()
 		};
 
 		//Set by default
@@ -467,7 +508,6 @@ void XIIRenderer::UploadVertices(Mesh* mesh) {
 
 	const UINT ibByteSize = (UINT)mesh->indices.size() * sizeof(mesh->indices[0]);
 
-
 	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mesh->VertexBufferCPU));
 	CopyMemory(mesh->VertexBufferCPU->GetBufferPointer(), mesh->vertices.data(), vbByteSize);
 
@@ -485,19 +525,19 @@ void XIIRenderer::UploadVertices(Mesh* mesh) {
 
 
 void XIIRenderer::Update() {
+	auto view = mCamera.getViewMatrix();
+	auto proj = mProj;
 
 }
 
 void XIIRenderer::UploadMVPMatrix(Mesh* mesh) {
-	XMMATRIX view = mCamera.getViewMatrix();
-	XMMATRIX world = mesh->getWorldMatrix();
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-	XMMATRIX worldViewProj = world * view * proj;
+	
+	auto world = mesh->getWorldMatrix();
+	
+	//XMMATRIX worldViewProj = world * view * proj;
 
-	// Update the constant buffer with the latest worldViewProj matrix.
-	XMFLOAT4X4 objMVP;
-	XMStoreFloat4x4(&objMVP, XMMatrixTranspose(worldViewProj));
-	mObjectCB->CopyData(0, objMVP);
+	//Copy to GPU for use
+	mObjectCB->CopyData(0, world);
 }
 
 void XIIRenderer::CommitRenderCommand(Mesh* mesh) {

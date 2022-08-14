@@ -25,6 +25,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         Entity e1;
         Entity e2;
         e1.translation.rotation = XMVECTOR{ 45, 0, 0 };
+        Shader s1 = Shader(L"Renderer\\Shaders\\color.hlsl", "shader1");
         //e2.translation.rotation = XMVECTOR{ 45, 0, 0 };
         Singleton<XIIRenderer>::Get()->Init(hInstance);
 

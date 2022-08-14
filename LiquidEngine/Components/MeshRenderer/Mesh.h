@@ -19,6 +19,15 @@
 #include <dxgi1_4.h>
 #include <d3d12.h>
 
+struct ObjectConstants {
+	DirectX::XMFLOAT4X4 worldMatrix;
+};
+
+struct PassConstants {
+	DirectX::XMFLOAT4X4 view;
+	DirectX::XMFLOAT4X4 proj;
+	DirectX::XMFLOAT4X4 viewProj;
+};
 
 using UINT = unsigned int;
 
@@ -39,7 +48,7 @@ public:
 
 	std::vector<float>* getVertices();
 	std::vector<uint16_t>* getIndices();
-	XMMATRIX getWorldMatrix();
+	ObjectConstants getWorldMatrix();
 
 
 	void SetBufferView();
