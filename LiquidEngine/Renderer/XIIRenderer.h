@@ -157,7 +157,7 @@ private:
 	ComPtr<ID3D12RootSignature> mRootSignature;
 
 	//PSO
-	ComPtr<ID3D12PipelineState> mPSO;
+	//ComPtr<ID3D12PipelineState> mPSO;
 
 	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 

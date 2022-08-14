@@ -304,7 +304,7 @@ void XIIRenderer::CreatePSO() {
 		psoDesc.DSVFormat = mDepthStencilFormat;
 
 
-		ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO)));
+		ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&shader->mPSO)));
 	}
 }
 
@@ -453,7 +453,8 @@ void XIIRenderer::ClearForNextFrame() {
 
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 	// Reusing the command list reuses memory.
-	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), mPSO.Get()));
+	auto initPSO = Shader::getInitPSO();
+	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), initPSO.Get()));
 
 	mCommandList->RSSetViewports(1, &mScreenViewport);
 	mCommandList->RSSetScissorRects(1, &mScissorRect);

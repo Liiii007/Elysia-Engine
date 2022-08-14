@@ -58,6 +58,14 @@ public:
 		return mInputLayout;
 	}
 
+	ComPtr<ID3D12PipelineState> getPSO() {
+		return mPSO;
+	}
+
+	static ComPtr<ID3D12PipelineState> getInitPSO() {
+		return shaders["shader1"]->getPSO();
+	}
+
 	ComPtr<ID3DBlob> mvsByteCode;
 	ComPtr<ID3DBlob> mpsByteCode;
 	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
