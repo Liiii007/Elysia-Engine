@@ -20,6 +20,8 @@
 #include <d3d12.h>
 
 
+using UINT = unsigned int;
+
 using Microsoft::WRL::ComPtr;
 
 class MeshRenderer;
@@ -54,7 +56,5 @@ public:
 	ComPtr<ID3D12Resource> VertexBufferUploader;
 	ComPtr<ID3D12Resource> IndexBufferGPU;
 	ComPtr<ID3D12Resource> IndexBufferUploader;
-
-	UINT ObjCBIndex;
 };
 

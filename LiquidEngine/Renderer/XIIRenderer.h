@@ -55,7 +55,6 @@ using Microsoft::WRL::ComPtr;
 
 struct ObjectConstants {
 	DirectX::XMFLOAT4X4 MVP;
-	DirectX::XMFLOAT4X4 gMVP;
 };
 
 struct PassConstants {
@@ -157,8 +156,8 @@ private:
 	//Root Signature
 	ComPtr<ID3D12RootSignature> mRootSignature;
 
-	UINT mPassCBCount = 1;
-
+	//PSO
+	//ComPtr<ID3D12PipelineState> mPSO;
 
 	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 
