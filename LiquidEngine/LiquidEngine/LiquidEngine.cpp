@@ -21,9 +21,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         //Initialization
         //if (!Singleton<WorldManager>::Get()->Init()) return 0;
+        //Debuging
         Singleton<WorldManager>::Get()->Init();
         Entity e1;
-        Entity e2;
+        //Entity e2;
         Shader s1 = Shader(L"Renderer\\Shaders\\color.hlsl", "shader1");
         e1.translation.rotation = XMVECTOR{ 45, 0, 0 };
         //e2.translation.rotation = XMVECTOR{ 45, 0, 0 };
