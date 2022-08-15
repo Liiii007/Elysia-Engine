@@ -10,6 +10,7 @@ std::vector<uint16_t>* Mesh::getIndices() {
 }
 
 Mesh::Mesh(Translation* ptr) {
+	//将自己添加到RenderList里
 	MeshRenderer::getMeshList()->push_back(this);
 	translation = ptr;
 	SetToBox();
@@ -81,7 +82,7 @@ void Mesh::SetBufferView() {
 
 	mIBV.BufferLocation = IndexBufferGPU->GetGPUVirtualAddress();
 	mIBV.Format = DXGI_FORMAT_R16_UINT;
-	mIBV.SizeInBytes = sizeof(UINT) * indices.size();
+	mIBV.SizeInBytes = sizeof(std::uint16_t) * indices.size();
 }
 
 XMMATRIX Mesh::getWorldMatrix() {
