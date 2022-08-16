@@ -11,6 +11,7 @@
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/LogStream.hpp>
 #include "../../Components/Translation.h"
+#include "../../Tools/Logger.h"
 
 #include <DirectXColors.h>
 #include <windows.h>
@@ -29,11 +30,10 @@ class MeshRenderer;
 class Mesh
 {
 public:
-	Mesh(Translation* ptr);
-	Mesh::Mesh(Translation* ptr, std::string meshPath);
-	Mesh::~Mesh();
+	Mesh(std::string meshPath);
+	~Mesh();
 
-	const Translation* translation;
+	Translation* translation;
 	std::vector<float> vertices;
 	std::vector<uint16_t> indices;
 
@@ -44,7 +44,8 @@ public:
 
 	void SetBufferView();
 	void SetToBox();
-	void Mesh::LoadFromDisk();
+	bool LoadFromDisk(std::string meshPath);
+	void SetTranslation(Translation& t);
 
 	//Vertex Buffer
 	D3D12_VERTEX_BUFFER_VIEW mVBV;
@@ -56,5 +57,7 @@ public:
 	ComPtr<ID3D12Resource> VertexBufferUploader;
 	ComPtr<ID3D12Resource> IndexBufferGPU;
 	ComPtr<ID3D12Resource> IndexBufferUploader;
+
+	std::string path;
 };
 

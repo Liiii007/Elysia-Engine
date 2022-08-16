@@ -10,14 +10,18 @@ public:
 	XMVECTOR up;
 
 	float mTheta = 0.0f * XM_PI;
-	float mPhi = 1.5 * XM_PIDIV4;
-	float mRadius = 5.0f;
+	float mPhi = 1.0 * XM_PIDIV4;
+	float mRadius = 3.0f;
 
 	XMMATRIX getViewMatrix() {
 		// Convert Spherical to Cartesian coordinates.
 		float x = mRadius * sinf(mPhi) * cosf(mTheta);
 		float z = mRadius * sinf(mPhi) * sinf(mTheta);
 		float y = mRadius * cosf(mPhi);
+
+		x = mRadius;
+		y = 3;
+		z = 0;
 
 		// Build the view matrix.
 		pos = XMVectorSet(x, y, z, 1.0f);

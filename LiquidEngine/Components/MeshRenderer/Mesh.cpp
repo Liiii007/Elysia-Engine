@@ -9,26 +9,26 @@ std::vector<uint16_t>* Mesh::getIndices() {
 	return &indices;
 }
 
-Mesh::Mesh(Translation* ptr) {
+Mesh::Mesh(std::string meshPath) {
 	MeshRenderer::getMeshList()->push_back(this);
-	translation = ptr;
-	SetToBox();
+	if (LoadFromDisk(meshPath)) {
+		return;
+	}
+	else {
+		Log::Error("Unable to load mesh");
+		//SetToBox();
+		return;
+	}
 }
 
 Mesh::~Mesh() {
+	//BUG:未能抹除当前物体
 	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
 		if (*it == this) {
 			MeshRenderer::getMeshList()->erase(it);
 			break;
 		}
 	}
-	
-}
-
-Mesh::Mesh(Translation* ptr, std::string meshPath) {
-	MeshRenderer::getMeshList()->emplace_back(this);
-	translation = ptr;
-	LoadFromDisk();
 }
 
 void Mesh::SetToBox() {
@@ -70,8 +70,46 @@ void Mesh::SetToBox() {
 	};
 }
 
-void Mesh::LoadFromDisk() {
+bool Mesh::LoadFromDisk(std::string meshPath) {
+
 	//Filling
+	Assimp::Importer importer;
+
+	const aiScene* scene = importer.ReadFile(meshPath,
+		aiProcess_CalcTangentSpace |
+		aiProcess_Triangulate |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_SortByPType);
+
+	// If the import failed, report it
+	if (scene == nullptr) {
+		Log::Error(importer.GetErrorString());
+		return false;
+	}
+
+	auto mesh = scene->mMeshes[0];
+	for (int i = 0; i < mesh->mNumVertices; i++) {
+		vertices.push_back(mesh->mVertices[i].x);
+		vertices.push_back(mesh->mVertices[i].y);
+		vertices.push_back(mesh->mVertices[i].z);
+	}
+
+	for (int i = 0; i < mesh->mNumFaces; i++) {
+		indices.push_back(mesh->mFaces[i].mIndices[0]);
+		indices.push_back(mesh->mFaces[i].mIndices[1]);
+		indices.push_back(mesh->mFaces[i].mIndices[2]);
+	}
+	
+
+
+	// We're done. Everything will be cleaned up by the importer destructor
+	return true;
+}
+
+void Mesh::SetTranslation(Translation& t) {
+	translation->position = t.position;
+	translation->rotation = t.rotation;
+	translation->scale    = t.scale;
 }
 
 void Mesh::SetBufferView() {
@@ -85,7 +123,14 @@ void Mesh::SetBufferView() {
 }
 
 XMMATRIX Mesh::getWorldMatrix() {
-	auto rotationMatrix = XMMatrixRotationRollPitchYawFromVector(translation->rotation);
+	auto r = translation->rotation;
+	XMFLOAT3 a;
+	XMStoreFloat3(&a, r);
+	auto rX = XMMatrixRotationX(a.x / 6.28f);
+	auto rY = XMMatrixRotationY(a.y / 6.28f);
+	auto rZ = XMMatrixRotationZ(a.z / 6.28f);
+
+	auto rotationMatrix = XMMatrixRotationRollPitchYawFromVector(translation->rotation/6.28f);
 	auto scaleMatrix = XMMatrixScalingFromVector(translation->scale);
 	auto translationMatrix = XMMatrixTranslationFromVector(translation->position);
 	return translationMatrix * scaleMatrix * rotationMatrix;

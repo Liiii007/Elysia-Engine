@@ -22,11 +22,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         //Initialization
         //if (!Singleton<WorldManager>::Get()->Init()) return 0;
         //Debuging
+
         Singleton<WorldManager>::Get()->Init();
-        Entity e1;
+        Entity e1{"e1"};
+        e1.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
+        e1.setRotation(-90, 90, 0);
+
         //Entity e2;
         Shader s1 = Shader(L"Renderer\\Shaders\\color.hlsl", "shader1");
-        e1.translation.rotation = XMVECTOR{ 45, 0, 0 };
+        //e1.translation.rotation = XMVECTOR{ 45, 0, 0 };
         //e2.translation.rotation = XMVECTOR{ 45, 0, 0 };
         Singleton<XIIRenderer>::Get()->Init(hInstance);
 

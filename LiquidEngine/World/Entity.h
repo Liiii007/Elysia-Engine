@@ -5,8 +5,29 @@
 class Entity
 {
 public:
+	Entity(std::string name);
+
+	bool loadMesh(std::string meshPath);
+
+
+	void setLocation(float x, float y, float z) {
+		translation.position = XMVECTOR{ x,y,z };
+	}
+
+	void setRotation(float x, float y, float z) {
+		translation.rotation = XMVECTOR{ x,y,z };
+	}
+
+	void setScale(float scale) {
+		translation.scale = XMVECTOR{ scale,scale,scale };
+	}
+
+	void setScale(float x, float y, float z) {
+		translation.scale = XMVECTOR{ x,y,z };
+	}
+
 	Translation translation;
-	Mesh mesh{&translation};
+	std::unique_ptr<Mesh> mesh{nullptr};
 	
 	std::string name;
 };
