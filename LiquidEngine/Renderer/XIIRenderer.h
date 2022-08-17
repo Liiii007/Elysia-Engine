@@ -4,17 +4,6 @@
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
 
-#include <DirectXColors.h>
-#include <windows.h>
-#include <WindowsX.h>
-#include <wrl.h>
-#include <dxgi1_4.h>
-#include <d3d12.h>
-#include <D3Dcompiler.h>
-#include <DirectXMath.h>
-#include <DirectXPackedVector.h>
-#include <DirectXColors.h>
-#include <DirectXCollision.h>
 
 using UINT = unsigned int;
 
@@ -47,6 +36,8 @@ using UINT = unsigned int;
 #include "../System/MeshRenderer.h" 
 #include "../Renderer/SphereCamera.h"
 #include "../World/Entity.h"
+#include <rttr/registration>
+
 
 using namespace DirectX;
 using namespace std;
@@ -79,7 +70,7 @@ public:
 
 	
 
-private:
+public:
 	//Init
 	bool InitWindow();
 	bool InitDirect3D();
@@ -167,4 +158,7 @@ private:
 	SphereCamera mCamera;
 };
 
-
+using namespace rttr;
+RTTR_REGISTRATION{
+	//registration::method("GetDevice", &XIIRenderer::getDevice);
+}

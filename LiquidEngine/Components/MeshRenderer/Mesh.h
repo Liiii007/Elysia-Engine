@@ -19,6 +19,7 @@
 #include <wrl.h>
 #include <dxgi1_4.h>
 #include <d3d12.h>
+#include <rttr/type.h>
 
 
 using UINT = unsigned int;

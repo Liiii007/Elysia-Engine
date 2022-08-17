@@ -135,3 +135,4 @@ XMMATRIX Mesh::getWorldMatrix() {
 	auto translationMatrix = XMMatrixTranslationFromVector(translation->position);
 	return translationMatrix * scaleMatrix * rotationMatrix;
 }
+

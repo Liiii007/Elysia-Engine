@@ -728,3 +728,4 @@ void XIIRenderer::OnMouseMove(WPARAM btnState, int x, int y)
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 }
+
