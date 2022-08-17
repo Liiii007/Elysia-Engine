@@ -79,7 +79,6 @@ public:
 	void CreateDescHeaps();
 	void CreateConstantBuffer();
 	void CreatePSO();
-	void UploadVertex();
 	void OnResize();
 	
 	void OnMouseDown(WPARAM btnState, int x, int y);
@@ -89,7 +88,7 @@ public:
 	//Render Tick
 	
 	void ClearForNextFrame();
-	void CommitRenderCommand(Mesh* mesh, Shader* shader);
+	void RenderItem(Mesh* mesh, Shader* shader);
 	void RenderFrame();
 	void FlushCommandQueue();
 	ID3D12Resource* CurrentBackBuffer()const;

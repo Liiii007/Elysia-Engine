@@ -47,6 +47,7 @@ public:
 	void SetToBox();
 	bool LoadFromDisk(std::string meshPath);
 	void SetTranslation(Translation& t);
+	void UploadVertices();
 
 	//Vertex Buffer
 	D3D12_VERTEX_BUFFER_VIEW mVBV;

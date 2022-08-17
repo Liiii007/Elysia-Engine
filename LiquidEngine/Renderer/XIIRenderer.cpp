@@ -456,25 +456,7 @@ void XIIRenderer::ClearForNextFrame() {
 }
 
 void XIIRenderer::UploadVertices(Mesh* mesh) {
-
-	const UINT vbByteSize = (UINT)mesh->vertices.size() * sizeof(mesh->vertices[0]);
-
-	const UINT ibByteSize = (UINT)mesh->indices.size() * sizeof(mesh->indices[0]);
-
-
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mesh->VertexBufferCPU));
-	CopyMemory(mesh->VertexBufferCPU->GetBufferPointer(), mesh->vertices.data(), vbByteSize);
-
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &mesh->IndexBufferCPU));
-	CopyMemory(mesh->IndexBufferCPU->GetBufferPointer(), mesh->indices.data(), ibByteSize);
-
-	mesh->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), mesh->vertices.data(), vbByteSize, mesh->VertexBufferUploader);
-
-	mesh->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), mesh->indices.data(), ibByteSize, mesh->IndexBufferUploader);
-
-	mesh->SetBufferView();
+	mesh->UploadVertices();
 }
 
 
@@ -499,7 +481,7 @@ void XIIRenderer::UploadMVPMatrix(Mesh* mesh) {
 	mPassCB->CopyData(0, pcb);
 }
 
-void XIIRenderer::CommitRenderCommand(Mesh* mesh, Shader* shader) {
+void XIIRenderer::RenderItem(Mesh* mesh, Shader* shader) {
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
@@ -518,24 +500,17 @@ void XIIRenderer::CommitRenderCommand(Mesh* mesh, Shader* shader) {
 }
 
 void XIIRenderer::RenderFrame() {
-	// Indicate a state transition on the resource usage.
 	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
-	// Done recording commands.
 	ThrowIfFailed(mCommandList->Close());
 
-	// Add the command list to the queue for execution.
 	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
 	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-	// swap the back and front buffers
 	ThrowIfFailed(mSwapChain->Present(0, 0));
 	mCurrentBackBufferCount = (mCurrentBackBufferCount + 1) % mSwapChainBufferCount;
 
-	// Wait until frame commands are complete.  This waiting is inefficient and is
-	// done for simplicity.  Later we will show how to organize our rendering code
-	// so we do not have to wait per frame.
 	FlushCommandQueue();
 }
 
@@ -547,7 +522,7 @@ int XIIRenderer::RenderTick() {
 
 	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
 		UploadMVPMatrix(*it);
-		CommitRenderCommand(*it, Shader::shaders["shader1"]);
+		RenderItem(*it, Shader::shaders["shader1"]);
 	}
 	
 	RenderFrame();

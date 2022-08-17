@@ -1,5 +1,7 @@
 #include "Mesh.h"
 #include "../../System/MeshRenderer.h"
+#include "../../Renderer/XIIRenderer.h"
+#include "../../Tools/Singleton.h"
 
 std::vector<float>* Mesh::getVertices() {
 	return &vertices;
@@ -134,5 +136,27 @@ XMMATRIX Mesh::getWorldMatrix() {
 	auto scaleMatrix = XMMatrixScalingFromVector(translation->scale);
 	auto translationMatrix = XMMatrixTranslationFromVector(translation->position);
 	return translationMatrix * scaleMatrix * rotationMatrix;
+}
+
+void Mesh::UploadVertices() {
+	auto renderer = Singleton<XIIRenderer>::Get();
+
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(vertices[0]);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(indices[0]);
+
+
+	ThrowIfFailed(D3DCreateBlob(vbByteSize, &VertexBufferCPU));
+	CopyMemory(VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
+
+	ThrowIfFailed(D3DCreateBlob(ibByteSize, &IndexBufferCPU));
+	CopyMemory(IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+
+	VertexBufferGPU = d3dUtil::CreateDefaultBuffer(renderer->md3dDevice.Get(),
+		renderer->mCommandList.Get(), vertices.data(), vbByteSize, VertexBufferUploader);
+
+	IndexBufferGPU = d3dUtil::CreateDefaultBuffer(renderer->md3dDevice.Get(),
+		renderer->mCommandList.Get(), indices.data(), ibByteSize, IndexBufferUploader);
+
+	SetBufferView();
 }
 
