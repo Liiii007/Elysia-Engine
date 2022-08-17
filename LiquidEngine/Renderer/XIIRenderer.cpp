@@ -222,7 +222,7 @@ void XIIRenderer::CreateConstantBuffer() {
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
 	cbvDesc.BufferLocation = cbAddress;
 	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
-	int heapIndex = 0;
+	int heapIndex = 1;
 	auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 	handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
 
@@ -235,7 +235,7 @@ void XIIRenderer::CreateConstantBuffer() {
 	UINT passCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
 
 	D3D12_GPU_VIRTUAL_ADDRESS cbAddress1 = mPassCB->Resource()->GetGPUVirtualAddress();
-	UINT heapIndex1 = 1;
+	UINT heapIndex1 = 0;
 	auto handle1 = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 	handle1.Offset(heapIndex1, mCbvSrvUavDescriptorSize);
 
@@ -425,15 +425,18 @@ void XIIRenderer::UploadMVPMatrix(Mesh* mesh) {
 	XMMATRIX world = mesh->getWorldMatrix();
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
 	XMMATRIX worldViewProj = world * view * proj;
+	XMMATRIX viewProj = view * proj;
 
 	// Update the constant buffer with the latest worldViewProj matrix.
 	ObjectConstants ocb;
-	XMStoreFloat4x4(&ocb.MVP, XMMatrixTranspose(worldViewProj));
+	//XMStoreFloat4x4(&ocb.MVP, XMMatrixTranspose(worldViewProj));
+	XMStoreFloat4x4(&ocb.gWorld, XMMatrixTranspose(world));
 	mObjectCB->CopyData(0, ocb);
 
 	PassConstants pcb;
 	XMStoreFloat4x4(&pcb.gView, XMMatrixTranspose(worldViewProj));
 	XMStoreFloat4x4(&pcb.gProj, XMMatrixTranspose(worldViewProj));
+	XMStoreFloat4x4(&pcb.gViewProj, XMMatrixTranspose(viewProj));
 	mPassCB->CopyData(0, pcb);
 }
 
@@ -443,15 +446,13 @@ void XIIRenderer::RenderItem(Mesh* mesh, Shader* shader) {
 
 	//FIXED:avoid switch PSO when using same shader as last command
 	//Set by shader
-	mCommandList->SetGraphicsRootSignature(shader->mRootSignature.Get());
-	mCommandList->SetPipelineState(shader->mPSO.Get());
+	shader->Use(0);
 
 	//Set by mesh
 	mCommandList->IASetVertexBuffers(0, 2, &mesh->mVBV);
 	mCommandList->IASetIndexBuffer(&mesh->mIBV);
 
 	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
 	//FIXED:GPU Instancing
 	mCommandList->DrawIndexedInstanced(

@@ -109,3 +109,21 @@ void Shader::Build() {
 	BuildRootSig();
 	BuildPSO();
 }
+
+void Shader::Use(int objectIndex) {
+	auto renderer = Singleton<XIIRenderer>::Get();
+	renderer->mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
+	renderer->mCommandList->SetPipelineState(mPSO.Get());
+
+	//set object CB
+	int objectCbvIndex = 1 + objectIndex;
+	auto objectCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(renderer->mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+	objectCbvHandle.Offset(objectCbvIndex, renderer->mCbvSrvUavDescriptorSize);
+	renderer->mCommandList->SetGraphicsRootDescriptorTable(0, objectCbvHandle);
+
+	//set pass CB
+	int passCbvIndex = 0;
+	auto passCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(renderer->mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+	passCbvHandle.Offset(passCbvIndex, renderer->mCbvSrvUavDescriptorSize);
+	renderer->mCommandList->SetGraphicsRootDescriptorTable(1, passCbvHandle);
+}

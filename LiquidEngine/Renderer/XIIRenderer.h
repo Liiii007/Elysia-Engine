@@ -45,12 +45,13 @@ using namespace std;
 using Microsoft::WRL::ComPtr;
 
 struct ObjectConstants {
-	DirectX::XMFLOAT4X4 MVP;
+	DirectX::XMFLOAT4X4 gWorld;
 };
 
 struct PassConstants {
 	DirectX::XMFLOAT4X4 gView;
 	DirectX::XMFLOAT4X4 gProj;
+	DirectX::XMFLOAT4X4 gViewProj;
 };
 
 class XIIRenderer

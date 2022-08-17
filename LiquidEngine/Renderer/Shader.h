@@ -37,6 +37,8 @@ public:
 	void BuildPSO();
 	void BuildRootSig();
 
+	void Use(int);
+
 	ComPtr<ID3DBlob> GetVertexShader() {
 		return mvsByteCode;
 	}
