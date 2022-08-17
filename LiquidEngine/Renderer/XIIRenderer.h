@@ -62,7 +62,8 @@ public:
 
 	//Upload
 	void UploadVertices(Mesh* mesh);
-	void UploadMVPMatrix(Mesh* mesh);
+	void UploadObjectCB(Mesh* mesh);
+	void UploadPassCB();
 
 	//Tick
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -78,7 +79,8 @@ public:
 	void CreateCommandObjects();
 	void CreateSwapChain();
 	void CreateDescHeaps();
-	void CreateConstantBuffer();
+	void CreatePassConstantBuffer();
+	void CreateObjectConstantBuffer(int objectIndex);
 	void OnResize();
 	
 	void OnMouseDown(WPARAM btnState, int x, int y);
@@ -153,6 +155,8 @@ public:
 	POINT mLastMousePos;
 
 	SphereCamera mCamera;
+
+	UINT mRendererItemCount{ 0 };
 };
 
 using namespace rttr;

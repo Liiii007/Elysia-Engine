@@ -30,6 +30,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         e1.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
         e1.setRotation(-90, 90, 0);
 
+        //Entity e2{ "e2" };
+        //e2.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
+        //e2.setRotation(90, 90, 0);
+
         //Entity e2;
         Shader s1 = Shader(L"Renderer\\Shaders\\color.hlsl", "shader1");
         //e1.translation.rotation = XMVECTOR{ 45, 0, 0 };

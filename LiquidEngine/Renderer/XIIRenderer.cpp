@@ -20,13 +20,18 @@ bool XIIRenderer::Init(HINSTANCE hInstance) {
 	// Reset the command list to prep for initialization commands.
 	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), nullptr));
 
-	CreateConstantBuffer();
+	CreatePassConstantBuffer();
 
-	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
+	for (auto& it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
 		UploadVertices(*it);
+		(*it)->mObjectIndex = mRendererItemCount;
+		CreateObjectConstantBuffer((*it)->mObjectIndex);
+		mRendererItemCount++;
 	}
 
-	Shader::shaders["shader1"]->Build();
+	for (auto it : Shader::shaders) {
+		it.second->Build();
+	}
 
 	// Execute the initialization commands.
 	ThrowIfFailed(mCommandList->Close());
@@ -204,7 +209,7 @@ void XIIRenderer::CreateDescHeaps() {
 		&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
 
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-	cbvHeapDesc.NumDescriptors = 2;
+	cbvHeapDesc.NumDescriptors = 100;
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.NodeMask = 0;
@@ -212,7 +217,28 @@ void XIIRenderer::CreateDescHeaps() {
 		IID_PPV_ARGS(&mCbvHeap)));
 }
 
-void XIIRenderer::CreateConstantBuffer() {
+void XIIRenderer::CreatePassConstantBuffer() {
+	mPassCB = std::make_unique<UploadBuffer<PassConstants>>(md3dDevice.Get(), 1, true);
+
+	UINT passCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
+
+	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mPassCB->Resource()->GetGPUVirtualAddress();
+
+	//handle for offset
+	UINT heapIndex = 0;
+	auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+	handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
+
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc1;
+	cbvDesc1.BufferLocation = cbAddress;
+	cbvDesc1.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
+
+	md3dDevice->CreateConstantBufferView(
+		&cbvDesc1,
+		handle);
+}
+
+void XIIRenderer::CreateObjectConstantBuffer(int objectIndex) {
 	mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 1, true);
 
 	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
@@ -222,31 +248,13 @@ void XIIRenderer::CreateConstantBuffer() {
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
 	cbvDesc.BufferLocation = cbAddress;
 	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
-	int heapIndex = 1;
+	int heapIndex = 1 + objectIndex;
 	auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 	handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
 
 	md3dDevice->CreateConstantBufferView(
 		&cbvDesc,
 		handle);
-
-	mPassCB = std::make_unique<UploadBuffer<PassConstants>>(md3dDevice.Get(), 1, true);
-
-	UINT passCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
-
-	D3D12_GPU_VIRTUAL_ADDRESS cbAddress1 = mPassCB->Resource()->GetGPUVirtualAddress();
-	UINT heapIndex1 = 0;
-	auto handle1 = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
-	handle1.Offset(heapIndex1, mCbvSrvUavDescriptorSize);
-
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc1;
-	cbvDesc1.BufferLocation = cbAddress1;
-	cbvDesc1.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
-
-	md3dDevice->CreateConstantBufferView(
-		&cbvDesc1,
-		handle1);
-
 }
 
 void XIIRenderer::OnResize() {
@@ -420,24 +428,24 @@ void XIIRenderer::Update() {
 
 }
 
-void XIIRenderer::UploadMVPMatrix(Mesh* mesh) {
+void XIIRenderer::UploadPassCB() {
 	XMMATRIX view = mCamera.getViewMatrix();
-	XMMATRIX world = mesh->getWorldMatrix();
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-	XMMATRIX worldViewProj = world * view * proj;
 	XMMATRIX viewProj = view * proj;
 
-	// Update the constant buffer with the latest worldViewProj matrix.
-	ObjectConstants ocb;
-	//XMStoreFloat4x4(&ocb.MVP, XMMatrixTranspose(worldViewProj));
-	XMStoreFloat4x4(&ocb.gWorld, XMMatrixTranspose(world));
-	mObjectCB->CopyData(0, ocb);
-
 	PassConstants pcb;
-	XMStoreFloat4x4(&pcb.gView, XMMatrixTranspose(worldViewProj));
-	XMStoreFloat4x4(&pcb.gProj, XMMatrixTranspose(worldViewProj));
+	XMStoreFloat4x4(&pcb.gView, XMMatrixTranspose(view));
+	XMStoreFloat4x4(&pcb.gProj, XMMatrixTranspose(proj));
 	XMStoreFloat4x4(&pcb.gViewProj, XMMatrixTranspose(viewProj));
 	mPassCB->CopyData(0, pcb);
+}
+
+void XIIRenderer::UploadObjectCB(Mesh* mesh) {
+	XMMATRIX world = mesh->getWorldMatrix();
+
+	ObjectConstants ocb;
+	XMStoreFloat4x4(&ocb.gWorld, XMMatrixTranspose(world));
+	mObjectCB->CopyData(mesh->mObjectIndex, ocb);
 }
 
 void XIIRenderer::RenderItem(Mesh* mesh, Shader* shader) {
@@ -445,7 +453,6 @@ void XIIRenderer::RenderItem(Mesh* mesh, Shader* shader) {
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	//FIXED:avoid switch PSO when using same shader as last command
-	//Set by shader
 	shader->Use(0);
 
 	//Set by mesh
@@ -481,9 +488,12 @@ int XIIRenderer::RenderTick() {
 	ClearForNextFrame();
 	Update();
 
+	UploadPassCB();
+
 	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
-		UploadMVPMatrix(*it);
+		UploadObjectCB(*it);
 		RenderItem(*it, Shader::shaders["shader1"]);
+		break;
 	}
 	
 	RenderFrame();

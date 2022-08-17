@@ -144,7 +144,6 @@ void Mesh::UploadVertices() {
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(vertices[0]);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(indices[0]);
 
-
 	ThrowIfFailed(D3DCreateBlob(vbByteSize, &VertexBufferCPU));
 	CopyMemory(VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
 

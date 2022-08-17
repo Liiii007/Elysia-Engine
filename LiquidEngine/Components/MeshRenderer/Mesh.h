@@ -61,5 +61,6 @@ public:
 	ComPtr<ID3D12Resource> IndexBufferUploader;
 
 	std::string path;
+	UINT mObjectIndex;
 };
 

@@ -6,6 +6,7 @@ class Entity
 {
 public:
 	Entity(std::string name);
+	~Entity();
 
 	bool loadMesh(std::string meshPath);
 
