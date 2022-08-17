@@ -21,14 +21,12 @@ bool XIIRenderer::Init(HINSTANCE hInstance) {
 	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), nullptr));
 
 	CreateConstantBuffer();
-	//CreateRootSignature();
-	Shader::shaders["shader1"]->BuildRootSig();
 
 	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
 		UploadVertices(*it);
 	}
-	
-	CreatePSO();
+
+	Shader::shaders["shader1"]->Build();
 
 	// Execute the initialization commands.
 	ThrowIfFailed(mCommandList->Close());
@@ -37,7 +35,6 @@ bool XIIRenderer::Init(HINSTANCE hInstance) {
 
 	// Wait until initialization is complete.
 	FlushCommandQueue();
-
 
 	return true;
 }
@@ -252,46 +249,6 @@ void XIIRenderer::CreateConstantBuffer() {
 
 }
 
-
-
-
-void XIIRenderer::CreatePSO() {
-	for (auto it : Shader::shaders) {
-		auto shader = it.second;
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
-		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-
-		//Needed change
-		psoDesc.InputLayout = { shader->mInputLayout.data(), (UINT)shader->mInputLayout.size() };
-		psoDesc.pRootSignature = shader->mRootSignature.Get();
-		psoDesc.VS =
-		{
-			reinterpret_cast<BYTE*>(shader->mvsByteCode->GetBufferPointer()),
-			shader->mvsByteCode->GetBufferSize()
-		};
-		psoDesc.PS =
-		{
-			reinterpret_cast<BYTE*>(shader->mpsByteCode->GetBufferPointer()),
-			shader->mpsByteCode->GetBufferSize()
-		};
-
-		//Set by default
-		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-		psoDesc.SampleMask = UINT_MAX;
-		psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		psoDesc.NumRenderTargets = 1;
-		psoDesc.RTVFormats[0] = mBackBufferFormat;
-		psoDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
-		psoDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
-		psoDesc.DSVFormat = mDepthStencilFormat;
-
-
-		ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&shader->mPSO)));
-	}
-}
-
 void XIIRenderer::OnResize() {
 	assert(md3dDevice);
 	assert(mSwapChain);
@@ -459,7 +416,6 @@ void XIIRenderer::UploadVertices(Mesh* mesh) {
 	mesh->UploadVertices();
 }
 
-
 void XIIRenderer::Update() {
 
 }
@@ -485,12 +441,16 @@ void XIIRenderer::RenderItem(Mesh* mesh, Shader* shader) {
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
+	//FIXED:avoid switch PSO when using same shader as last command
+	//Set by shader
 	mCommandList->SetGraphicsRootSignature(shader->mRootSignature.Get());
+	mCommandList->SetPipelineState(shader->mPSO.Get());
 
+	//Set by mesh
 	mCommandList->IASetVertexBuffers(0, 2, &mesh->mVBV);
 	mCommandList->IASetIndexBuffer(&mesh->mIBV);
-	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
 	//FIXED:GPU Instancing

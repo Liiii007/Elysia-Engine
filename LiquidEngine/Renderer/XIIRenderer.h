@@ -78,7 +78,6 @@ public:
 	void CreateSwapChain();
 	void CreateDescHeaps();
 	void CreateConstantBuffer();
-	void CreatePSO();
 	void OnResize();
 	
 	void OnMouseDown(WPARAM btnState, int x, int y);

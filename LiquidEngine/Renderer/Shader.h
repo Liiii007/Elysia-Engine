@@ -20,32 +20,21 @@ using Microsoft::WRL::ComPtr;
 
 class Shader {
 public:
+	static std::unordered_map<std::string, Shader*> shaders;
+	std::string name;
+	ComPtr<ID3D12PipelineState> mPSO;
+	ComPtr<ID3D12RootSignature> mRootSignature;
+	ComPtr<ID3DBlob> mvsByteCode;
+	ComPtr<ID3DBlob> mpsByteCode;
+	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
+
 	Shader(const std::wstring& filename, const std::string name) :filename(filename), name(name) {
-		CompileShaders();
 		shaders[name] = this;
 	}
 
-	static std::unordered_map<std::string, Shader*> shaders;
-	
-	std::string name;
-	ComPtr<ID3D12PipelineState> mPSO;
-	
-	ComPtr<ID3D12RootSignature> mRootSignature;
-
-	void CompileShaders() {
-		HRESULT hr = S_OK;
-
-		mvsByteCode = CompileShader(nullptr, "VS", "vs_5_0");
-		mpsByteCode = CompileShader(nullptr, "PS", "ps_5_0");
-
-		mInputLayout.clear();
-		mInputLayout.push_back({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	}
-
-	void BuildPSO() {
-
-	}
-
+	void Build();
+	void SetInputLayout();
+	void BuildPSO();
 	void BuildRootSig();
 
 	ComPtr<ID3DBlob> GetVertexShader() {
@@ -68,33 +57,12 @@ public:
 		return shaders["shader1"]->getPSO();
 	}
 
-	ComPtr<ID3DBlob> mvsByteCode;
-	ComPtr<ID3DBlob> mpsByteCode;
-	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
+	
 
 
 private:
 	std::wstring filename;
-	ComPtr<ID3DBlob> CompileShader(const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target) {
-		UINT compileFlags = 0;
-#if defined(DEBUG) || defined(_DEBUG)  
-		compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-
-		HRESULT hr = S_OK;
-
-		ComPtr<ID3DBlob> byteCode = nullptr;
-		ComPtr<ID3DBlob> errors;
-		hr = D3DCompileFromFile(filename.c_str(), defines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-			entrypoint.c_str(), target.c_str(), compileFlags, 0, &byteCode, &errors);
-
-		if (errors != nullptr)
-			OutputDebugStringA((char*)errors->GetBufferPointer());
-
-		ThrowIfFailed(hr);
-
-		return byteCode;
-	}
+	ComPtr<ID3DBlob> CompileShader(const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target);
 
 };
 
