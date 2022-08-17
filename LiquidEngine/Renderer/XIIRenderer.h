@@ -78,8 +78,6 @@ public:
 	void CreateSwapChain();
 	void CreateDescHeaps();
 	void CreateConstantBuffer();
-	void CreateRootSignature();
-	void BuildShader();
 	void CreatePSO();
 	void UploadVertex();
 	void OnResize();
@@ -91,7 +89,7 @@ public:
 	//Render Tick
 	
 	void ClearForNextFrame();
-	void CommitRenderCommand(Mesh* mesh);
+	void CommitRenderCommand(Mesh* mesh, Shader* shader);
 	void RenderFrame();
 	void FlushCommandQueue();
 	ID3D12Resource* CurrentBackBuffer()const;
@@ -145,7 +143,7 @@ public:
 	std::unique_ptr<UploadBuffer<PassConstants>> mPassCB = nullptr;
 
 	//Root Signature
-	ComPtr<ID3D12RootSignature> mRootSignature;
+	//ComPtr<ID3D12RootSignature> mRootSignature;
 
 	//PSO
 	//ComPtr<ID3D12PipelineState> mPSO;

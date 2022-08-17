@@ -21,8 +21,8 @@ bool XIIRenderer::Init(HINSTANCE hInstance) {
 	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), nullptr));
 
 	CreateConstantBuffer();
-	CreateRootSignature();
-	BuildShader();
+	//CreateRootSignature();
+	Shader::shaders["shader1"]->BuildRootSig();
 
 	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
 		UploadVertices(*it);
@@ -252,41 +252,8 @@ void XIIRenderer::CreateConstantBuffer() {
 
 }
 
-void XIIRenderer::CreateRootSignature() {
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
 
-	CD3DX12_DESCRIPTOR_RANGE cbvTable;
-	cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-	CD3DX12_DESCRIPTOR_RANGE cbvTable1;
-	cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
-
-	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable);
-	slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
-
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter, 0, nullptr,
-		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-	ComPtr<ID3DBlob> serializedRootSig = nullptr;
-	ComPtr<ID3DBlob> errorBlob = nullptr;
-	HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
-		serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
-
-	if (errorBlob != nullptr) {
-		::OutputDebugStringA((char*)errorBlob->GetBufferPointer());
-	}
-	ThrowIfFailed(hr);
-
-	ThrowIfFailed(md3dDevice->CreateRootSignature(
-		0,
-		serializedRootSig->GetBufferPointer(),
-		serializedRootSig->GetBufferSize(),
-		IID_PPV_ARGS(&mRootSignature)));
-}
-
-void XIIRenderer::BuildShader() {
-	//mShaders.emplace_back(Shader(L"Renderer\\Shaders\\color.hlsl", "shader1"));
-}
 
 void XIIRenderer::CreatePSO() {
 	for (auto it : Shader::shaders) {
@@ -296,7 +263,7 @@ void XIIRenderer::CreatePSO() {
 
 		//Needed change
 		psoDesc.InputLayout = { shader->mInputLayout.data(), (UINT)shader->mInputLayout.size() };
-		psoDesc.pRootSignature = mRootSignature.Get();
+		psoDesc.pRootSignature = shader->mRootSignature.Get();
 		psoDesc.VS =
 		{
 			reinterpret_cast<BYTE*>(shader->mvsByteCode->GetBufferPointer()),
@@ -532,11 +499,11 @@ void XIIRenderer::UploadMVPMatrix(Mesh* mesh) {
 	mPassCB->CopyData(0, pcb);
 }
 
-void XIIRenderer::CommitRenderCommand(Mesh* mesh) {
+void XIIRenderer::CommitRenderCommand(Mesh* mesh, Shader* shader) {
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-	mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
+	mCommandList->SetGraphicsRootSignature(shader->mRootSignature.Get());
 
 	mCommandList->IASetVertexBuffers(0, 2, &mesh->mVBV);
 	mCommandList->IASetIndexBuffer(&mesh->mIBV);
@@ -580,7 +547,7 @@ int XIIRenderer::RenderTick() {
 
 	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
 		UploadMVPMatrix(*it);
-		CommitRenderCommand(*it);
+		CommitRenderCommand(*it, Shader::shaders["shader1"]);
 	}
 	
 	RenderFrame();

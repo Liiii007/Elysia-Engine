@@ -46,6 +46,8 @@ public:
 
 	}
 
+	void BuildRootSig();
+
 	ComPtr<ID3DBlob> GetVertexShader() {
 		return mvsByteCode;
 	}
