@@ -28,21 +28,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         //Singleton<WorldManager>::Get()->Init();
         Entity e1{"e1"};
+        e1.appendComponent<Mesh>();
+        e1.appendComponent<Material>();
         e1.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
-        e1.setLocation(1, 0, 0);
-        e1.setRotation(-90, 90, 0);
-        e1.setScale(0.4);
+        
+        auto 
+        //Entity e2{ "e2" };
+        //e2.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
 
-        Entity e2{ "e2" };
-        e2.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
+        //Entity e3{ "e3" };
+        //e3.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
+        //e3.setLocation(-1, 0, 0);
 
-        Entity e3{ "e3" };
-        e3.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
-        e3.setLocation(-1, 0, 0);
-
-        Entity e4{ "Component Test" };
-        e4.appendComponent<Material>();
-        auto c = e4.getComponent<Material>();
+        //Entity e4{ "Component Test" };
+        //e4.appendComponent<Material>();
+        //auto c = e4.getComponent<Material>();
 
         Shader s1 = Shader(L"Renderer\\Shaders\\color.hlsl", "shader1");
 

@@ -3,21 +3,26 @@
 #include <memory>
 #include <any>
 
-class IComponent
-{
+class IComponent {
+
 public:
+	std::any component;
+	bool enabled;
+	std::string name;
+
 	IComponent(); 
 
 	template<typename T>
 	void make() {
-		component = std::make_any<T>();
+		std::shared_ptr<T> raw = std::make_shared<T>();
+		component = std::move(raw);
 	}
 
 	template<typename T>
-	T* get() {
-		T* returnComponent{ nullptr };
+	std::shared_ptr<T> get() {
+		std::shared_ptr<T> returnComponent{ nullptr };
 		try {
-			returnComponent = &std::any_cast<T>(component);
+			returnComponent = std::any_cast<std::shared_ptr<T>>(component);
 		}
 		catch (const std::bad_any_cast& e) {
 			Log::Error("Not contain this component");
@@ -26,9 +31,4 @@ public:
 
 		return returnComponent;
 	}
-
-	//std::unique_ptr<std::any> component{ nullptr };
-	std::any component;
-	std::string name;
 };
-

@@ -36,8 +36,12 @@ struct Vertex {
 class Mesh
 {
 public:
-	Mesh(std::string meshPath);
+	Mesh() {
+
+	}
 	~Mesh();
+
+	void Init(std::string meshPath);
 
 	Translation* translation;
 	std::vector<Vertex> vertices;

@@ -38,12 +38,11 @@ public:
 	}
 
 	template<typename T>
-	T* getComponent() {
+	std::shared_ptr<T> getComponent() {
 		return components[T::componentName]->get<T>();
 	}
 
 	Translation translation;
-	std::unique_ptr<Mesh> mesh{nullptr};
 
 	std::unordered_map<std::string, std::unique_ptr<IComponent>> components;
 	

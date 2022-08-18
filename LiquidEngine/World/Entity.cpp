@@ -9,7 +9,15 @@ Entity::~Entity() {
 }
 
 bool Entity::loadMesh(std::string meshPath) {
-	mesh = std::make_unique<Mesh>(meshPath);
-	mesh->translation = &translation;
-	return true;
+	auto mesh = getComponent<Mesh>();
+	if (mesh == nullptr) {
+		Log::Error("Î´ÕÒµ½Mesh×é¼þ");
+		return false;
+	}
+	else {
+		mesh->Init(meshPath);
+		mesh->translation = &translation;
+		return true;
+	}
+	
 }

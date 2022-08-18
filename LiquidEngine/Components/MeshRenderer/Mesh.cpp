@@ -13,9 +13,11 @@ std::vector<uint16_t>* Mesh::getIndices() {
 	return &indices;
 }
 
-Mesh::Mesh(std::string meshPath) {
+void Mesh::Init(std::string meshPath) {
 	MeshRenderer::getMeshList()->push_back(this);
 	if (LoadFromDisk(meshPath)) {
+		mIBV.SizeInBytes = 0;
+		mVBV.SizeInBytes = 0;
 		return;
 	}
 	else {
