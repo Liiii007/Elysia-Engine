@@ -28,6 +28,7 @@ using UINT = unsigned int;
 using Microsoft::WRL::ComPtr;
 
 class MeshRenderer;
+class Entity;
 
 struct Vertex {
 	DirectX::XMFLOAT3 Position;
@@ -37,7 +38,7 @@ struct Vertex {
 class Mesh : public ComponentBase
 {
 public:
-	Mesh();
+	Mesh(Entity* entity);
 	~Mesh();
 
 	void Init(std::string meshPath);

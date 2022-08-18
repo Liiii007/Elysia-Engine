@@ -41,7 +41,7 @@ public:
 	template<typename T>
 	Entity& appendComponent() {
 		auto component = std::make_unique<IComponent>();
-		component->make<T>();
+		component->make<T>(this);
 		components.insert(std::make_pair(T::componentName, std::move(component)));
 		return *this;
 	}

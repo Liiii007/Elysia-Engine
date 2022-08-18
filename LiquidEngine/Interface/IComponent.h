@@ -11,12 +11,14 @@ public:
 	std::any component;
 	bool enabled{ true };
 	std::string name;
+	Entity* parentEntity;
 
 	IComponent(); 
 
 	template<typename T>
-	void make() {
-		std::shared_ptr<T> raw = std::make_shared<T>();
+	void make(Entity* parentEntity) {
+		this->parentEntity = parentEntity;
+		std::shared_ptr<T> raw = std::make_shared<T>(parentEntity);
 		component = std::move(raw);
 	}
 

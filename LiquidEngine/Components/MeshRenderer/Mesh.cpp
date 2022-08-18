@@ -2,6 +2,7 @@
 #include "../../System/MeshRenderer.h"
 #include "../../Renderer/XIIRenderer.h"
 #include "../../Tools/Singleton.h"
+#include "../../World/Entity.h"
 
 std::string Mesh::componentName = "Mesh";
 
@@ -13,7 +14,7 @@ std::vector<uint16_t>* Mesh::getIndices() {
 	return &indices;
 }
 
-Mesh::Mesh() :ComponentBase() {
+Mesh::Mesh(Entity* entity) :ComponentBase(entity) {
 
 }
 

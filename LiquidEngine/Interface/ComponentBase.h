@@ -1,9 +1,12 @@
 #pragma once
-//#include "../World/Entity.h"
+
+class Entity;
 
 class ComponentBase
 {
 public:
-	//Entity* parentEntity;
+	ComponentBase(Entity* entity);
+
+	Entity* parentEntity;
 };
 
