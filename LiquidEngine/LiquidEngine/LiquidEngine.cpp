@@ -13,9 +13,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_ int       nCmdShow)
 {
     // Enable run-time memory check for debug builds.
-#if defined(DEBUG) | defined(_DEBUG)
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#endif
 
     try
     {
@@ -25,19 +23,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         
 
-        Singleton<WorldManager>::Get()->Init();
+        //Singleton<WorldManager>::Get()->Init();
         Entity e1{"e1"};
         e1.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
+        e1.setLocation(1, 0, 0);
         e1.setRotation(-90, 90, 0);
+        e1.setScale(0.4);
 
-        //Entity e2{ "e2" };
-        //e2.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
-        //e2.setRotation(90, 90, 0);
+        //Bug:只要传进去第二个就会失败
+        Entity e2{ "e2" };
+        e2.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
 
-        //Entity e2;
         Shader s1 = Shader(L"Renderer\\Shaders\\color.hlsl", "shader1");
-        //e1.translation.rotation = XMVECTOR{ 45, 0, 0 };
-        //e2.translation.rotation = XMVECTOR{ 45, 0, 0 };
+
         Singleton<XIIRenderer>::Get()->Init(hInstance);
 
         Log::Error("This is an error");

@@ -36,12 +36,14 @@ public:
 
 	Translation* translation;
 	std::vector<float> vertices;
+	std::vector<float> normals;
 	std::vector<uint16_t> indices;
 
 	std::vector<float>* getVertices();
 	std::vector<uint16_t>* getIndices();
 	XMMATRIX getWorldMatrix();
-
+	D3D12_VERTEX_BUFFER_VIEW* VertexBufferView();
+	D3D12_INDEX_BUFFER_VIEW Mesh::IndexBufferView()const;
 
 	void SetBufferView();
 	void SetToBox();
@@ -49,18 +51,20 @@ public:
 	void SetTranslation(Translation& t);
 	void UploadVertices();
 
-	//Vertex Buffer
-	D3D12_VERTEX_BUFFER_VIEW mVBV;
-	D3D12_INDEX_BUFFER_VIEW mIBV;
-
 	ComPtr<ID3DBlob> VertexBufferCPU;
 	ComPtr<ID3DBlob> IndexBufferCPU;
 	ComPtr<ID3D12Resource> VertexBufferGPU;
 	ComPtr<ID3D12Resource> VertexBufferUploader;
 	ComPtr<ID3D12Resource> IndexBufferGPU;
 	ComPtr<ID3D12Resource> IndexBufferUploader;
+	D3D12_PRIMITIVE_TOPOLOGY Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	std::string path;
 	UINT mObjectIndex;
+
+private:
+	D3D12_VERTEX_BUFFER_VIEW mVBV;
+	D3D12_INDEX_BUFFER_VIEW mIBV;
+
 };
 

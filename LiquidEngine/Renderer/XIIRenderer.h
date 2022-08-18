@@ -5,8 +5,6 @@
 #pragma comment(lib, "dxgi.lib")
 
 
-using UINT = unsigned int;
-
 #include <DirectXColors.h>
 #include <windows.h>
 #include <WindowsX.h>
@@ -40,18 +38,18 @@ using UINT = unsigned int;
 
 
 using namespace DirectX;
-using namespace std;
 
 using Microsoft::WRL::ComPtr;
 
 struct ObjectConstants {
-	DirectX::XMFLOAT4X4 gWorld;
+	XMFLOAT4X4 gWorld;
+	XMFLOAT4 gColor;
 };
 
 struct PassConstants {
-	DirectX::XMFLOAT4X4 gView;
-	DirectX::XMFLOAT4X4 gProj;
-	DirectX::XMFLOAT4X4 gViewProj;
+	XMFLOAT4X4 gView;
+	XMFLOAT4X4 gProj;
+	XMFLOAT4X4 gViewProj;
 };
 
 class XIIRenderer
@@ -61,7 +59,6 @@ public:
 	bool Init(HINSTANCE);
 
 	//Upload
-	void UploadVertices(Mesh* mesh);
 	void UploadObjectCB(Mesh* mesh);
 	void UploadPassCB();
 
@@ -70,7 +67,6 @@ public:
 	int RenderTick();
 	void Update();
 
-	
 
 public:
 	//Init
@@ -143,14 +139,7 @@ public:
 	std::unique_ptr<UploadBuffer<ObjectConstants>> mObjectCB = nullptr;
 	std::unique_ptr<UploadBuffer<PassConstants>> mPassCB = nullptr;
 
-	//Root Signature
-	//ComPtr<ID3D12RootSignature> mRootSignature;
-
-	//PSO
-	//ComPtr<ID3D12PipelineState> mPSO;
-
 	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
-
 
 	POINT mLastMousePos;
 
@@ -158,8 +147,3 @@ public:
 
 	UINT mRendererItemCount{ 0 };
 };
-
-using namespace rttr;
-RTTR_REGISTRATION{
-	//registration::method("GetDevice", &XIIRenderer::getDevice);
-}

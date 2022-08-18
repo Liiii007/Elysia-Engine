@@ -25,12 +25,6 @@ Mesh::Mesh(std::string meshPath) {
 
 Mesh::~Mesh() {
 	//BUG:未能抹除当前物体
-	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
-		if (*it == this) {
-			MeshRenderer::getMeshList()->erase(it);
-			break;
-		}
-	}
 }
 
 void Mesh::SetToBox() {
@@ -102,7 +96,11 @@ bool Mesh::LoadFromDisk(std::string meshPath) {
 		indices.push_back(mesh->mFaces[i].mIndices[2]);
 	}
 	
-
+	for (int i = 0; i < mesh->mNumVertices; i++) {
+		normals.push_back(mesh->mNormals[i].x);
+		normals.push_back(mesh->mNormals[i].y);
+		normals.push_back(mesh->mNormals[i].z);
+	}
 
 	// We're done. Everything will be cleaned up by the importer destructor
 	return true;
@@ -121,7 +119,29 @@ void Mesh::SetBufferView() {
 
 	mIBV.BufferLocation = IndexBufferGPU->GetGPUVirtualAddress();
 	mIBV.Format = DXGI_FORMAT_R16_UINT;
-	mIBV.SizeInBytes = sizeof(UINT) * indices.size();
+	mIBV.SizeInBytes = sizeof(indices[0]) * indices.size();
+}
+
+D3D12_VERTEX_BUFFER_VIEW* Mesh::VertexBufferView()
+{
+	D3D12_VERTEX_BUFFER_VIEW vbv{};
+	vbv.BufferLocation = VertexBufferGPU->GetGPUVirtualAddress();
+	vbv.StrideInBytes = sizeof(vertices[0]) * 3;
+	vbv.SizeInBytes = sizeof(vertices[0]) * vertices.size();
+
+	mVBV = vbv;
+
+	return &mVBV;
+}
+
+D3D12_INDEX_BUFFER_VIEW Mesh::IndexBufferView()const
+{
+	D3D12_INDEX_BUFFER_VIEW ibv;
+	ibv.BufferLocation = IndexBufferGPU->GetGPUVirtualAddress();
+	ibv.Format = DXGI_FORMAT_R16_UINT;
+	ibv.SizeInBytes = sizeof(UINT) * indices.size();
+
+	return ibv;
 }
 
 XMMATRIX Mesh::getWorldMatrix() {
