@@ -2,6 +2,8 @@
 #include "../Components/Translation.h"
 #include "../Components/MeshRenderer/Mesh.h"
 #include "../Components/MeshRenderer/Material.h"
+#include "../Interface/IComponent.h"
+#include <any>
 
 class Entity
 {
@@ -28,10 +30,24 @@ public:
 		translation.scale = XMVECTOR{ x,y,z };
 	}
 
+	template<typename T>
+	void appendComponent() {
+		auto component = std::make_unique<IComponent>();
+		component->make<T>();
+		components.insert(std::make_pair(T::componentName, std::move(component)));
+	}
+
+	template<typename T>
+	T* getComponent() {
+		return components[T::componentName]->get<T>();
+	}
+
 	Translation translation;
 	std::unique_ptr<Mesh> mesh{nullptr};
-	Material material;
+
+	std::unordered_map<std::string, std::unique_ptr<IComponent>> components;
 	
 	std::string name;
+
 };
 

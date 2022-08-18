@@ -202,6 +202,7 @@ void XIIRenderer::CreateDescHeaps() {
 		&rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf())));
 
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
+
 	dsvHeapDesc.NumDescriptors = 1;
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
@@ -466,7 +467,7 @@ void XIIRenderer::RenderItem(Mesh* mesh, Shader* shader) {
 	
 	//Set by mesh
 	mCommandList->IASetVertexBuffers(0, 2, mesh->VertexBufferView());
-	mCommandList->IASetIndexBuffer(&mesh->IndexBufferView());
+	mCommandList->IASetIndexBuffer(mesh->IndexBufferView());
 	mCommandList->IASetPrimitiveTopology(mesh->Topology);
 	mCommandList->SetGraphicsRootDescriptorTable(0, objectCbvHandle);
 

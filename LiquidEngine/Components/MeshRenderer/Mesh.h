@@ -28,9 +28,9 @@ using Microsoft::WRL::ComPtr;
 
 class MeshRenderer;
 
-class Vertex {
+struct Vertex {
 	DirectX::XMFLOAT3 Position;
-
+	DirectX::XMFLOAT3 Normal;
 };
 
 class Mesh
@@ -40,18 +40,16 @@ public:
 	~Mesh();
 
 	Translation* translation;
-	std::vector<float> vertices;
+	std::vector<Vertex> vertices;
 	std::vector<float> normals;
 	std::vector<uint16_t> indices;
 
-	std::vector<float>* getVertices();
+	std::vector<Vertex>* getVertices();
 	std::vector<uint16_t>* getIndices();
 	XMMATRIX getWorldMatrix();
 	D3D12_VERTEX_BUFFER_VIEW* VertexBufferView();
-	D3D12_INDEX_BUFFER_VIEW Mesh::IndexBufferView()const;
+	D3D12_INDEX_BUFFER_VIEW* IndexBufferView();
 
-	void SetBufferView();
-	void SetToBox();
 	bool LoadFromDisk(std::string meshPath);
 	void SetTranslation(Translation& t);
 	void UploadVertices();
@@ -66,6 +64,7 @@ public:
 
 	std::string path;
 	UINT mObjectIndex;
+	static std::string componentName;
 
 private:
 	D3D12_VERTEX_BUFFER_VIEW mVBV;

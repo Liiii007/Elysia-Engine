@@ -6,6 +6,8 @@
 
 #include "../World/Entity.h"
 #include "../Tools/Logger.h"
+#include "../Components/Light.h"
+#include "../Interface/IComponent.h"
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -31,7 +33,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         e1.setRotation(-90, 90, 0);
         e1.setScale(0.4);
 
-        //Bug:只要传进去第二个就会失败
         Entity e2{ "e2" };
         e2.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
 
@@ -39,6 +40,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         e3.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
         e3.setLocation(-1, 0, 0);
 
+        Entity e4{ "Component Test" };
+        e4.appendComponent<Material>();
+        auto c = e4.getComponent<Material>();
 
         Shader s1 = Shader(L"Renderer\\Shaders\\color.hlsl", "shader1");
 

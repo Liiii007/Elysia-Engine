@@ -3,7 +3,9 @@
 #include "../../Renderer/XIIRenderer.h"
 #include "../../Tools/Singleton.h"
 
-std::vector<float>* Mesh::getVertices() {
+std::string Mesh::componentName = "Mesh";
+
+std::vector<Vertex>* Mesh::getVertices() {
 	return &vertices;
 }
 
@@ -18,52 +20,12 @@ Mesh::Mesh(std::string meshPath) {
 	}
 	else {
 		Log::Error("Unable to load mesh");
-		//SetToBox();
 		return;
 	}
 }
 
 Mesh::~Mesh() {
 	//BUG:未能抹除当前物体
-}
-
-void Mesh::SetToBox() {
-	vertices = {
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, +1.0f, -1.0f,
-		+1.0f, +1.0f, -1.0f,
-		+1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, +1.0f,
-		-1.0f, +1.0f, +1.0f,
-		+1.0f, +1.0f, +1.0f,
-		+1.0f, -1.0f, +1.0f,
-	};
-
-	indices = {
-		// front face
-		0, 1, 2,
-		0, 2, 3,
-
-		// back face
-		4, 6, 5,
-		4, 7, 6,
-
-		// left face
-		4, 5, 1,
-		4, 1, 0,
-
-		// right face
-		3, 2, 6,
-		3, 6, 7,
-
-		// top face
-		1, 5, 6,
-		1, 6, 2,
-
-		// bottom face
-		4, 0, 3,
-		4, 3, 7
-	};
 }
 
 bool Mesh::LoadFromDisk(std::string meshPath) {
@@ -85,9 +47,11 @@ bool Mesh::LoadFromDisk(std::string meshPath) {
 
 	auto mesh = scene->mMeshes[0];
 	for (int i = 0; i < mesh->mNumVertices; i++) {
-		vertices.push_back(mesh->mVertices[i].x);
-		vertices.push_back(mesh->mVertices[i].y);
-		vertices.push_back(mesh->mVertices[i].z);
+		Vertex v;
+		v.Position.x = mesh->mVertices[i].x;
+		v.Position.y = mesh->mVertices[i].y;
+		v.Position.z = mesh->mVertices[i].z;
+		vertices.push_back(v);
 	}
 
 	for (int i = 0; i < mesh->mNumFaces; i++) {
@@ -112,21 +76,16 @@ void Mesh::SetTranslation(Translation& t) {
 	translation->scale    = t.scale;
 }
 
-void Mesh::SetBufferView() {
-	mVBV.BufferLocation = VertexBufferGPU->GetGPUVirtualAddress();
-	mVBV.StrideInBytes = sizeof(vertices[0]) * 3;
-	mVBV.SizeInBytes = sizeof(vertices[0]) * vertices.size();
-
-	mIBV.BufferLocation = IndexBufferGPU->GetGPUVirtualAddress();
-	mIBV.Format = DXGI_FORMAT_R16_UINT;
-	mIBV.SizeInBytes = sizeof(indices[0]) * indices.size();
-}
-
 D3D12_VERTEX_BUFFER_VIEW* Mesh::VertexBufferView()
 {
+	if (vertices.size() == 0) {
+		Log::Error("Empty vertex buffer");
+		return nullptr;
+	}
+
 	D3D12_VERTEX_BUFFER_VIEW vbv{};
 	vbv.BufferLocation = VertexBufferGPU->GetGPUVirtualAddress();
-	vbv.StrideInBytes = sizeof(vertices[0]) * 3;
+	vbv.StrideInBytes = sizeof(vertices[0]);
 	vbv.SizeInBytes = sizeof(vertices[0]) * vertices.size();
 
 	mVBV = vbv;
@@ -134,14 +93,21 @@ D3D12_VERTEX_BUFFER_VIEW* Mesh::VertexBufferView()
 	return &mVBV;
 }
 
-D3D12_INDEX_BUFFER_VIEW Mesh::IndexBufferView()const
+D3D12_INDEX_BUFFER_VIEW* Mesh::IndexBufferView()
 {
+	if (indices.size() == 0) {
+		Log::Error("Empty vertex buffer");
+		return nullptr;
+	}
+
 	D3D12_INDEX_BUFFER_VIEW ibv;
 	ibv.BufferLocation = IndexBufferGPU->GetGPUVirtualAddress();
 	ibv.Format = DXGI_FORMAT_R16_UINT;
-	ibv.SizeInBytes = sizeof(UINT) * indices.size();
+	ibv.SizeInBytes = sizeof(indices[0]) * indices.size();
 
-	return ibv;
+	mIBV = ibv;
+
+	return &mIBV;
 }
 
 XMMATRIX Mesh::getWorldMatrix() {
@@ -175,7 +141,5 @@ void Mesh::UploadVertices() {
 
 	IndexBufferGPU = d3dUtil::CreateDefaultBuffer(renderer->md3dDevice.Get(),
 		renderer->mCommandList.Get(), indices.data(), ibByteSize, IndexBufferUploader);
-
-	SetBufferView();
 }
 

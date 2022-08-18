@@ -117,6 +117,12 @@
     <ClInclude Include="Components\MeshRenderer\Material.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\IComponent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Light.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LiquidEngine\LiquidEngine.cpp">
@@ -192,6 +198,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Components\MeshRenderer\Material.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface\IComponent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Light.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

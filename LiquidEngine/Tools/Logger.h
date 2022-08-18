@@ -30,7 +30,7 @@ namespace Log {
 
 	static void writeToConsole(std::string message) {
 		if (Singleton<LogConfig>::Get()->consoleBit) {
-			std::cout << message << std::endl;
+			std::cerr << message << std::endl;
 		}
 	}
 
