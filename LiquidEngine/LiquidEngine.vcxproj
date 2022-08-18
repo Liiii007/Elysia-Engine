@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Components\MeshRenderer\Material.h" />
+    <ClInclude Include="Interface\ComponentBase.h" />
     <ClInclude Include="Interface\IComponent.h" />
     <ClInclude Include="Components\Light.h" />
     <ClInclude Include="Tools\MeshImporter.h" />
@@ -175,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Components\MeshRenderer\Material.cpp" />
+    <ClCompile Include="Interface\ComponentBase.cpp" />
     <ClCompile Include="Interface\IComponent.cpp" />
     <ClCompile Include="Components\Light.cpp" />
     <ClCompile Include="Tools\MeshImporter.cpp" />

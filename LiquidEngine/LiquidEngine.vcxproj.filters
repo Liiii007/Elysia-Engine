@@ -123,6 +123,9 @@
     <ClInclude Include="Components\Light.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\ComponentBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LiquidEngine\LiquidEngine.cpp">
@@ -204,6 +207,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Components\Light.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface\ComponentBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

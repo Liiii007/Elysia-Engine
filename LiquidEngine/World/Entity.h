@@ -52,7 +52,7 @@ public:
 	}
 
 	Translation translation;
-	std::unordered_map<std::string, std::unique_ptr<IComponent>> components;
+	std::unordered_map<std::string, std::unique_ptr<IComponent> > components;
 	std::string name;
 
 };

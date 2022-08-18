@@ -12,6 +12,7 @@
 #include <assimp/LogStream.hpp>
 #include "../../Components/Translation.h"
 #include "../../Tools/Logger.h"
+#include "../../Interface/ComponentBase.h"
 
 #include <DirectXColors.h>
 #include <windows.h>
@@ -33,12 +34,10 @@ struct Vertex {
 	DirectX::XMFLOAT3 Normal;
 };
 
-class Mesh
+class Mesh : public ComponentBase
 {
 public:
-	Mesh() {
-
-	}
+	Mesh();
 	~Mesh();
 
 	void Init(std::string meshPath);

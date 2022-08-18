@@ -3,11 +3,13 @@
 #include <memory>
 #include <any>
 
+class Entity;
+
 class IComponent {
 
 public:
 	std::any component;
-	bool enabled;
+	bool enabled{ true };
 	std::string name;
 
 	IComponent(); 
@@ -19,7 +21,7 @@ public:
 	}
 
 	template<typename T>
-	std::shared_ptr<T> get() {
+	inline std::shared_ptr<T> get() {
 		std::shared_ptr<T> returnComponent{ nullptr };
 		try {
 			returnComponent = std::any_cast<std::shared_ptr<T>>(component);

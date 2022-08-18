@@ -7,7 +7,6 @@
 #include "../World/Entity.h"
 #include "../Tools/Logger.h"
 #include "../Components/Light.h"
-#include "../Interface/IComponent.h"
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,

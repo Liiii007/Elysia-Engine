@@ -13,6 +13,10 @@ std::vector<uint16_t>* Mesh::getIndices() {
 	return &indices;
 }
 
+Mesh::Mesh() :ComponentBase() {
+
+}
+
 void Mesh::Init(std::string meshPath) {
 	MeshRenderer::getMeshList()->push_back(this);
 	if (LoadFromDisk(meshPath)) {
