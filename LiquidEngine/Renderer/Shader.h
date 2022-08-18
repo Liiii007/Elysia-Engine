@@ -59,9 +59,6 @@ public:
 		return shaders["shader1"]->getPSO();
 	}
 
-	
-
-
 private:
 	std::wstring filename;
 	ComPtr<ID3DBlob> CompileShader(const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target);

@@ -28,18 +28,19 @@
 #include <cassert>
 #include "../Tools/Common/d3dUtil.h"
 #include "../Tools/Common/UploadBuffer.h"
-#include "../Tools/Singleton.h"
-#include "../System/InputSystem.h"
-#include "../Renderer/Shader.h"
-#include "../System/MeshRenderer.h" 
+
+ 
 #include "../Renderer/SphereCamera.h"
-#include "../World/Entity.h"
+
 #include <rttr/registration>
 
 
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
+
+class Mesh;
+class Shader;
 
 struct ObjectConstants {
 	XMFLOAT4X4 gWorld;

@@ -2,6 +2,7 @@
 #include "LiquidEngine.h"
 #include "../Renderer/XIIRenderer.h"
 #include "../World/WorldManager.h"
+#include "../Renderer/Shader.h"
 
 #include "../World/Entity.h"
 #include "../Tools/Logger.h"
@@ -33,6 +34,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         //Bug:只要传进去第二个就会失败
         Entity e2{ "e2" };
         e2.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
+
+        Entity e3{ "e3" };
+        e3.loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
+        e3.setLocation(-1, 0, 0);
+
 
         Shader s1 = Shader(L"Renderer\\Shaders\\color.hlsl", "shader1");
 

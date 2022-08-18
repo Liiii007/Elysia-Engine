@@ -1,6 +1,7 @@
 #pragma once
 #include "../Components/Translation.h"
 #include "../Components/MeshRenderer/Mesh.h"
+#include "../Components/MeshRenderer/Material.h"
 
 class Entity
 {
@@ -29,6 +30,7 @@ public:
 
 	Translation translation;
 	std::unique_ptr<Mesh> mesh{nullptr};
+	Material material;
 	
 	std::string name;
 };

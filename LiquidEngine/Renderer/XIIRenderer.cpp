@@ -1,4 +1,9 @@
 #include "XIIRenderer.h"
+#include "../World/Entity.h"
+#include "../Renderer/Shader.h"
+#include "../System/MeshRenderer.h"
+#include "../Tools/Singleton.h"
+#include "../System/InputSystem.h"
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -215,7 +220,7 @@ void XIIRenderer::CreateDescHeaps() {
 
 void XIIRenderer::CreatePassConstantBuffer() {
 	mPassCB = std::make_unique<UploadBuffer<PassConstants>>(md3dDevice.Get(), 1, true);
-	mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 2, true);
+	mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 100, true);
 
 	UINT passCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
 

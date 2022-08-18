@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Components\MeshRenderer\Material.h" />
     <ClInclude Include="Tools\MeshImporter.h" />
     <ClInclude Include="Tools\Logger.h" />
     <ClInclude Include="World\Entity.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Renderer\XIIRenderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Components\MeshRenderer\Material.cpp" />
     <ClCompile Include="Tools\MeshImporter.cpp" />
     <ClCompile Include="Tools\Logger.cpp" />
     <ClCompile Include="World\Entity.cpp" />

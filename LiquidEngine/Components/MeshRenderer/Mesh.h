@@ -28,6 +28,11 @@ using Microsoft::WRL::ComPtr;
 
 class MeshRenderer;
 
+class Vertex {
+	DirectX::XMFLOAT3 Position;
+
+};
+
 class Mesh
 {
 public:

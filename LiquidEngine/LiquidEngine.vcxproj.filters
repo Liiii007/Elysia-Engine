@@ -114,6 +114,9 @@
     <ClInclude Include="Tools\MeshImporter.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Components\MeshRenderer\Material.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LiquidEngine\LiquidEngine.cpp">
@@ -186,6 +189,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Tools\MeshImporter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\MeshRenderer\Material.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
