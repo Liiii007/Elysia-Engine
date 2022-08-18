@@ -8,33 +8,42 @@
 class Entity
 {
 public:
-	Entity(std::string name);
-	~Entity();
+	Entity() = default;
+	~Entity() = default;
 
 	bool loadMesh(std::string meshPath);
 
+	Entity& setName(std::string name) {
+		this->name = name;
+		return *this;
+	}
 
-	void setLocation(float x, float y, float z) {
+	Entity& setLocation(float x, float y, float z) {
 		translation.position = XMVECTOR{ x,y,z };
+		return *this;
 	}
 
-	void setRotation(float x, float y, float z) {
+	Entity& setRotation(float x, float y, float z) {
 		translation.rotation = XMVECTOR{ x,y,z };
+		return *this;
 	}
 
-	void setScale(float scale) {
+	Entity& setScale(float scale) {
 		translation.scale = XMVECTOR{ scale,scale,scale };
+		return *this;
 	}
 
-	void setScale(float x, float y, float z) {
+	Entity& setScale(float x, float y, float z) {
 		translation.scale = XMVECTOR{ x,y,z };
+		return *this;
 	}
 
 	template<typename T>
-	void appendComponent() {
+	Entity& appendComponent() {
 		auto component = std::make_unique<IComponent>();
 		component->make<T>();
 		components.insert(std::make_pair(T::componentName, std::move(component)));
+		return *this;
 	}
 
 	template<typename T>
@@ -43,9 +52,7 @@ public:
 	}
 
 	Translation translation;
-
 	std::unordered_map<std::string, std::unique_ptr<IComponent>> components;
-	
 	std::string name;
 
 };
