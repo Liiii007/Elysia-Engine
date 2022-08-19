@@ -4,6 +4,7 @@
 #include "../System/MeshRenderer.h"
 #include "../Tools/Singleton.h"
 #include "../System/InputSystem.h"
+#include "../Components/Light.h"
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -434,11 +435,16 @@ void XIIRenderer::UploadPassCB() {
 	XMMATRIX view = mCamera.getViewMatrix();
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
 	XMMATRIX viewProj = view * proj;
+	auto light = Entity::entities["eLight"]->GetComponent<Light>();
 
-	PassConstants pcb;
-	XMStoreFloat4x4(&pcb.gView, XMMatrixTranspose(view));
-	XMStoreFloat4x4(&pcb.gProj, XMMatrixTranspose(proj));
+	PassConstants pcb{};
+
 	XMStoreFloat4x4(&pcb.gViewProj, XMMatrixTranspose(viewProj));
+	pcb.viewPos = mCamera.GetPosition();
+	pcb.viewDir = mCamera.GetDirection();
+	pcb.lightPos = light->GetPosition();
+	pcb.lightDir = light->GetDirection();
+
 	mPassCB->CopyData(0, pcb);
 }
 

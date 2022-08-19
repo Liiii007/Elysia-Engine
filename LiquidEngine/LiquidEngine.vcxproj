@@ -117,9 +117,8 @@
       <AdditionalDependencies>rttr_core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
-      <ShaderType>
-      </ShaderType>
-      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <ShaderType>Effect</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
       <EntryPointName>main</EntryPointName>
     </FxCompile>
   </ItemDefinitionGroup>
@@ -210,11 +209,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Model\box.fbx" />
+    <None Include="Resources\Model\dawei.fbx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Renderer\Shaders\color.hlsl">
-      <FileType>Document</FileType>
-    </None>
+    <FxCompile Include="Renderer\Shaders\color.hlsl" />
+    <FxCompile Include="Renderer\Shaders\normal.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,32 +8,29 @@
 class Entity
 {
 public:
-	Entity()  = default;
+	Entity(std::string name) {
+		this->name = name;
+		entities[name] = this;
+	}
 	~Entity() = default;
 
-
-	Entity& SetName(std::string name) {
-		this->name = name;
-		return *this;
-	}
-
 	Entity& SetLocation(float x, float y, float z) {
-		translation.position = XMVECTOR{ x,y,z };
+		translation.position = XMFLOAT3{ x,y,z };
 		return *this;
 	}
 
 	Entity& SetRotation(float x, float y, float z) {
-		translation.rotation = XMVECTOR{ x,y,z };
+		translation.rotation = XMFLOAT3{ x,y,z };
 		return *this;
 	}
 
 	Entity& setScale(float scale) {
-		translation.scale = XMVECTOR{ scale,scale,scale };
+		translation.scale = XMFLOAT3{ scale,scale,scale };
 		return *this;
 	}
 
 	Entity& setScale(float x, float y, float z) {
-		translation.scale = XMVECTOR{ x,y,z };
+		translation.scale = XMFLOAT3{ x,y,z };
 		return *this;
 	}
 
@@ -56,13 +53,23 @@ public:
 			throw std::exception("Unable to get this component");
 			return nullptr;
 		}
-		
+	}
+
+	template<typename T>
+	bool HasComponent() {
+		if (components[T::componentName]->get<T>() != nullptr) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	Translation translation;
+	std::vector<std::string> tags;
 	std::unordered_map<std::string, std::unique_ptr<IComponent> > components;
-	//FIXED:±£´æËùÓÐentity
 	std::string name;
 
+	static std::unordered_map<std::string, Entity*> entities;
 };
 

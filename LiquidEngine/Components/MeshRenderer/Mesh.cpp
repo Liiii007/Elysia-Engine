@@ -64,6 +64,10 @@ bool Mesh::LoadFromDisk(std::string meshPath) {
 		v.Normal.x = mesh->mNormals[i].x;
 		v.Normal.y = mesh->mNormals[i].y;
 		v.Normal.z = mesh->mNormals[i].z;
+
+		v.Texcoord.x = mesh->mTextureCoords[0][i].x;
+		v.Texcoord.y = mesh->mTextureCoords[0][i].y;
+
 		vertices.push_back(v);
 	}
 
@@ -118,15 +122,32 @@ D3D12_INDEX_BUFFER_VIEW* Mesh::IndexBufferView()
 
 XMMATRIX Mesh::getWorldMatrix() {
 	auto r = translation->rotation;
-	XMFLOAT3 a;
-	XMStoreFloat3(&a, r);
-	auto rX = XMMatrixRotationX(a.x / 6.28f);
-	auto rY = XMMatrixRotationY(a.y / 6.28f);
-	auto rZ = XMMatrixRotationZ(a.z / 6.28f);
+	auto rX = XMMatrixRotationX(r.x / 6.28f);
+	auto rY = XMMatrixRotationY(r.y / 6.28f);
+	auto rZ = XMMatrixRotationZ(r.z / 6.28f);
+	
 
-	auto rotationMatrix = XMMatrixRotationRollPitchYawFromVector(translation->rotation/6.28f);
-	auto scaleMatrix = XMMatrixScalingFromVector(translation->scale);
-	auto translationMatrix = XMMatrixTranslationFromVector(translation->position);
+	auto rotationMatrix = XMMatrixRotationRollPitchYawFromVector(
+		XMVectorSet(
+			translation->rotation.x,
+			translation->rotation.y,
+			translation->rotation.z,
+			1
+		)/6.28f);
+	auto scaleMatrix = XMMatrixScalingFromVector(
+		XMVectorSet(
+			translation->scale.x,
+			translation->scale.y,
+			translation->scale.z,
+			1
+		));
+	auto translationMatrix = XMMatrixTranslationFromVector(
+		XMVectorSet(
+			translation->position.x,
+			translation->position.y,
+			translation->position.z,
+			1
+		));
 	return translationMatrix * scaleMatrix * rotationMatrix;
 }
 

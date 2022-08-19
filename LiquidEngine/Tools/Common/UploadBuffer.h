@@ -52,7 +52,9 @@ public:
 
     void CopyData(int elementIndex, const T& data)
     {
+        auto size = sizeof(T);
         memcpy(&mMappedData[elementIndex*mElementByteSize], &data, sizeof(T));
+        auto mapdata = &mMappedData;
     }
 
 private:

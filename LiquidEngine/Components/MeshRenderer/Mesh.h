@@ -33,6 +33,7 @@ class Entity;
 struct Vertex {
 	DirectX::XMFLOAT3 Position;
 	DirectX::XMFLOAT3 Normal;
+	DirectX::XMFLOAT2 Texcoord;
 };
 
 class Mesh : public ComponentBase

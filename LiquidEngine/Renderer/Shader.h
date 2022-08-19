@@ -1,9 +1,5 @@
 #pragma once
 
-#pragma comment(lib, "d3dcompiler.lib")
-#pragma comment(lib, "D3D12.lib")
-#pragma comment(lib, "dxgi.lib")
-
 #include <wrl.h>
 #include <dxgi1_4.h>
 #include <d3d12.h>
@@ -25,9 +21,26 @@ struct ObjectConstants {
 };
 
 struct PassConstants {
-	DirectX::XMFLOAT4X4 gView;
-	DirectX::XMFLOAT4X4 gProj;
+	//FIXED:HLSL采用4byte打包，意味着每个float3后面都会自动插入一个byte，因此需要手动匹配padding
 	DirectX::XMFLOAT4X4 gViewProj;
+
+	//4Byte
+	DirectX::XMFLOAT3 viewPos;
+	float pad1;
+
+	//4Byte
+	DirectX::XMFLOAT3 viewDir;
+	float pad2;
+
+	//4Byte
+	DirectX::XMFLOAT3 lightDir;
+	float pad3;
+
+	//4Byte
+	DirectX::XMFLOAT3 lightPos;
+	float nullVar;
+	
+
 };
 
 class Shader {

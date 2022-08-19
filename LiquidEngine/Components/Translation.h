@@ -8,10 +8,10 @@ class Translation
 {
 public:
 	Translation(){};
-	Translation(XMVECTOR position, XMVECTOR rotation, XMVECTOR scale):position(position), rotation(rotation), scale(scale){};
+	Translation(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale):position(position), rotation(rotation), scale(scale){};
 
-	XMVECTOR position{ 0,0,0 };
-	XMVECTOR rotation{ 0,0,0 };
-	XMVECTOR scale{ 1,1,1 };
+	XMFLOAT3 position{ 0,0,0 };
+	XMFLOAT3 rotation{ 0,0,0 };
+	XMFLOAT3 scale{ 1,1,1 };
 };
 

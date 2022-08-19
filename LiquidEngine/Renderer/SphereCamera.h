@@ -5,9 +5,9 @@ using namespace DirectX;
 class SphereCamera
 {
 public:
-	XMVECTOR pos;
-	XMVECTOR target;
-	XMVECTOR up;
+	XMFLOAT3 pos;
+	XMFLOAT3 target;
+	XMFLOAT3 up;
 
 	float mTheta = 0.0f * XM_PI;
 	float mPhi = 1.0 * XM_PIDIV4;
@@ -19,19 +19,30 @@ public:
 		float z = mRadius * sinf(mPhi) * sinf(mTheta);
 		float y = mRadius * cosf(mPhi);
 
-		x = mRadius;
-		y = 3;
-		z = 0;
+		pos.x = mRadius;
+		pos.y = 0;
+		pos.z = 0;
 
 		// Build the view matrix.
-		pos = XMVectorSet(x, y, z, 1.0f);
-		target = XMVectorZero();
-		up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+		XMVECTOR posV = XMVectorSet(x, y, z, 1.0f);
+		XMVECTOR targetV = XMVectorZero();
+		XMVECTOR upV = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-		return XMMatrixLookAtLH(pos, target, up);
+		return XMMatrixLookAtLH(posV, targetV, upV);
 
 	}
 
+	XMFLOAT3 GetPosition() {
+		return pos;
+	}
+
+	XMFLOAT3 GetDirection() {
+		XMFLOAT3 direction;
+		direction.x = target.x - pos.x;
+		direction.y = target.y - pos.y;
+		direction.z = target.z - pos.z;
+		return direction;
+	}
 	
 };
 
