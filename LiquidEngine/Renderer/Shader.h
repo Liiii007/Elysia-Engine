@@ -18,6 +18,18 @@
 
 using Microsoft::WRL::ComPtr;
 
+
+struct ObjectConstants {
+	DirectX::XMFLOAT4X4 gWorld;
+	DirectX::XMFLOAT4 gColor;
+};
+
+struct PassConstants {
+	DirectX::XMFLOAT4X4 gView;
+	DirectX::XMFLOAT4X4 gProj;
+	DirectX::XMFLOAT4X4 gViewProj;
+};
+
 class Shader {
 public:
 	static std::unordered_map<std::string, Shader*> shaders;
@@ -55,8 +67,17 @@ public:
 		return mPSO;
 	}
 
-	static ComPtr<ID3D12PipelineState> getInitPSO() {
-		return shaders["shader1"]->getPSO();
+	bool operator==(const Shader& other) {
+		if (this->filename == other.filename) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool operator!=(const Shader& other) {
+		return !(*this == other);
 	}
 
 private:

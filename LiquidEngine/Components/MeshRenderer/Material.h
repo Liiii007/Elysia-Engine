@@ -13,9 +13,10 @@ public:
 
 	static std::string componentName;
 	std::string name;
-	std::string shaderName;
+	Shader* shader;
 
 	Shader* getShader();
-	void setShader(const std::string name);
+	void SetShader(const std::string name);
+	void SetShader(Shader* shader);
 };
 

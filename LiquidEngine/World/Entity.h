@@ -8,22 +8,21 @@
 class Entity
 {
 public:
-	Entity() = default;
+	Entity()  = default;
 	~Entity() = default;
 
-	bool loadMesh(std::string meshPath);
 
-	Entity& setName(std::string name) {
+	Entity& SetName(std::string name) {
 		this->name = name;
 		return *this;
 	}
 
-	Entity& setLocation(float x, float y, float z) {
+	Entity& SetLocation(float x, float y, float z) {
 		translation.position = XMVECTOR{ x,y,z };
 		return *this;
 	}
 
-	Entity& setRotation(float x, float y, float z) {
+	Entity& SetRotation(float x, float y, float z) {
 		translation.rotation = XMVECTOR{ x,y,z };
 		return *this;
 	}
@@ -39,7 +38,7 @@ public:
 	}
 
 	template<typename T>
-	Entity& appendComponent() {
+	Entity& AppendComponent() {
 		auto component = std::make_unique<IComponent>();
 		component->make<T>(this);
 		components.insert(std::make_pair(T::componentName, std::move(component)));
@@ -47,12 +46,22 @@ public:
 	}
 
 	template<typename T>
-	std::shared_ptr<T> getComponent() {
-		return components[T::componentName]->get<T>();
+	std::shared_ptr<T> GetComponent() {
+		std::shared_ptr<T> r = components[T::componentName]->get<T>();
+		if (r != nullptr) {
+			return r;
+		}
+		else {
+			Log::Error("Unable to get this component");
+			throw std::exception("Unable to get this component");
+			return nullptr;
+		}
+		
 	}
 
 	Translation translation;
 	std::unordered_map<std::string, std::unique_ptr<IComponent> > components;
+	//FIXED:±£´æËùÓÐentity
 	std::string name;
 
 };

@@ -15,7 +15,7 @@ std::vector<uint16_t>* Mesh::getIndices() {
 }
 
 Mesh::Mesh(Entity* entity) :ComponentBase(entity) {
-
+	this->translation = &parentEntity->translation;
 }
 
 void Mesh::Init(std::string meshPath) {
@@ -29,6 +29,7 @@ void Mesh::Init(std::string meshPath) {
 		Log::Error("Unable to load mesh");
 		return;
 	}
+	
 }
 
 Mesh::~Mesh() {
@@ -46,7 +47,6 @@ bool Mesh::LoadFromDisk(std::string meshPath) {
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType);
 
-	// If the import failed, report it
 	if (scene == nullptr) {
 		Log::Error(importer.GetErrorString());
 		return false;
@@ -55,9 +55,15 @@ bool Mesh::LoadFromDisk(std::string meshPath) {
 	auto mesh = scene->mMeshes[0];
 	for (int i = 0; i < mesh->mNumVertices; i++) {
 		Vertex v;
+		//push position
 		v.Position.x = mesh->mVertices[i].x;
 		v.Position.y = mesh->mVertices[i].y;
 		v.Position.z = mesh->mVertices[i].z;
+
+		//push normal
+		v.Normal.x = mesh->mNormals[i].x;
+		v.Normal.y = mesh->mNormals[i].y;
+		v.Normal.z = mesh->mNormals[i].z;
 		vertices.push_back(v);
 	}
 
@@ -66,14 +72,7 @@ bool Mesh::LoadFromDisk(std::string meshPath) {
 		indices.push_back(mesh->mFaces[i].mIndices[1]);
 		indices.push_back(mesh->mFaces[i].mIndices[2]);
 	}
-	
-	for (int i = 0; i < mesh->mNumVertices; i++) {
-		normals.push_back(mesh->mNormals[i].x);
-		normals.push_back(mesh->mNormals[i].y);
-		normals.push_back(mesh->mNormals[i].z);
-	}
 
-	// We're done. Everything will be cleaned up by the importer destructor
 	return true;
 }
 

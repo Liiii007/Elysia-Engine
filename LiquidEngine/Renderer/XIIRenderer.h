@@ -29,7 +29,6 @@
 #include "../Tools/Common/d3dUtil.h"
 #include "../Tools/Common/UploadBuffer.h"
 
- 
 #include "../Renderer/SphereCamera.h"
 
 #include <rttr/registration>
@@ -41,17 +40,9 @@ using Microsoft::WRL::ComPtr;
 
 class Mesh;
 class Shader;
+struct ObjectConstants;
+struct PassConstants;
 
-struct ObjectConstants {
-	XMFLOAT4X4 gWorld;
-	XMFLOAT4 gColor;
-};
-
-struct PassConstants {
-	XMFLOAT4X4 gView;
-	XMFLOAT4X4 gProj;
-	XMFLOAT4X4 gViewProj;
-};
 
 class XIIRenderer
 {
@@ -87,7 +78,7 @@ public:
 	//Render Tick
 	
 	void ClearForNextFrame();
-	void RenderItem(Mesh* mesh, Shader* shader);
+	void RenderItem(Mesh* mesh);
 	void RenderFrame();
 	void FlushCommandQueue();
 	ID3D12Resource* CurrentBackBuffer()const;

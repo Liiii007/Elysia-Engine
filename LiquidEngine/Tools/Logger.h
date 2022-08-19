@@ -66,7 +66,7 @@ namespace Log {
 		
 	};
 
-	static std::vector<std::string>* getLogs() {
+	static std::vector<std::string>* GetLogs() {
 		return &(Singleton<LogConfig>::Get()->logs);
 	}
 

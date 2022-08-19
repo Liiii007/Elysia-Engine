@@ -19,29 +19,32 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     try
     {
+
+        Shader initShader = Shader(L"Renderer\\Shaders\\color.hlsl", "initShader");
+        Shader normalShader = Shader(L"Renderer\\Shaders\\normal.hlsl", "normalShader");
+
         Entity e1;
-        e1.setName("e1")
-          .appendComponent<Mesh>()
-          .appendComponent<Material>()
-          .loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
+        e1.SetName("e1")
+            .AppendComponent<Mesh>()
+            .AppendComponent<Material>();
+          
+
+        e1.GetComponent<Mesh>()->Init("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
+        e1.GetComponent<Material>()->SetShader(&initShader);
 
         Entity e2;
-        e2.setName("e2")
-          .appendComponent<Mesh>()
-          .appendComponent<Material>()
-          .setLocation( -1, 0, 0)
-          .setRotation(-90, 0, 0)
-          .loadMesh("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
-
-
-        Shader s1 = Shader(L"Renderer\\Shaders\\color.hlsl", "shader1");
+        e2.SetName("e2")
+            .AppendComponent<Mesh>()
+            .AppendComponent<Material>()
+            .SetLocation(-1, 0, 0)
+            .SetRotation(-90, 0, 0);
+          
+        e2.GetComponent<Mesh>()->Init("C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Resources\\Model\\dawei.fbx");
+        e2.GetComponent<Material>()->SetShader(&normalShader);
 
         Singleton<XIIRenderer>::Get()->Init(hInstance);
 
-        Log::Error("This is an error");
-        Log::Warning("This is a warning");
-
-        auto a = Log::getLogs();
+        auto a = Log::GetLogs();
 
         //Tick
         while (true) {

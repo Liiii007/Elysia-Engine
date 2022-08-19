@@ -9,9 +9,13 @@ Material::Material(Entity* entity) : ComponentBase(entity) {
 }
 
 Shader* Material::getShader() {
-	return Shader::shaders[shaderName];
+	return shader;
 }
 
-void Material::setShader(const std::string name) {
-	shaderName = name;
+void Material::SetShader(const std::string name) {
+	shader = Shader::shaders[name];
+}
+
+void Material::SetShader(Shader* shader) {
+	this->shader = shader;
 }

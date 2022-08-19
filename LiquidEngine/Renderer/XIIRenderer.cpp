@@ -408,8 +408,7 @@ void XIIRenderer::ClearForNextFrame() {
 
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 	// Reusing the command list reuses memory.
-	auto initPSO = Shader::getInitPSO();
-	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), initPSO.Get()));
+	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), nullptr));
 
 	mCommandList->RSSetViewports(1, &mScreenViewport);
 	mCommandList->RSSetScissorRects(1, &mScissorRect);
@@ -457,8 +456,7 @@ void XIIRenderer::UploadObjectCB(Mesh* mesh) {
 	mObjectCB->CopyData(mesh->mObjectIndex, ocb);
 }
 
-void XIIRenderer::RenderItem(Mesh* mesh, Shader* shader) {
-	//shader->Use(1);
+void XIIRenderer::RenderItem(Mesh* mesh) {
 
 	//set object CB
 	int objectCbvIndex = mesh->mObjectIndex + 1;
@@ -497,14 +495,12 @@ int XIIRenderer::RenderTick() {
 	Update();
 	UploadPassCB();
 
-	auto shader = Shader::shaders["shader1"];
-
-	mCommandList->SetGraphicsRootSignature(shader->mRootSignature.Get());
-	mCommandList->SetPipelineState(shader->mPSO.Get());
-
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
+	Shader* lastShader = Shader::shaders["initShader"];
+	mCommandList->SetGraphicsRootSignature(lastShader->mRootSignature.Get());
+	mCommandList->SetPipelineState(lastShader->mPSO.Get());
 
 	//set pass CB
 	int passCbvIndex = 0;
@@ -513,12 +509,15 @@ int XIIRenderer::RenderTick() {
 	mCommandList->SetGraphicsRootDescriptorTable(1, passCbvHandle);
 
 	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
+		Shader* s = (*it)->parentEntity->GetComponent<Material>()->getShader();
+		if (*s != *lastShader) {
+			mCommandList->SetGraphicsRootSignature(s->mRootSignature.Get());
+			mCommandList->SetPipelineState(s->mPSO.Get());
+			lastShader = s;
+		}
 		
-	}
-
-	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
 		UploadObjectCB(*it);
-		RenderItem(*it, Shader::shaders["shader1"]);
+		RenderItem(*it);
 	}
 	
 	RenderFrame();
