@@ -11,7 +11,7 @@ public:
 
 	float mTheta = 0.0f * XM_PI;
 	float mPhi = 1.0 * XM_PIDIV4;
-	float mRadius = 3.0f;
+	float mRadius = 4.0f;
 
 	XMMATRIX getViewMatrix() {
 		// Convert Spherical to Cartesian coordinates.
@@ -20,7 +20,7 @@ public:
 		float y = mRadius * cosf(mPhi);
 
 		pos.x = mRadius;
-		pos.y = 0;
+		pos.y = 1;
 		pos.z = 0;
 
 		// Build the view matrix.

@@ -38,8 +38,7 @@ struct PassConstants {
 
 	//4Byte
 	DirectX::XMFLOAT3 lightPos;
-	float nullVar;
-	
+	float pad4;
 
 };
 

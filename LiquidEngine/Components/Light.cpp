@@ -12,8 +12,8 @@ Light* Light::SetPosition(XMFLOAT3 position) {
 	return this;
 }
 
-Light* Light::SetDirection(XMFLOAT3 direction) {
-	mDirection = direction;
+Light* Light::SetTarget(XMFLOAT3 target) {
+	mTarget = target;
 	return this;
 }
 
@@ -28,5 +28,6 @@ XMFLOAT3 Light::GetPosition() {
 }
 
 XMFLOAT3 Light::GetDirection() {
-	return mDirection;
+	XMFLOAT3 direction{ mTarget.x - mPosition.x, mTarget.y - mPosition.y, mTarget.z - mPosition.z};
+	return direction;
 }

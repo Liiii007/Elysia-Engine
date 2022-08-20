@@ -24,15 +24,13 @@ class Light : public ComponentBase
 
 public:
 	
-
 	static std::string componentName;
 	std::string name;
-
 
 	Light(Entity* entity);
 
 	Light* SetPosition(XMFLOAT3 position);
-	Light* SetDirection(XMFLOAT3 direction);
+	Light* SetTarget(XMFLOAT3 direction);
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetDirection();
 
@@ -40,6 +38,7 @@ public:
 
 private:
 	XMFLOAT3 mPosition;
-	XMFLOAT3 mDirection;
+	XMFLOAT3 mTarget;
+	//XMFLOAT3 mDirection;
 };
 

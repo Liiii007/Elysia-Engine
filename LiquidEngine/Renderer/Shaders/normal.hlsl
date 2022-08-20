@@ -9,13 +9,16 @@ cbuffer cbPerPass : register(b1)
 	float4x4 gViewProj;
 
 	float3 viewPos;
-	//float pad1;
+	float pad1;
+
 	float3 viewDir;
-	//float pad2;
+	float pad2;
+
 	float3 lightDir;
-	//float pad3;
+	float pad3;
+
 	float3 lightPos;
-	//float pad4;
+	float pad4;
 }
 
 struct VertexIn
@@ -38,7 +41,8 @@ VertexOut VS(VertexIn vin)
 
 	float4x4 mvp = mul(gWorld, gViewProj);
 	vout.PosH = mul(float4(vin.PosL, 1.0f), mvp);
-	vout.Normal = normalize(viewPos);
+	float4 normalWorld = mul(float4(vin.Normal, 1), gWorld);
+	vout.Normal = normalize(normalWorld);
 	vout.Color = float4(-viewDir, 1);
 
 	return vout;
@@ -46,6 +50,10 @@ VertexOut VS(VertexIn vin)
 
 float4 PS(VertexOut pin) : SV_Target
 {
-
-	return pin.Color;
+	float c = max(dot(pin.Normal, normalize(-lightDir)), 0);
+	c = min(c, 1);
+	c = pow(c, 5);
+	float strength = 5;
+	float4 color =  0.9 * float4(strength * c, strength * c, strength * c, 1) + 0.1;
+	return color;
 }
