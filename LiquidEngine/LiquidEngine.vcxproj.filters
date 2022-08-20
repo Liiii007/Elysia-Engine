@@ -27,16 +27,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LiquidEngine\framework.h">
+    <ClInclude Include="ElysiaEngine\framework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="LiquidEngine\targetver.h">
+    <ClInclude Include="ElysiaEngine\targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="LiquidEngine\LiquidEngine.h">
+    <ClInclude Include="ElysiaEngine\ElysiaEngine.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="World\WorldManager.h">
@@ -134,7 +134,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LiquidEngine\LiquidEngine.cpp">
+    <ClCompile Include="ElysiaEngine\ElysiaEngine.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="World\WorldManager.cpp">
@@ -236,6 +236,7 @@
   <ItemGroup>
     <None Include="Resources\Model\box.fbx" />
     <None Include="Resources\Model\dawei.fbx" />
+    <None Include="Components\README.md" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Renderer\Shaders\normal.hlsl" />
