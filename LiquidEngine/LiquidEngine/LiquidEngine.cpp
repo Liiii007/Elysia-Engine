@@ -7,6 +7,7 @@
 #include "../World/Entity.h"
 #include "../Tools/Logger.h"
 #include "../Components/Light.h"
+#include "../System/LightMoveSystem.h"
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -21,7 +22,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         Shader initShader = Shader(L"C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Renderer\\Shaders\\normal.hlsl", "initShader");
         //Shader normalShader = Shader(L"C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Renderer\\Shaders\\normal.hlsl", "normalShader");
-
+        
+        //System Test
+        LightMoveSystem system1;
 
         Entity e2("e2");
         e2.AppendComponent<Mesh>()

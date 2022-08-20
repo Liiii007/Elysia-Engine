@@ -138,4 +138,5 @@ public:
 	SphereCamera mCamera;
 
 	UINT mRendererItemCount{ 0 };
+	UINT mFrameCount{ 0 };
 };

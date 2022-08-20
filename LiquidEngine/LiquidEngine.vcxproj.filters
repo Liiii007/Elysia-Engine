@@ -126,6 +126,12 @@
     <ClInclude Include="Interface\ComponentBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="System\LightMoveSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="System\SystemBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LiquidEngine\LiquidEngine.cpp">
@@ -210,6 +216,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Interface\ComponentBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="System\LightMoveSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="System\SystemBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

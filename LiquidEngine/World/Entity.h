@@ -19,6 +19,11 @@ public:
 		return *this;
 	}
 
+	Entity& SetLocation(XMFLOAT3 position) {
+		translation.position = position;
+		return *this;
+	}
+
 	Entity& SetRotation(float x, float y, float z) {
 		translation.rotation = XMFLOAT3{ x,y,z };
 		return *this;

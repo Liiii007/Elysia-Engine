@@ -5,6 +5,8 @@
 #include "../Tools/Singleton.h"
 #include "../System/InputSystem.h"
 #include "../Components/Light.h"
+#include "../System/SystemBase.h"
+
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -428,7 +430,9 @@ void XIIRenderer::ClearForNextFrame() {
 
 
 void XIIRenderer::Update() {
-
+	for (auto& system : SystemBase::systems) {
+		system->Tick();
+	}
 }
 
 void XIIRenderer::UploadPassCB() {
@@ -527,7 +531,7 @@ int XIIRenderer::RenderTick() {
 	}
 	
 	RenderFrame();
-
+	mFrameCount++;
 	return 0;
 }
 

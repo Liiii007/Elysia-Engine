@@ -143,6 +143,8 @@
     <ClInclude Include="Interface\ComponentBase.h" />
     <ClInclude Include="Interface\IComponent.h" />
     <ClInclude Include="Components\Light.h" />
+    <ClInclude Include="System\LightMoveSystem.h" />
+    <ClInclude Include="System\SystemBase.h" />
     <ClInclude Include="Tools\MeshImporter.h" />
     <ClInclude Include="Tools\Logger.h" />
     <ClInclude Include="World\Entity.h" />
@@ -178,6 +180,8 @@
     <ClCompile Include="Interface\ComponentBase.cpp" />
     <ClCompile Include="Interface\IComponent.cpp" />
     <ClCompile Include="Components\Light.cpp" />
+    <ClCompile Include="System\LightMoveSystem.cpp" />
+    <ClCompile Include="System\SystemBase.cpp" />
     <ClCompile Include="Tools\MeshImporter.cpp" />
     <ClCompile Include="Tools\Logger.cpp" />
     <ClCompile Include="World\Entity.cpp" />
