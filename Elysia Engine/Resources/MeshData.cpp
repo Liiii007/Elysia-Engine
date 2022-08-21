@@ -1,46 +1,32 @@
-#include "Mesh.h"
-#include "../../System/MeshRenderer.h"
-#include "../../Renderer/XIIRenderer.h"
-#include "../../Tools/Singleton.h"
-#include "../../World/Entity.h"
+#include "MeshData.h"
+#include "System/MeshRenderer.h"
+#include "Renderer/XIIRenderer.h"
+#include "Tools/Singleton.h"
+#include "World/Entity.h"
 
-std::string Mesh::componentName = "Mesh";
+std::unordered_map<std::string, MeshData*> MeshData::meshs;
 
-std::vector<Vertex>* Mesh::getVertices() {
+std::vector<Vertex1>* MeshData::getVertices() {
 	return &vertices;
 }
 
-std::vector<uint16_t>* Mesh::getIndices() {
+std::vector<uint16_t>* MeshData::getIndices() {
 	return &indices;
 }
 
-Mesh::Mesh(Entity* entity) :ComponentBase(entity) {
-	this->translation = &parentEntity->translation;
-}
-
-Mesh* Mesh::Init(std::string meshPath) {
-	MeshRenderer::getMeshList()->push_back(this);
+MeshData::MeshData(std::string meshPath) {
+	meshs[meshPath] = this;
 	if (LoadFromDisk(meshPath)) {
 		mIBV.SizeInBytes = 0;
 		mVBV.SizeInBytes = 0;
-		return this;
 	}
 	else {
 		Log::Error("Unable to load mesh");
-		return this;
 	}
-	
 }
 
-Entity& Mesh::ReturnParentEntity() {
-	return *parentEntity;//Define in ComponentBase.h
-}
 
-Mesh::~Mesh() {
-	//BUG:未能抹除当前物体
-}
-
-bool Mesh::LoadFromDisk(std::string meshPath) {
+bool MeshData::LoadFromDisk(std::string meshPath) {
 
 	//Filling
 	Assimp::Importer importer;
@@ -58,7 +44,7 @@ bool Mesh::LoadFromDisk(std::string meshPath) {
 
 	auto mesh = scene->mMeshes[0];
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-		Vertex v{};
+		Vertex1 v{};
 		//push position
 		v.Position.x = mesh->mVertices[i].x;
 		v.Position.y = mesh->mVertices[i].y;
@@ -86,7 +72,7 @@ bool Mesh::LoadFromDisk(std::string meshPath) {
 
 
 
-D3D12_VERTEX_BUFFER_VIEW* Mesh::VertexBufferView()
+D3D12_VERTEX_BUFFER_VIEW* MeshData::VertexBufferView()
 {
 	if (vertices.size() == 0) {
 		Log::Error("Empty vertex buffer");
@@ -103,7 +89,7 @@ D3D12_VERTEX_BUFFER_VIEW* Mesh::VertexBufferView()
 	return &mVBV;
 }
 
-D3D12_INDEX_BUFFER_VIEW* Mesh::IndexBufferView()
+D3D12_INDEX_BUFFER_VIEW* MeshData::IndexBufferView()
 {
 	if (indices.size() == 0) {
 		Log::Error("Empty vertex buffer");
@@ -120,38 +106,7 @@ D3D12_INDEX_BUFFER_VIEW* Mesh::IndexBufferView()
 	return &mIBV;
 }
 
-XMMATRIX Mesh::getWorldMatrix() {
-	auto r = translation->rotation;
-	auto rX = XMMatrixRotationX(r.x / 6.28f);
-	auto rY = XMMatrixRotationY(r.y / 6.28f);
-	auto rZ = XMMatrixRotationZ(r.z / 6.28f);
-	
-
-	auto rotationMatrix = XMMatrixRotationRollPitchYawFromVector(
-		XMVectorSet(
-			translation->rotation.x,
-			translation->rotation.y,
-			translation->rotation.z,
-			1
-		)/6.28f);
-	auto scaleMatrix = XMMatrixScalingFromVector(
-		XMVectorSet(
-			translation->scale.x,
-			translation->scale.y,
-			translation->scale.z,
-			1
-		));
-	auto translationMatrix = XMMatrixTranslationFromVector(
-		XMVectorSet(
-			translation->position.x,
-			translation->position.y,
-			translation->position.z,
-			1
-		));
-	return translationMatrix * scaleMatrix * rotationMatrix;
-}
-
-void Mesh::UploadVertices() {
+void MeshData::UploadVertices() {
 	auto renderer = Singleton<XIIRenderer>::Get();
 
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(vertices[0]);

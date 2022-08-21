@@ -4,7 +4,6 @@
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
 
-
 #include <DirectXColors.h>
 #include <windows.h>
 #include <WindowsX.h>
@@ -31,8 +30,8 @@
 
 #include "../Renderer/SphereCamera.h"
 
-using namespace DirectX;
 
+using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 class Mesh;
@@ -45,7 +44,6 @@ class XIIRenderer
 public:
 
 	bool Init(HINSTANCE);
-
 	//Upload
 	void UploadObjectCB(Mesh* mesh);
 	void UploadPassCB();

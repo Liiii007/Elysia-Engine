@@ -37,3 +37,15 @@ public:
 		return returnComponent;
 	}
 };
+
+#ifndef FullComponentHeader
+#define FullComponentHeader \
+    #include <Component/Light.h> \
+
+#endif // !FullComponentHeader
+
+#ifndef FullComponentClass
+#define FullComponentClass \
+	class Light;\
+
+#endif

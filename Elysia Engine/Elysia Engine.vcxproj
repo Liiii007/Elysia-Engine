@@ -131,11 +131,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Components\FullComponentClass.h" />
+    <ClInclude Include="Components\FullComponentHeader.h" />
     <ClInclude Include="Components\Light.h" />
     <ClInclude Include="Components\MeshRenderer\Material.h" />
     <ClInclude Include="Components\MeshRenderer\Mesh.h" />
     <ClInclude Include="Components\Translation.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Resources\MeshData.h" />
+    <ClInclude Include="Resources\ResourceManager.h" />
+    <ClInclude Include="System\FullSystemHeader.h" />
     <ClInclude Include="Interface\ComponentBase.h" />
     <ClInclude Include="Interface\ICommand.h" />
     <ClInclude Include="Interface\IComponent.h" />
@@ -154,7 +159,6 @@
     <ClInclude Include="Tools\Common\d3dx12.h" />
     <ClInclude Include="Tools\Common\DDSTextureLoader.h" />
     <ClInclude Include="Tools\Common\GameTimer.h" />
-    <ClInclude Include="Tools\Common\GeometryGenerator.h" />
     <ClInclude Include="Tools\Common\MathHelper.h" />
     <ClInclude Include="Tools\Common\UploadBuffer.h" />
     <ClInclude Include="Tools\Delegate.h" />
@@ -170,6 +174,9 @@
     <ClCompile Include="Components\MeshRenderer\Mesh.cpp" />
     <ClCompile Include="Components\Translation.cpp" />
     <ClCompile Include="Elysia Engine.cpp" />
+    <ClCompile Include="Resources\MeshData.cpp" />
+    <ClCompile Include="Resources\ResourceManager.cpp" />
+    <ClCompile Include="System\FullSystemHeader.cpp" />
     <ClCompile Include="Interface\ComponentBase.cpp" />
     <ClCompile Include="Interface\ICommand.cpp" />
     <ClCompile Include="Interface\IComponent.cpp" />
@@ -185,7 +192,6 @@
     <ClCompile Include="Tools\Common\d3dUtil.cpp" />
     <ClCompile Include="Tools\Common\DDSTextureLoader.cpp" />
     <ClCompile Include="Tools\Common\GameTimer.cpp" />
-    <ClCompile Include="Tools\Common\GeometryGenerator.cpp" />
     <ClCompile Include="Tools\Common\MathHelper.cpp" />
     <ClCompile Include="Tools\Delegate.cpp" />
     <ClCompile Include="Tools\Logger.cpp" />

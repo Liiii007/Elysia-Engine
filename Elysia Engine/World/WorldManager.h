@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "../Components/Translation.h"
-#include "../Interface/ISerializable.h"
-#include "../Tools/JSONHandler.h"
+#include <Components/Translation.h>
+#include <Interface/ISerializable.h>
+#include <Tools/JSONHandler.h>
 #include "Entity.h"
 
 

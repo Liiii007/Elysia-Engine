@@ -15,6 +15,11 @@ public:
 	}
 	~Entity() = default;
 
+	static Entity& New(std::string name) {
+		Entity* newEntity = new Entity(name);
+		return *newEntity;
+	}
+
 	Entity& SetLocation(float x, float y, float z) {
 		translation.position = XMFLOAT3{ x,y,z };
 		return *this;

@@ -56,6 +56,10 @@ public:
 		shaders[name] = this;
 	}
 
+	static void New(const std::wstring& filename, const std::string name) {
+		Shader* newShader = new Shader(filename, name);
+	}
+
 	void Build();
 	void SetInputLayout();
 	void BuildPSO();

@@ -1,8 +1,9 @@
 #pragma once
 #include "SystemBase.h"
-#include "../Components/Light.h"
 
-#include "../World/Entity.h"
+#include <World/Entity.h>
+#include <Components/FullComponentHeader.h>
+
 
 class LightMoveSystem : public SystemBase {
 public:
@@ -17,6 +18,6 @@ public:
 		return;
 	}
 
-	float moveSpeed = 0.1;
+	float moveSpeed = 0.1f;
 };
 

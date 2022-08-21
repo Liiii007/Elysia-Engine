@@ -4,8 +4,9 @@
 #include "../System/MeshRenderer.h"
 #include "../Tools/Singleton.h"
 #include "../System/InputSystem.h"
-#include "../Components/Light.h"
-#include "../System/SystemBase.h"
+#include <Components/FullComponentHeader.h>
+#include <System/SystemBase.h>
+
 
 
 LRESULT CALLBACK
@@ -430,9 +431,7 @@ void XIIRenderer::ClearForNextFrame() {
 
 
 void XIIRenderer::Update() {
-	for (auto& system : SystemBase::systems) {
-		system->Tick();
-	}
+	
 }
 
 void XIIRenderer::UploadPassCB() {

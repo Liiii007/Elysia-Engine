@@ -26,5 +26,11 @@ public:
 	}
 
 	static std::vector<SystemBase*> systems;
+
+	static void SystemTick() {
+		for (auto& system : systems) {
+			system->Tick();
+		}
+	}
 };
 

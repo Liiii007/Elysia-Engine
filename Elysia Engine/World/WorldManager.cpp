@@ -1,10 +1,28 @@
 #include "WorldManager.h"
 
+#include <Components/FullComponentHeader.h>
+#include <Renderer/Shader.h>
+
 bool WorldManager::Init() {
-	//FIXED:º”‘ÿƒ£–Õ
-	
-	//entities.emplace_back(Entity());
-	//entities.emplace_back(Entity());
+	Entity::New("e2")
+		.SetLocation(0, 0, 0)
+		.SetRotation(-90, 90, 0)
+		.AppendComponent<Mesh>()
+		.AppendComponent<Material>()
+		.GetComponent<Mesh>()
+			->Init("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Model\\dawei.fbx")
+			->ReturnParentEntity()
+		.GetComponent<Material>()
+			->SetShader(Shader::shaders["initShader"])
+		;
+
+	Entity::New("eLight")
+		.SetLocation(3, 3, 3)
+		.AppendComponent<Light>()
+		.GetComponent<Light>()
+			->SetTarget(XMFLOAT3(0, 0, 0))
+			->ReturnParentEntity();
+
 	return true;
 }
 

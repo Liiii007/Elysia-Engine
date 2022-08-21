@@ -1,12 +1,14 @@
 #include "framework.h"
 #include "Renderer/XIIRenderer.h"
 #include "World/WorldManager.h"
-#include "Renderer/Shader.h"
+#include "Resources/ResourceManager.h"
 
 #include "World/Entity.h"
 #include "Tools/Logger.h"
 #include "Components/Light.h"
 #include "System/LightMoveSystem.h"
+#include <assimp/ai_assert.h>
+
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -19,36 +21,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     try
     {
-        Shader initShader = Shader(L"D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Renderer\\Shaders\\normal.hlsl", "initShader");
-        //Shader normalShader = Shader(L"C:\\Users\\LiYU\\source\\repos\\LiquidEngine\\LiquidEngine\\Renderer\\Shaders\\normal.hlsl", "normalShader");
+        Singleton<ResourceManager>::Get()->Init();
+        Singleton<WorldManager>::Get()->Init();
+        Singleton<XIIRenderer>::Get()->Init(hInstance);
+        
 
         //System Test
         LightMoveSystem system1;
 
-        Entity e2("e2");
-        e2.AppendComponent<Mesh>()
-            .AppendComponent<Material>()
-            .SetLocation(0, 0, 0)
-            .SetRotation(-90, 90, 0);
-
-        e2.GetComponent<Mesh>()->Init("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Model\\dawei.fbx");
-        e2.GetComponent<Material>()->SetShader(&initShader);
-
-        Entity eLight("eLight");
-        eLight
-            .SetLocation(3, 3, 3)
-            .AppendComponent<Light>()
-            .GetComponent<Light>()
-            ->SetTarget(XMFLOAT3(0, 0, 0))
-            ->ReturnParentEntity()
-            ;
-
-        Singleton<XIIRenderer>::Get()->Init(hInstance);
-
-        auto a = Log::GetLogs();
-
-        //Tick
+        //Main Tick
         while (true) {
+            SystemBase::SystemTick();
             Singleton<XIIRenderer>::Get()->RenderTick();
         }
     }

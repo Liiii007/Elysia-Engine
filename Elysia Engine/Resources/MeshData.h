@@ -10,9 +10,7 @@
 #include <assimp/scene.h>
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/LogStream.hpp>
-#include "Components/Translation.h"
 #include "Tools/Logger.h"
-#include "Interface/ComponentBase.h"
 
 #include <DirectXColors.h>
 #include <windows.h>
@@ -20,8 +18,7 @@
 #include <wrl.h>
 #include <dxgi1_4.h>
 #include <d3d12.h>
-
-
+#include <unordered_map>
 
 using UINT = unsigned int;
 
@@ -30,31 +27,23 @@ using Microsoft::WRL::ComPtr;
 class MeshRenderer;
 class Entity;
 
-struct Vertex {
+struct Vertex1 {
 	DirectX::XMFLOAT3 Position;
 	DirectX::XMFLOAT3 Normal;
 	DirectX::XMFLOAT2 Texcoord;
 };
 
-class Mesh : public ComponentBase
+class MeshData
 {
 public:
-	Mesh(Entity* entity);
-	~Mesh();
+	MeshData(std::string meshPath);
 
-	Mesh* Init(std::string meshPath);
-	Entity& ReturnParentEntity();//Same as above
-
-	//Note:the translation inherit from parent Entity
-	Translation* translation;
-	std::vector<Vertex> vertices;
-	std::vector<float> normals;
+	std::vector<Vertex1> vertices;
 	std::vector<uint16_t> indices;
 
 	//Getter for member varient
-	std::vector<Vertex>* getVertices();
+	std::vector<Vertex1>* getVertices();
 	std::vector<uint16_t>* getIndices();
-	XMMATRIX getWorldMatrix();
 	D3D12_VERTEX_BUFFER_VIEW* VertexBufferView();
 	D3D12_INDEX_BUFFER_VIEW* IndexBufferView();
 
@@ -74,11 +63,12 @@ public:
 
 	std::string path;
 	UINT mObjectIndex;
-	static std::string componentName;
+	static std::unordered_map<std::string, MeshData*> meshs;
 
 private:
 	D3D12_VERTEX_BUFFER_VIEW mVBV;
 	D3D12_INDEX_BUFFER_VIEW mIBV;
 
 };
+
 
