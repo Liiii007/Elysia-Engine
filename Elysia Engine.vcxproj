@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{3263ccbe-b997-4c06-b52e-04f3f55a1f9a}</ProjectGuid>
-    <RootNamespace>LiquidEngine</RootNamespace>
+    <ProjectGuid>{fe27085e-fe13-4b5d-8148-3d63a5ffcfd7}</ProjectGuid>
+    <RootNamespace>ElysiaEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -71,18 +71,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Dependency\includes;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Working\VS Projects\Elysia Engine;D:\Dependency\includes;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Dependency\libs;$(LibraryPath)</LibraryPath>
+    <SourcePath>D:\Working\VS Projects\Elysia Engine;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -92,11 +93,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -106,21 +107,15 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
-      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>rttr_core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>rttr_core_d.dll;assimp-vc143-mt.dll;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <FxCompile>
-      <ShaderType>Effect</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -128,32 +123,68 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Components\MeshRenderer\Material.h" />
-    <ClInclude Include="Interface\ComponentBase.h" />
-    <ClInclude Include="Interface\IComponent.h" />
+    <ClCompile Include="Components\Light.cpp" />
+    <ClCompile Include="Components\MeshRenderer\Material.cpp" />
+    <ClCompile Include="Components\MeshRenderer\Mesh.cpp" />
+    <ClCompile Include="Components\Translation.cpp" />
+    <ClCompile Include="ElysiaEngine\ElysiaEngine.cpp" />
+    <ClCompile Include="Interface\ComponentBase.cpp" />
+    <ClCompile Include="Interface\ICommand.cpp" />
+    <ClCompile Include="Interface\IComponent.cpp" />
+    <ClCompile Include="Interface\ISerializable.cpp" />
+    <ClCompile Include="Renderer\Shader.cpp" />
+    <ClCompile Include="Renderer\Skybox.cpp" />
+    <ClCompile Include="Renderer\SphereCamera.cpp" />
+    <ClCompile Include="Renderer\XIIRenderer.cpp" />
+    <ClCompile Include="System\InputSystem.cpp" />
+    <ClCompile Include="System\LightMoveSystem.cpp" />
+    <ClCompile Include="System\MeshRenderer.cpp" />
+    <ClCompile Include="System\SystemBase.cpp" />
+    <ClCompile Include="Tools\Common\d3dUtil.cpp" />
+    <ClCompile Include="Tools\Common\DDSTextureLoader.cpp" />
+    <ClCompile Include="Tools\Common\GameTimer.cpp" />
+    <ClCompile Include="Tools\Common\GeometryGenerator.cpp" />
+    <ClCompile Include="Tools\Common\MathHelper.cpp" />
+    <ClCompile Include="Tools\Delegate.cpp" />
+    <ClCompile Include="Tools\JSONHandler.cpp" />
+    <ClCompile Include="Tools\Logger.cpp" />
+    <ClCompile Include="Tools\MeshImporter.cpp" />
+    <ClCompile Include="Tools\Publisher.cpp" />
+    <ClCompile Include="Tools\Singleton.cpp" />
+    <ClCompile Include="World\Entity.cpp" />
+    <ClCompile Include="World\WorldManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="Components\Light.h" />
-    <ClInclude Include="System\LightMoveSystem.h" />
-    <ClInclude Include="System\SystemBase.h" />
-    <ClInclude Include="Tools\MeshImporter.h" />
-    <ClInclude Include="Tools\Logger.h" />
-    <ClInclude Include="World\Entity.h" />
-    <ClInclude Include="Renderer\SphereCamera.h" />
-    <ClInclude Include="System\MeshRenderer.h" />
+    <ClInclude Include="Components\MeshRenderer\Material.h" />
     <ClInclude Include="Components\MeshRenderer\Mesh.h" />
+    <ClInclude Include="Components\Translation.h" />
+    <ClInclude Include="ElysiaEngine\ElysiaEngine.h" />
+    <ClInclude Include="ElysiaEngine\framework.h" />
+    <ClInclude Include="ElysiaEngine\targetver.h" />
+    <ClInclude Include="Interface\ComponentBase.h" />
+    <ClInclude Include="Interface\ICommand.h" />
+    <ClInclude Include="Interface\IComponent.h" />
+    <ClInclude Include="Interface\ISerializable.h" />
     <ClInclude Include="Renderer\Shader.h" />
     <ClInclude Include="Renderer\Skybox.h" />
-    <ClInclude Include="Tools\Singleton.h" />
+    <ClInclude Include="Renderer\SphereCamera.h" />
+    <ClInclude Include="Renderer\XIIRenderer.h" />
+    <ClInclude Include="System\InputSystem.h" />
+    <ClInclude Include="System\LightMoveSystem.h" />
+    <ClInclude Include="System\MeshRenderer.h" />
+    <ClInclude Include="System\SystemBase.h" />
     <ClInclude Include="Tools\Common\d3dUtil.h" />
     <ClInclude Include="Tools\Common\d3dx12.h" />
     <ClInclude Include="Tools\Common\DDSTextureLoader.h" />
@@ -162,63 +193,13 @@
     <ClInclude Include="Tools\Common\MathHelper.h" />
     <ClInclude Include="Tools\Common\UploadBuffer.h" />
     <ClInclude Include="Tools\Delegate.h" />
-    <ClInclude Include="ElysiaEngine\framework.h" />
-    <ClInclude Include="Interface\ICommand.h" />
-    <ClInclude Include="Tools\Publisher.h" />
-    <ClInclude Include="System\InputSystem.h" />
-    <ClInclude Include="Interface\ISerializable.h" />
     <ClInclude Include="Tools\JSONHandler.h" />
-    <ClInclude Include="ElysiaEngine\ElysiaEngine.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="ElysiaEngine\targetver.h" />
-    <ClInclude Include="Components\Translation.h" />
+    <ClInclude Include="Tools\Logger.h" />
+    <ClInclude Include="Tools\MeshImporter.h" />
+    <ClInclude Include="Tools\Publisher.h" />
+    <ClInclude Include="Tools\Singleton.h" />
+    <ClInclude Include="World\Entity.h" />
     <ClInclude Include="World\WorldManager.h" />
-    <ClInclude Include="Renderer\XIIRenderer.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Components\MeshRenderer\Material.cpp" />
-    <ClCompile Include="Interface\ComponentBase.cpp" />
-    <ClCompile Include="Interface\IComponent.cpp" />
-    <ClCompile Include="Components\Light.cpp" />
-    <ClCompile Include="System\LightMoveSystem.cpp" />
-    <ClCompile Include="System\SystemBase.cpp" />
-    <ClCompile Include="Tools\MeshImporter.cpp" />
-    <ClCompile Include="Tools\Logger.cpp" />
-    <ClCompile Include="World\Entity.cpp" />
-    <ClCompile Include="Renderer\SphereCamera.cpp" />
-    <ClCompile Include="System\MeshRenderer.cpp" />
-    <ClCompile Include="Components\MeshRenderer\Mesh.cpp" />
-    <ClCompile Include="Renderer\Shader.cpp" />
-    <ClCompile Include="Renderer\Skybox.cpp" />
-    <ClCompile Include="Tools\Singleton.cpp" />
-    <ClCompile Include="Tools\Common\d3dUtil.cpp" />
-    <ClCompile Include="Tools\Common\DDSTextureLoader.cpp" />
-    <ClCompile Include="Tools\Common\GameTimer.cpp" />
-    <ClCompile Include="Tools\Common\GeometryGenerator.cpp" />
-    <ClCompile Include="Tools\Common\MathHelper.cpp" />
-    <ClCompile Include="Tools\Delegate.cpp" />
-    <ClCompile Include="Interface\ICommand.cpp" />
-    <ClCompile Include="Tools\Publisher.cpp" />
-    <ClCompile Include="System\InputSystem.cpp" />
-    <ClCompile Include="Interface\ISerializable.cpp" />
-    <ClCompile Include="Tools\JSONHandler.cpp" />
-    <ClCompile Include="ElysiaEngine\ElysiaEngine.cpp" />
-    <ClCompile Include="Components\Translation.cpp" />
-    <ClCompile Include="World\WorldManager.cpp" />
-    <ClCompile Include="Renderer\XIIRenderer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resources\icon\LiquidEngine.ico" />
-    <Image Include="Resources\icon\small.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Components\README.md" />
-    <None Include="Resources\Model\box.fbx" />
-    <None Include="Resources\Model\dawei.fbx" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Renderer\Shaders\color.hlsl" />
-    <FxCompile Include="Renderer\Shaders\normal.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

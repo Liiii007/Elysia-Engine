@@ -6,7 +6,7 @@
 #include <rapidjson/document.h>
 #include "rapidjson/filereadstream.h"
 #include <rapidjson/filewritestream.h>
-
+#pragma warning(disable:4996)
 
 using namespace rapidjson;
 

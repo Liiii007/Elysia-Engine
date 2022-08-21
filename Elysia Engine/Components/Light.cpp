@@ -1,5 +1,5 @@
 #include "Light.h"
-#include "../../World/Entity.h"
+#include "World/Entity.h"
 
 std::string Light::componentName = "Light";
 

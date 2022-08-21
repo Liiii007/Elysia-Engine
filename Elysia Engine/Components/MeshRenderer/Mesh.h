@@ -10,9 +10,9 @@
 #include <assimp/scene.h>
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/LogStream.hpp>
-#include "../../Components/Translation.h"
-#include "../../Tools/Logger.h"
-#include "../../Interface/ComponentBase.h"
+#include "Components/Translation.h"
+#include "Tools/Logger.h"
+#include "Interface/ComponentBase.h"
 
 #include <DirectXColors.h>
 #include <windows.h>
@@ -20,7 +20,7 @@
 #include <wrl.h>
 #include <dxgi1_4.h>
 #include <d3d12.h>
-#include <rttr/type.h>
+
 
 
 using UINT = unsigned int;

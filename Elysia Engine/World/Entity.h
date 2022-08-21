@@ -1,9 +1,10 @@
 #pragma once
-#include "../Components/Translation.h"
-#include "../Components/MeshRenderer/Mesh.h"
-#include "../Components/MeshRenderer/Material.h"
-#include "../Interface/IComponent.h"
+#include "Components/Translation.h"
+#include "Components/MeshRenderer/Mesh.h"
+#include "Components/MeshRenderer/Material.h"
+#include <Interface/IComponent.h>
 #include <any>
+#include <unordered_map>
 
 class Entity
 {

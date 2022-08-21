@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include <any>
+#include <Tools/Logger.h>
 
 class Entity;
 

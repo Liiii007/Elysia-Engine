@@ -31,9 +31,6 @@
 
 #include "../Renderer/SphereCamera.h"
 
-#include <rttr/registration>
-
-
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
@@ -42,7 +39,6 @@ class Mesh;
 class Shader;
 struct ObjectConstants;
 struct PassConstants;
-
 
 class XIIRenderer
 {

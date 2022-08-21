@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
-#include "../Tools/Singleton.h"
+#include <Tools/Singleton.h>
 
 namespace Log {
 
