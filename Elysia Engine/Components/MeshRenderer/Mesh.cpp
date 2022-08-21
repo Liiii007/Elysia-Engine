@@ -18,6 +18,18 @@ Mesh::Mesh(Entity* entity) :ComponentBase(entity) {
 	this->translation = &parentEntity->translation;
 }
 
+void Mesh::Bind() {
+	ComponentBase::initList["Mesh"] = &Parse;
+}
+
+void Mesh::Parse(Entity& entity, const rapidjson::Value& parm) {
+	using namespace rapidjson;
+	std::string componentInitParm = parm.GetString();
+	entity.AppendComponent<Mesh>()
+		.GetComponent<Mesh>()
+		->Init(componentInitParm);
+}
+
 Mesh* Mesh::Init(std::string meshPath) {
 	MeshRenderer::getMeshList()->push_back(this);
 	if (LoadFromDisk(meshPath)) {

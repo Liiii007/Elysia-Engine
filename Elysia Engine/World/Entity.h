@@ -25,7 +25,7 @@ public:
 		return *this;
 	}
 
-	Entity& SetLocation(XMFLOAT3 position) {
+	Entity& SetLocation(const XMFLOAT3& position) {
 		translation.position = position;
 		return *this;
 	}
@@ -35,13 +35,23 @@ public:
 		return *this;
 	}
 
-	Entity& setScale(float scale) {
+	Entity& SetRotation(const XMFLOAT3& rotation) {
+		translation.rotation = rotation;
+		return *this;
+	}
+
+	Entity& SetUniformScale(float scale) {
 		translation.scale = XMFLOAT3{ scale,scale,scale };
 		return *this;
 	}
 
-	Entity& setScale(float x, float y, float z) {
+	Entity& SetScale(float x, float y, float z) {
 		translation.scale = XMFLOAT3{ x,y,z };
+		return *this;
+	}
+
+	Entity& SetScale(const XMFLOAT3& scale) {
+		translation.scale = scale;
 		return *this;
 	}
 

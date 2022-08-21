@@ -6,7 +6,13 @@
 - Material->与Shader联动，存有物体的材质信息（待扩展）
 - Light->场景中的灯光定义，目前为平行光
 
-## 新建一个组件
+
+
+## 使用 `AutoComponentGenerater.py` 脚本自动创建组件
+
+运行后输入组件名字即可
+
+## 手动创建组件
 
 假设组件名为T
 
@@ -28,6 +34,11 @@ public:
 	T(Entity* entity);
 	static std::string componentName;
 	std::string name;
+
+	//Regist to reflect
+	static void Bind();
+	//Parse init data from json file
+	static void Parse(Entity& entity, const rapidjson::Value& parm);
 	
     //optional
     ReturnType GetValue();
@@ -43,9 +54,19 @@ public:
 //Note:For dependent component, include X.h here, define "class X;" in T.h
 
 //Required
+#include "T.h"
 #include "../../World/Entity.h"
+
 std::string T::componentName = "T";
 T::T(Entity* entity) : ComponentBase(entity) {}
+
+void T::Bind() {
+	ComponentBase::initList[componentName] = &Parse;
+}
+
+void T::Parse(Entity& entity, const rapidjson::Value& parm) {
+	//Parse logic
+}
 
 //Optional
 T* T::SetValue(value) {
@@ -57,3 +78,4 @@ Entity& T::ReturnParentEntity() {
 	return *parentEntity;//Define in ComponentBase.h
 }
 ```
+随后手动include或是加入 `FullComponentClass.h` 和 `FullComponentHeader.h` 进行自动include即可使用

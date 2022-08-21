@@ -141,6 +141,7 @@
     <ClInclude Include="Components\Light\SpotLight.h" />
     <ClInclude Include="Components\Translation.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Tools\Reflect.h" />
     <ClInclude Include="Resources\MeshData.h" />
     <ClInclude Include="Resources\ResourceManager.h" />
     <ClInclude Include="System\FullSystemHeader.h" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Tools\Common\MathHelper.h" />
     <ClInclude Include="Tools\Common\UploadBuffer.h" />
     <ClInclude Include="Tools\Delegate.h" />
+    <ClInclude Include="Tools\JSONHandler.h" />
     <ClInclude Include="Tools\Logger.h" />
     <ClInclude Include="Tools\Publisher.h" />
     <ClInclude Include="Tools\Singleton.h" />
@@ -180,6 +182,7 @@
     <ClCompile Include="Components\Light\SpotLight.cpp" />
     <ClCompile Include="Components\Translation.cpp" />
     <ClCompile Include="Elysia Engine.cpp" />
+    <ClCompile Include="Tools\Reflect.cpp" />
     <ClCompile Include="Resources\MeshData.cpp" />
     <ClCompile Include="Resources\ResourceManager.cpp" />
     <ClCompile Include="System\FullSystemHeader.cpp" />
@@ -200,6 +203,7 @@
     <ClCompile Include="Tools\Common\GameTimer.cpp" />
     <ClCompile Include="Tools\Common\MathHelper.cpp" />
     <ClCompile Include="Tools\Delegate.cpp" />
+    <ClCompile Include="Tools\JSONHandler.cpp" />
     <ClCompile Include="Tools\Logger.cpp" />
     <ClCompile Include="Tools\Publisher.cpp" />
     <ClCompile Include="Tools\Singleton.cpp" />

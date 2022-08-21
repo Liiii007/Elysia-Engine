@@ -10,10 +10,10 @@
 #include <vector>
 #include <array>
 #include <unordered_map>
-#include "../Tools/Common/d3dUtil.h"
+#include "Tools/Common/d3dUtil.h"
 
-#include "../../Interface/IComponent.h"
-#include "../../Interface/ComponentBase.h"
+#include "Interface/IComponent.h"
+#include "Interface/ComponentBase.h"
 
 using namespace DirectX;
 
@@ -29,8 +29,13 @@ public:
 
 	Light(Entity* entity);
 
-	Light* SetPosition(XMFLOAT3 position);
-	Light* SetTarget(XMFLOAT3 direction);
+	//Regist to reflect
+	static void Bind();
+	//Parse init data from json file
+	static void Parse(Entity& entity, const rapidjson::Value& parm);
+
+	Light* SetPosition  (const XMFLOAT3& position);
+	Light* SetTarget    (const XMFLOAT3& direction);
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetDirection();
 

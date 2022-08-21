@@ -40,8 +40,15 @@ public:
 	Mesh(Entity* entity);
 	~Mesh();
 
+	//Regist to reflect
+	static void Bind();
+
+	//Parse init data from json file
+	static void Parse(Entity& entity, const rapidjson::Value& parm);
+
+	//Actual Init
 	Mesh* Init(std::string meshPath);
-	Entity& ReturnParentEntity();//Same as above
+	Entity& ReturnParentEntity();
 
 	//Note:the translation inherit from parent Entity
 	Translation* translation;
@@ -62,6 +69,7 @@ public:
 	//Upload Vertices to GPU, called by XIIRenderer
 	void UploadVertices();
 
+	//DX12 Resources
 	ComPtr<ID3DBlob> VertexBufferCPU;
 	ComPtr<ID3DBlob> IndexBufferCPU;
 	ComPtr<ID3D12Resource> VertexBufferGPU;

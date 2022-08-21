@@ -132,6 +132,12 @@
     <ClInclude Include="Components\Light\DirectLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Tools\JSONHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Reflect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Elysia Engine.cpp">
@@ -231,6 +237,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Components\Light\DirectLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\JSONHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Reflect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

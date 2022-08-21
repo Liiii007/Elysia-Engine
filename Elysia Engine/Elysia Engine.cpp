@@ -7,8 +7,9 @@
 #include "Tools/Logger.h"
 #include "Components/Light.h"
 #include "System/LightMoveSystem.h"
-#include <assimp/ai_assert.h>
 
+#include "Tools/JSONHandler.h"
+#include "Tools/Reflect.h"
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -20,11 +21,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
     try
-    {
+    {  
+        Reflect::Init();
+
         Singleton<ResourceManager>::Get()->Init();
         Singleton<WorldManager>::Get()->Init();
         Singleton<XIIRenderer>::Get()->Init(hInstance);
-        
 
         //System Test
         LightMoveSystem system1;

@@ -14,7 +14,7 @@ class JSONHandler {
 public:
 
 	//Read json from file
-	static Document load(std::string path) {
+	Document load(std::string path) {
 		if (path.empty()) {
 			return NULL;
 		}
@@ -24,8 +24,8 @@ public:
 
 		fp = fopen(path.c_str(), "r");
 		if (fp == 0) return d;
-		char readBuffer[65536];
-		FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+
+		FileReadStream is(fp, buffer, sizeof(buffer));
 		d.ParseStream(is);
 		fclose(fp);
 
@@ -33,7 +33,7 @@ public:
 	}
 
 	//write json to file
-	static bool save(std::string path, const Document& d) {
+	bool save(std::string path, const Document& d) {
 		if (path.empty()) return false;
 
 		
@@ -41,8 +41,7 @@ public:
 
 		if (fp == 0) return false;
 
-		char writeBuffer[65536];
-		FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
+		FileWriteStream os(fp, buffer, sizeof(buffer));
 
 		Writer<FileWriteStream> writer(os);
 		d.Accept(writer);
@@ -51,5 +50,7 @@ public:
 
 		return true;
 	}
+
+	char buffer[65536];
 };
 

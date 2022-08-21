@@ -7,12 +7,29 @@ Light::Light(Entity* entity) : ComponentBase(entity) {
 
 }
 
-Light* Light::SetPosition(XMFLOAT3 position) {
+void Light::Bind() {
+	ComponentBase::initList[componentName] = &Parse;
+}
+
+void Light::Parse(Entity& entity, const rapidjson::Value& parm) {
+	const XMFLOAT3 target{
+		parm[0].GetFloat(),
+		parm[1].GetFloat(),
+		parm[2].GetFloat(),
+	};
+
+	entity.AppendComponent<Light>()
+		.GetComponent<Light>()
+		->SetTarget(target);
+}
+
+
+Light* Light::SetPosition(const XMFLOAT3& position) {
 	mPosition = position;
 	return this;
 }
 
-Light* Light::SetTarget(XMFLOAT3 target) {
+Light* Light::SetTarget(const XMFLOAT3& target) {
 	mTarget = target;
 	return this;
 }

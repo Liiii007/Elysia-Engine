@@ -8,6 +8,17 @@ Material::Material(Entity* entity) : ComponentBase(entity) {
 
 }
 
+void Material::Bind() {
+	ComponentBase::initList[Material::componentName] = &Parse;
+}
+
+void Material::Parse(Entity& entity, const rapidjson::Value& parm) {
+	std::string componentInitParm = parm.GetString();
+	entity.AppendComponent<Material>()
+		.GetComponent<Material>()
+		->SetShader(Shader::shaders[componentInitParm]);
+}
+
 Shader* Material::getShader() {
 	return shader;
 }

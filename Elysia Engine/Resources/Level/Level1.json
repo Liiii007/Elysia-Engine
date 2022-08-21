@@ -1,0 +1,41 @@
+{
+    "Name" : "Level1",
+    "Entities" : [
+        {
+            "Name" : "e1",
+            "Location" : [0,0,0],
+            "Rotation" : [-90,90,0],
+            "Scale" : [1,1,1],
+
+            "Components" : [
+                {
+                    "Type":"Mesh",
+                    "Parm":"D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Model\\dawei.fbx"
+                },
+                {
+                    "Type":"Material",
+                    "Parm":"initShader"
+                }
+            ]
+        },
+        {
+            "Name" : "eLight",
+            "Location" : [3,3,3],
+            "Rotation" : [0,0,0],
+            "Scale" : [1,1,1],
+
+            "Components" : [
+                {
+                    "Type":"Light",
+                    "Parm":[1,0,0]
+                }
+            ]
+        }
+
+    ],
+
+    "System" : {
+        "Type" : "LightMove"
+    }
+
+}

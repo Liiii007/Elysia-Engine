@@ -3,26 +3,71 @@
 #include <Components/FullComponentHeader.h>
 #include <Renderer/Shader.h>
 
+
 bool WorldManager::Init() {
 
-	Entity::New("e2")
-		.SetLocation(0, 0, 0)
-		.SetRotation(-90, 90, 0)
-		.AppendComponent<Mesh>()
-		.AppendComponent<Material>()
-		.GetComponent<Mesh>()
-			->Init("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Model\\dawei.fbx")
-			->ReturnParentEntity()
-		.GetComponent<Material>()
-			->SetShader(Shader::shaders["initShader"])
-		;
+	JSONHandler hand{};
+	auto d = hand.load("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Level\\Level1.json");
 
-	Entity::New("eLight")
-		.SetLocation(3, 3, 3)
-		.AppendComponent<Light>()
-		.GetComponent<Light>()
-			->SetTarget(XMFLOAT3(0, 0, 0))
-			->ReturnParentEntity();
+	if (d.HasMember("Entities")) {
+
+		const Value& entities = d["Entities"];
+
+		for (auto& entity : entities.GetArray()) {
+
+			//Name
+			auto name = entity["Name"].GetString();
+			Entity::New(name);
+
+			if (Entity::entities[name] == nullptr) {
+				Log::Error("Entity not exist");
+				return false;
+			}
+
+			Entity& e = *(Entity::entities[name]);
+
+			//Translation
+			const Value& locationValue = entity["Location"];
+			const Value& rotationValue = entity["Rotation"];
+			const Value& scaleValue = entity["Scale"];
+			const XMFLOAT3 location{
+				locationValue[0].GetFloat(),
+				locationValue[1].GetFloat(),
+				locationValue[2].GetFloat()
+			};
+
+			const XMFLOAT3 rotation{
+				rotationValue[0].GetFloat(),
+				rotationValue[1].GetFloat(),
+				rotationValue[2].GetFloat()
+			};
+
+			const XMFLOAT3 scale{
+				scaleValue[0].GetFloat(),
+				scaleValue[1].GetFloat(),
+				scaleValue[2].GetFloat()
+			};
+			
+			e.SetLocation(location)
+			 .SetRotation(rotation)
+			 .SetScale(scale);
+
+			//Components
+			const Value& components = entity["Components"];
+
+			for (auto& component : components.GetArray()) {
+				const std::string componentName = component["Type"].GetString();
+				const Value& parm = component["Parm"];
+
+				if (ComponentBase::initList.find(componentName) == ComponentBase::initList.end()) {
+					Log::Error("Not contain required component");
+				}
+				else {
+					ComponentBase::initList[componentName](e, parm);
+				}
+			}
+		}
+	}
 
 	return true;
 }
@@ -36,7 +81,8 @@ inline void WorldManager::removeItem() {
 }
 
 bool WorldManager::load(std::string path) {
-	config = JSONHandler::load(path);
+	JSONHandler handler;
+	config = handler.load(path);
 
 	//check if load success
 	if (config.IsNull()) {
@@ -47,7 +93,9 @@ bool WorldManager::load(std::string path) {
 	return true;
 }
 bool WorldManager::save(std::string path) {
-	return JSONHandler::save(path, config);;
+	JSONHandler handler;
+
+	return handler.save(path, config);;
 }
 
 void WorldManager::changeItem(std::string name, int value) {
