@@ -4,6 +4,7 @@
 #include <Renderer/Shader.h>
 
 bool WorldManager::Init() {
+
 	Entity::New("e2")
 		.SetLocation(0, 0, 0)
 		.SetRotation(-90, 90, 0)

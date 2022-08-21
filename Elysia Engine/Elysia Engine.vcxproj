@@ -131,11 +131,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Components\Light\DirectLight.h" />
     <ClInclude Include="Components\FullComponentClass.h" />
     <ClInclude Include="Components\FullComponentHeader.h" />
     <ClInclude Include="Components\Light.h" />
     <ClInclude Include="Components\MeshRenderer\Material.h" />
     <ClInclude Include="Components\MeshRenderer\Mesh.h" />
+    <ClInclude Include="Components\Light\PointLight.h" />
+    <ClInclude Include="Components\Light\SpotLight.h" />
     <ClInclude Include="Components\Translation.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resources\MeshData.h" />
@@ -169,9 +172,12 @@
     <ClInclude Include="World\WorldManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Components\Light\DirectLight.cpp" />
     <ClCompile Include="Components\Light.cpp" />
     <ClCompile Include="Components\MeshRenderer\Material.cpp" />
     <ClCompile Include="Components\MeshRenderer\Mesh.cpp" />
+    <ClCompile Include="Components\Light\PointLight.cpp" />
+    <ClCompile Include="Components\Light\SpotLight.cpp" />
     <ClCompile Include="Components\Translation.cpp" />
     <ClCompile Include="Elysia Engine.cpp" />
     <ClCompile Include="Resources\MeshData.cpp" />
@@ -199,6 +205,9 @@
     <ClCompile Include="Tools\Singleton.cpp" />
     <ClCompile Include="World\Entity.cpp" />
     <ClCompile Include="World\WorldManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Components\AutoComponentGenerater.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
