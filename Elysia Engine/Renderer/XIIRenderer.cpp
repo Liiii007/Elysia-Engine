@@ -72,7 +72,7 @@ bool XIIRenderer::InitWindow() {
 		return false;
 	}
 
-	// Compute window rectangle dimensions based on requested client area dimensions.
+	//Window Size
 	RECT R = { 0, 0, mClientWidth, mClientHeight };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
 	int width = R.right - R.left;
@@ -82,6 +82,7 @@ bool XIIRenderer::InitWindow() {
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, mHInstance, 0);
 	if (!mhMainWnd)
 	{
+		Log::Error("CreateWindow Failed.");
 		MessageBox(0, L"CreateWindow Failed.", 0, 0);
 		return false;
 	}
@@ -214,6 +215,17 @@ void XIIRenderer::CreateDescHeaps() {
 	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
 		&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
 
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc;
+		srvHeapDesc.NumDescriptors = 1;
+		srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		srvHeapDesc.NodeMask = 0;
+		ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&srvHeapDesc,
+			IID_PPV_ARGS(&mSrvHeap)));
+	}
+	
+
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
 	cbvHeapDesc.NumDescriptors = 100;
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -221,6 +233,8 @@ void XIIRenderer::CreateDescHeaps() {
 	cbvHeapDesc.NodeMask = 0;
 	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&cbvHeapDesc,
 		IID_PPV_ARGS(&mCbvHeap)));
+
+
 }
 
 void XIIRenderer::CreatePassConstantBuffer() {
@@ -360,7 +374,7 @@ void XIIRenderer::OnResize() {
 	mScreenViewport.MinDepth = 0.0f;
 	mScreenViewport.MaxDepth = 1.0f;
 
-	mScissorRect = { 0, 0, mClientWidth, mClientHeight };
+	mScissorRect = { mClientWidth/2, 0, mClientWidth, mClientHeight };
 
 	// The window resized, so update the aspect ratio and recompute the projection matrix.
 	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, mClientWidth / mClientHeight, 1.0f, 1000.0f);

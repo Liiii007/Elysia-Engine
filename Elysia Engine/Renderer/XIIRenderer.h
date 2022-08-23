@@ -114,6 +114,7 @@ public:
 	ComPtr<ID3D12DescriptorHeap> mRtvHeap;
 	ComPtr<ID3D12DescriptorHeap> mDsvHeap;
 	ComPtr<ID3D12DescriptorHeap> mCbvHeap;
+	ComPtr<ID3D12DescriptorHeap> mSrvHeap;
 	
 	UINT mRtvDescriptorSize = 0;
 	UINT mDsvDescriptorSize = 0;
