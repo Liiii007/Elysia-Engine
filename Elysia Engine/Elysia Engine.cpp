@@ -6,16 +6,16 @@
 #include "Tools/Logger.h"
 #include "System/LightMoveSystem.h"
 
+#include <Editor/EditorUI.h>
+
 #include "Tools/JSONHandler.h"
 #include "Tools/Reflect.h"
 
+#define EDITOR_ENABLE
 
 // Entrypoint
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_ LPWSTR    lpCmdLine,
-    _In_ int       nCmdShow)
-{
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,_In_ int nCmdShow) {
+
     // Enable run-time memory check for debug builds.
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
@@ -26,6 +26,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         Singleton<ResourceManager>::Get()->Init();
         Singleton<WorldManager>::Get()->Init();
         Singleton<XIIRenderer>::Get()->Init(hInstance);
+
+#ifdef EDITOR_ENABLE
+        Singleton<EditorUI>::Get()->Init();
+#endif // EDITOR_ENABLE
 
         //System Test
         LightMoveSystem system1;

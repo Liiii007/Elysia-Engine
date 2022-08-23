@@ -1,24 +1,15 @@
 #include "XIIRenderer.h"
-#include "../World/Entity.h"
-#include "../Renderer/Shader.h"
-#include "../System/MeshRenderer.h"
-#include "../Tools/Singleton.h"
-#include "../System/InputSystem.h"
+#include <World/Entity.h>
+#include <Renderer/Shader.h>
 #include <Components/FullComponentHeader.h>
-#include <System/SystemBase.h>
+#include <System/FullSystemHeader.h>
 
-//imgui
-#include <Renderer/imgui/imgui.h>
-#include <Renderer/imgui/imgui_impl_win32.h>
-#include <Renderer/imgui/imgui_impl_dx12.h>
+#include <Editor/EditorUI.h>
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
-		return true;
 	return Singleton<InputSystem>::Get()->MsgProc(hwnd, msg, wParam, lParam);
 }
 
@@ -55,26 +46,7 @@ bool XIIRenderer::Init(HINSTANCE hInstance) {
 	// Wait until initialization is complete.
 	FlushCommandQueue();
 
-	//--------------START imgui
-
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
-
-	// Setup Platform/Renderer backends
-	ImGui_ImplWin32_Init(mhMainWnd);
-	ImGui_ImplDX12_Init(md3dDevice.Get(), mSwapChainBufferCount,
-		DXGI_FORMAT_R8G8B8A8_UNORM, mCbvHeap.Get(),
-		mSrvHeap.Get()->GetCPUDescriptorHandleForHeapStart(),
-		mSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
-
-	//-----------END imgui
+	
 	ShowWindow(mhMainWnd, SW_SHOW);
 	UpdateWindow(mhMainWnd);
 	return true;
@@ -398,7 +370,7 @@ void XIIRenderer::OnResize() {
 	mScreenViewport.MinDepth = 0.0f;
 	mScreenViewport.MaxDepth = 1.0f;
 
-	mScissorRect = { mClientWidth/2, 0, mClientWidth, mClientHeight };
+	mScissorRect = { 0, 0, mClientWidth, mClientHeight };
 
 	// The window resized, so update the aspect ratio and recompute the projection matrix.
 	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, mClientWidth / mClientHeight, 1.0f, 1000.0f);
@@ -568,50 +540,7 @@ int XIIRenderer::RenderTick() {
 		RenderItem(*it);
 	}
 
-	//--------------START imgui
-
-	bool show_demo_window = true;
-	bool show_another_window = false;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-	// Start the Dear ImGui frame
-	ImGui_ImplDX12_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
-	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if (show_demo_window)
-		ImGui::ShowDemoWindow(&show_demo_window);
-
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-	{
-		static float f = 0.0f;
-		static int counter = 0;
-
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);
-
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::End();
-	}
-
-	ImGui::Render();
-
-	// Render Dear ImGui graphics
-
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), mCommandList.Get());
-
-	//------------END imgui
+	Singleton<EditorUI>::Get()->Draw();
 	
 	RenderFrame();
 	mFrameCount++;

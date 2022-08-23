@@ -78,12 +78,7 @@ public:
 
 	template<typename T>
 	bool HasComponent() {
-		if (components[T::componentName]->get<T>() != nullptr) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return components[T::componentName]->is<T>();
 	}
 
 	Translation translation;

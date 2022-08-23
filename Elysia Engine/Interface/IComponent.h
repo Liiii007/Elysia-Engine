@@ -24,7 +24,7 @@ public:
 	}
 
 	template<typename T>
-	inline std::shared_ptr<T> get() {
+	std::shared_ptr<T> get() {
 		std::shared_ptr<T> returnComponent{ nullptr };
 		try {
 			returnComponent = std::any_cast<std::shared_ptr<T>>(component);
@@ -35,6 +35,17 @@ public:
 		}
 
 		return returnComponent;
+	}
+
+	template<typename T>
+	bool is() {
+		try {
+			std::any_cast<std::shared_ptr<T>>(component);
+			return true;
+		}
+		catch (const std::bad_any_cast& e) {
+			return false;
+		}
 	}
 };
 

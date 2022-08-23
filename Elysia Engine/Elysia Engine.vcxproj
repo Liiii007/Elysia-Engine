@@ -141,6 +141,7 @@
     <ClInclude Include="Components\Light\SpotLight.h" />
     <ClInclude Include="Components\Translation.h" />
     <ClInclude Include="EditorSystem.h" />
+    <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Renderer\imgui\imconfig.h" />
     <ClInclude Include="Renderer\imgui\imgui.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="Components\Light\SpotLight.cpp" />
     <ClCompile Include="Components\Translation.cpp" />
     <ClCompile Include="EditorSystem.cpp" />
+    <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Elysia Engine.cpp" />
     <ClCompile Include="Renderer\imgui\imgui.cpp" />
     <ClCompile Include="Renderer\imgui\imgui_demo.cpp" />

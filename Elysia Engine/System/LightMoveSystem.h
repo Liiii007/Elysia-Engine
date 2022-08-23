@@ -14,7 +14,7 @@ public:
 		if (pos.x > 10 || pos.x < -10) {
 			moveSpeed = -moveSpeed;
 		}
-		light->SetLocation(pos);
+		//light->SetLocation(pos);
 		return;
 	}
 
