@@ -1,22 +1,15 @@
 #pragma once
 
-#include<vector>
-#include<memory>
 #include <vector>
-#include <array>
+#include <memory>
 #include <string>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
-#include <assimp/DefaultLogger.hpp>
-#include <assimp/LogStream.hpp>
 #include "Tools/Logger.h"
 
 #include <DirectXColors.h>
-#include <windows.h>
-#include <WindowsX.h>
 #include <wrl.h>
-#include <dxgi1_4.h>
 #include <d3d12.h>
 #include <unordered_map>
 
