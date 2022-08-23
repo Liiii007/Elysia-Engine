@@ -3,6 +3,7 @@
 #include <memory>
 #include <any>
 #include <Tools/Logger.h>
+#include <Interface/ComponentBase.h>
 
 class Entity;
 
@@ -10,6 +11,7 @@ class IComponent {
 
 public:
 	std::any component;
+	std::shared_ptr<ComponentBase> basePtr;
 	bool enabled{ true };
 	std::string name;
 	Entity* parentEntity;
@@ -20,6 +22,8 @@ public:
 	void make(Entity* parentEntity) {
 		this->parentEntity = parentEntity;
 		std::shared_ptr<T> raw = std::make_shared<T>(parentEntity);
+		std::shared_ptr<ComponentBase> base{ raw.get() };
+		basePtr = std::move(base);
 		component = std::move(raw);
 	}
 
@@ -37,6 +41,10 @@ public:
 		return returnComponent;
 	}
 
+	std::weak_ptr<ComponentBase> getBase() {
+		return basePtr;
+	}
+
 	template<typename T>
 	bool is() {
 		try {
@@ -48,15 +56,3 @@ public:
 		}
 	}
 };
-
-#ifndef FullComponentHeader
-#define FullComponentHeader \
-    #include <Component/Light.h> \
-
-#endif // !FullComponentHeader
-
-#ifndef FullComponentClass
-#define FullComponentClass \
-	class Light;\
-
-#endif

@@ -4,6 +4,7 @@
 #include <World/Entity.h>
 #include <Components/FullComponentHeader.h>
 #include <System/FullSystemHeader.h>
+#include <Tools/Logger.h>
 
 //imgui
 #include <Renderer/imgui/imgui.h>
@@ -81,9 +82,17 @@ void EditorUI::Draw() {
 	}
 
 	{
-		ImGui::Begin("Debug");
+		ImGui::Begin("Log Output");
+		if (ImGui::Button("Clear Logs")) {
+			Log::clearLogs();
+		}
 
-		
+
+		auto loggerInfo = Log::GetLogs();
+		for (auto& log : *Log::GetLogs()) {
+
+			ImGui::Text(log.c_str());
+		}
 
 		ImGui::End();
 	}
@@ -91,12 +100,17 @@ void EditorUI::Draw() {
 	{
 		ImGui::Begin("Component");
 
-		//Translation
 		if (selectedEntity != nullptr) {
+			//Translation
 			ImGui::DragFloat3("Location", &selectedEntity->translation.position.x, 0.1f);
 			ImGui::DragFloat3("Rotation", &selectedEntity->translation.rotation.x, 0.1f);
 			ImGui::DragFloat3("Scale", &selectedEntity->translation.scale.x, 0.1f);
 			ImGui::Spacing();
+
+			for (auto& ui : selectedEntity->components) {
+				auto base = ui.second->getBase();
+				base.lock()->DrawEditorUI();
+			}
 		}
 		
 		ImGui::End();
@@ -104,10 +118,7 @@ void EditorUI::Draw() {
 
 	ImGui::Render();
 
-	// Render Dear ImGui graphics
-
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), renderer->mCommandList.Get());
-
 }
 
 EditorUI::~EditorUI() {

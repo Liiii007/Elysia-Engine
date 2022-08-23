@@ -19,6 +19,11 @@ void Material::Parse(Entity& entity, const rapidjson::Value& parm) {
 		->SetShader(Shader::shaders[componentInitParm]);
 }
 
+void Material::DrawEditorUI() {
+	ImGui::Text(componentName.c_str());
+	ImGui::Spacing();
+}
+
 Shader* Material::getShader() {
 	return shader;
 }

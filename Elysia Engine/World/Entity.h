@@ -83,7 +83,7 @@ public:
 
 	Translation translation;
 	std::vector<std::string> tags;
-	std::unordered_map<std::string, std::unique_ptr<IComponent> > components;
+	std::unordered_map<std::string, std::shared_ptr<IComponent>> components;
 	std::string name;
 
 	static std::unordered_map<std::string, Entity*> entities;

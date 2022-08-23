@@ -30,6 +30,11 @@ void Mesh::Parse(Entity& entity, const rapidjson::Value& parm) {
 		->Init(componentInitParm);
 }
 
+void Mesh::DrawEditorUI() {
+	ImGui::Text(componentName.c_str());
+	ImGui::Spacing();
+}
+
 Mesh* Mesh::Init(std::string meshPath) {
 	MeshRenderer::getMeshList()->push_back(this);
 	if (LoadFromDisk(meshPath)) {

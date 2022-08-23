@@ -46,6 +46,8 @@ public:
 	//Parse init data from json file
 	static void Parse(Entity& entity, const rapidjson::Value& parm);
 
+	virtual void DrawEditorUI();
+
 	//Actual Init
 	Mesh* Init(std::string meshPath);
 	Entity& ReturnParentEntity();

@@ -20,6 +20,8 @@ public:
 	//Parse init data from json file
 	static void Parse(Entity& entity, const rapidjson::Value& parm);
 
+	virtual void DrawEditorUI();
+
 	Shader* getShader();
 	void SetShader(const std::string name);
 	void SetShader(Shader* shader);

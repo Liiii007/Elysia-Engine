@@ -78,14 +78,17 @@ namespace Log {
 	static void Error(std::string message) {
 		LogEvent error{ message, LogLevel::LOGERROR };
 	}
+	static bool ShowError{ true };
 
 	static void Warning(std::string message) {
 		LogEvent warning{ message, LogLevel::LOGWARNING };
 	}
+	static bool ShowWarning{ true };
 
 	static void Info(std::string message) {
 		LogEvent info{ message, LogLevel::LOGINFO };
 	}
+	static bool ShowInfo{ true };
 }
 
 

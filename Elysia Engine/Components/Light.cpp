@@ -23,6 +23,11 @@ void Light::Parse(Entity& entity, const rapidjson::Value& parm) {
 		->SetTarget(target);
 }
 
+void Light::DrawEditorUI() {
+	ImGui::Text(componentName.c_str());
+	ImGui::Spacing();
+}
+
 
 Light* Light::SetPosition(const XMFLOAT3& position) {
 	mPosition = position;

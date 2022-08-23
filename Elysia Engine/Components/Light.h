@@ -27,6 +27,8 @@ public:
 	static std::string componentName;
 	std::string name;
 
+	virtual void DrawEditorUI();
+
 	Light(Entity* entity);
 
 	//Regist to reflect
