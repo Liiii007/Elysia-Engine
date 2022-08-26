@@ -162,7 +162,7 @@
     <ClInclude Include="Renderer\Shader.h" />
     <ClInclude Include="Renderer\Skybox.h" />
     <ClInclude Include="Renderer\SphereCamera.h" />
-    <ClInclude Include="Renderer\XIIRenderer.h" />
+    <ClInclude Include="Renderer\GriseoRenderer.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="System\InputSystem.h" />
     <ClInclude Include="System\LightMoveSystem.h" />
@@ -194,6 +194,7 @@
     <ClCompile Include="EditorSystem.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Elysia Engine.cpp" />
+    <ClCompile Include="Renderer\GriseoRenderer.cpp" />
     <ClCompile Include="Renderer\imgui\imgui.cpp" />
     <ClCompile Include="Renderer\imgui\imgui_demo.cpp" />
     <ClCompile Include="Renderer\imgui\imgui_draw.cpp" />
@@ -212,7 +213,6 @@
     <ClCompile Include="Renderer\Shader.cpp" />
     <ClCompile Include="Renderer\Skybox.cpp" />
     <ClCompile Include="Renderer\SphereCamera.cpp" />
-    <ClCompile Include="Renderer\XIIRenderer.cpp" />
     <ClCompile Include="System\InputSystem.cpp" />
     <ClCompile Include="System\LightMoveSystem.cpp" />
     <ClCompile Include="System\MeshRenderer.cpp" />

@@ -1,4 +1,4 @@
-#include "XIIRenderer.h"
+#include "GriseoRenderer.h"
 #include <World/Entity.h>
 #include <Renderer/Shader.h>
 #include <Components/FullComponentHeader.h>
@@ -13,7 +13,7 @@ MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return Singleton<InputSystem>::Get()->MsgProc(hwnd, msg, wParam, lParam);
 }
 
-bool XIIRenderer::Init(HINSTANCE hInstance) {
+bool GriseoRenderer::Init(HINSTANCE hInstance) {
 	mHInstance = hInstance;
 
 	if (!InitWindow())   { return false; }
@@ -52,7 +52,7 @@ bool XIIRenderer::Init(HINSTANCE hInstance) {
 	return true;
 }
 
-bool XIIRenderer::InitWindow() {
+bool GriseoRenderer::InitWindow() {
 	WNDCLASS wc;
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = MainWndProc;
@@ -91,7 +91,7 @@ bool XIIRenderer::InitWindow() {
 	return true;
 }
 
-bool XIIRenderer::InitDirect3D() {
+bool GriseoRenderer::InitDirect3D() {
 
 	ComPtr<ID3D12Debug> debugController;
 	ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
@@ -145,7 +145,7 @@ bool XIIRenderer::InitDirect3D() {
 	return true;
 }
 
-void XIIRenderer::CreateCommandObjects() {
+void GriseoRenderer::CreateCommandObjects() {
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -168,7 +168,7 @@ void XIIRenderer::CreateCommandObjects() {
 	mCommandList->Close();
 }
 
-void XIIRenderer::CreateSwapChain() {
+void GriseoRenderer::CreateSwapChain() {
 	mSwapChain.Reset();
 
 	DXGI_SWAP_CHAIN_DESC sd{};
@@ -195,7 +195,7 @@ void XIIRenderer::CreateSwapChain() {
 		mSwapChain.GetAddressOf()));
 }
 
-void XIIRenderer::CreateDescHeaps() {
+void GriseoRenderer::CreateDescHeaps() {
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
 	rtvHeapDesc.NumDescriptors = mSwapChainBufferCount;
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
@@ -233,7 +233,7 @@ void XIIRenderer::CreateDescHeaps() {
 
 }
 
-void XIIRenderer::CreatePassConstantBuffer() {
+void GriseoRenderer::CreatePassConstantBuffer() {
 	mPassCB = std::make_unique<UploadBuffer<PassConstants>>(md3dDevice.Get(), 1, true);
 	mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 100, true);
 
@@ -255,7 +255,7 @@ void XIIRenderer::CreatePassConstantBuffer() {
 		handle);
 }
 
-void XIIRenderer::CreateObjectConstantBuffer(int objectIndex) {
+void GriseoRenderer::CreateObjectConstantBuffer(int objectIndex) {
 	
 	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
 
@@ -277,7 +277,7 @@ void XIIRenderer::CreateObjectConstantBuffer(int objectIndex) {
 		handle);
 }
 
-void XIIRenderer::OnResize() {
+void GriseoRenderer::OnResize() {
 	assert(md3dDevice);
 	assert(mSwapChain);
 	assert(mCommandAllocator);
@@ -377,7 +377,7 @@ void XIIRenderer::OnResize() {
 	XMStoreFloat4x4(&mProj, P);
 }
 
-void XIIRenderer::FlushCommandQueue()
+void GriseoRenderer::FlushCommandQueue()
 {
 	// Advance the fence value to mark commands up to this fence point.
 	mCurrentFence++;
@@ -401,11 +401,11 @@ void XIIRenderer::FlushCommandQueue()
 	}
 }
 
-ID3D12Resource* XIIRenderer::CurrentBackBuffer()const {
+ID3D12Resource* GriseoRenderer::CurrentBackBuffer()const {
 	return mSwapChainBuffer[mCurrentBackBufferCount].Get();
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE XIIRenderer::CurrentBackBufferView()const {
+D3D12_CPU_DESCRIPTOR_HANDLE GriseoRenderer::CurrentBackBufferView()const {
 	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
 		mRtvHeap->GetCPUDescriptorHandleForHeapStart(),
 		mCurrentBackBufferCount,
@@ -413,11 +413,11 @@ D3D12_CPU_DESCRIPTOR_HANDLE XIIRenderer::CurrentBackBufferView()const {
 	);
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE XIIRenderer::DepthStencilView()const {
+D3D12_CPU_DESCRIPTOR_HANDLE GriseoRenderer::DepthStencilView()const {
 	return mDsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
-void XIIRenderer::ClearForNextFrame() {
+void GriseoRenderer::ClearForNextFrame() {
 	ThrowIfFailed(mCommandAllocator->Reset());
 
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
@@ -440,11 +440,11 @@ void XIIRenderer::ClearForNextFrame() {
 }
 
 
-void XIIRenderer::Update() {
+void GriseoRenderer::Update() {
 	
 }
 
-void XIIRenderer::UploadPassCB() {
+void GriseoRenderer::UploadPassCB() {
 	XMMATRIX view = mCamera.getViewMatrix();
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
 	XMMATRIX viewProj = view * proj;
@@ -461,7 +461,7 @@ void XIIRenderer::UploadPassCB() {
 	mPassCB->CopyData(0, pcb);
 }
 
-void XIIRenderer::UploadObjectCB(Mesh* mesh) {
+void GriseoRenderer::UploadObjectCB(Mesh* mesh) {
 	XMMATRIX world = mesh->getWorldMatrix();
 
 	ObjectConstants ocb;
@@ -475,7 +475,7 @@ void XIIRenderer::UploadObjectCB(Mesh* mesh) {
 	mObjectCB->CopyData(mesh->mObjectIndex, ocb);
 }
 
-void XIIRenderer::RenderItem(Mesh* mesh) {
+void GriseoRenderer::RenderItem(Mesh* mesh) {
 
 	//set object CB
 	int objectCbvIndex = mesh->mObjectIndex + 1;
@@ -494,7 +494,7 @@ void XIIRenderer::RenderItem(Mesh* mesh) {
 		1, 0, 0, 0);
 }
 
-void XIIRenderer::RenderFrame() {
+void GriseoRenderer::RenderFrame() {
 	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
@@ -509,7 +509,7 @@ void XIIRenderer::RenderFrame() {
 	FlushCommandQueue();
 }
 
-int XIIRenderer::RenderTick() {
+int GriseoRenderer::RenderTick() {
 	ClearForNextFrame();
 	Update();
 	UploadPassCB();
@@ -547,7 +547,7 @@ int XIIRenderer::RenderTick() {
 	return 0;
 }
 
-LRESULT XIIRenderer::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT GriseoRenderer::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -643,7 +643,7 @@ LRESULT XIIRenderer::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-void XIIRenderer::OnMouseDown(WPARAM btnState, int x, int y)
+void GriseoRenderer::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
@@ -651,12 +651,12 @@ void XIIRenderer::OnMouseDown(WPARAM btnState, int x, int y)
 	SetCapture(mhMainWnd);
 }
 
-void XIIRenderer::OnMouseUp(WPARAM btnState, int x, int y)
+void GriseoRenderer::OnMouseUp(WPARAM btnState, int x, int y)
 {
 	ReleaseCapture();
 }
 
-void XIIRenderer::OnMouseMove(WPARAM btnState, int x, int y)
+void GriseoRenderer::OnMouseMove(WPARAM btnState, int x, int y)
 {
 	if ((btnState & MK_LBUTTON) != 0)
 	{

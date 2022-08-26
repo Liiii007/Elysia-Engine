@@ -1,5 +1,5 @@
 #include "Shader.h"
-#include "../Renderer/XIIRenderer.h"
+#include "../Renderer/GriseoRenderer.h"
 #include "../Tools/Singleton.h"
 
 std::unordered_map<std::string, Shader*> Shader::shaders{};
@@ -26,7 +26,7 @@ ComPtr<ID3DBlob> Shader::CompileShader(const D3D_SHADER_MACRO* defines, const st
 }
 
 void Shader::BuildRootSig() {
-	auto renderer = Singleton<XIIRenderer>::Get();
+	auto renderer = Singleton<GriseoRenderer>::Get();
 
 	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
 
@@ -62,7 +62,7 @@ void Shader::BuildRootSig() {
 }
 
 void Shader::BuildPSO() {
-	auto renderer = Singleton<XIIRenderer>::Get();
+	auto renderer = Singleton<GriseoRenderer>::Get();
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
@@ -113,7 +113,7 @@ void Shader::Build() {
 }
 
 void Shader::Use(int objectIndex) {
-	auto renderer = Singleton<XIIRenderer>::Get();
+	auto renderer = Singleton<GriseoRenderer>::Get();
 	renderer->mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 	renderer->mCommandList->SetPipelineState(mPSO.Get());
 

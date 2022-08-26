@@ -1,6 +1,6 @@
 #include "Mesh.h"
 #include "../../System/MeshRenderer.h"
-#include "../../Renderer/XIIRenderer.h"
+#include "../../Renderer/GriseoRenderer.h"
 #include "../../Tools/Singleton.h"
 #include "../../World/Entity.h"
 
@@ -169,7 +169,7 @@ XMMATRIX Mesh::getWorldMatrix() {
 }
 
 void Mesh::UploadVertices() {
-	auto renderer = Singleton<XIIRenderer>::Get();
+	auto renderer = Singleton<GriseoRenderer>::Get();
 
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(vertices[0]);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(indices[0]);

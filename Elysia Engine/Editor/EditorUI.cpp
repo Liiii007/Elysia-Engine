@@ -1,5 +1,5 @@
 #include "EditorUI.h"
-#include <Renderer/XIIRenderer.h>
+#include <Renderer/GriseoRenderer.h>
 #include <Tools/Singleton.h>
 #include <World/Entity.h>
 #include <Components/FullComponentHeader.h>
@@ -13,7 +13,7 @@
 
 void EditorUI::Init() {
 
-	auto renderer = Singleton<XIIRenderer>::Get();
+	auto renderer = Singleton<GriseoRenderer>::Get();
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -39,7 +39,7 @@ void EditorUI::Draw() {
 	//UnInti->don't draw
 	if (!isInit) return;
 
-	auto renderer = Singleton<XIIRenderer>::Get();
+	auto renderer = Singleton<GriseoRenderer>::Get();
 
 	bool show_demo_window = true;
 	bool show_another_window = false;

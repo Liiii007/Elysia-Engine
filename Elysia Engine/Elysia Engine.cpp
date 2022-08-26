@@ -1,5 +1,5 @@
 #include "framework.h"
-#include "Renderer/XIIRenderer.h"
+#include "Renderer/GriseoRenderer.h"
 #include "World/WorldManager.h"
 #include "Resources/ResourceManager.h"
 
@@ -25,7 +25,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
         Singleton<ResourceManager>::Get()->Init();
         Singleton<WorldManager>::Get()->Init();
-        Singleton<XIIRenderer>::Get()->Init(hInstance);
+        Singleton<GriseoRenderer>::Get()->Init(hInstance);
 
 #ifdef EDITOR_ENABLE
         Singleton<EditorUI>::Get()->Init();
@@ -48,7 +48,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             if (done)
                 break;
             SystemBase::SystemTick();
-            Singleton<XIIRenderer>::Get()->RenderTick();
+            Singleton<GriseoRenderer>::Get()->RenderTick();
         }
 
         //Shutdown

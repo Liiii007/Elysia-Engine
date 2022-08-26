@@ -29,7 +29,7 @@ class Shader;
 struct ObjectConstants;
 struct PassConstants;
 
-class XIIRenderer
+class GriseoRenderer
 {
 public:
 

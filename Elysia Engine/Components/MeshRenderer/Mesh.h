@@ -68,7 +68,7 @@ public:
 	//Load and store vertex&index to vertices(vector)&indices(vector)
 	bool LoadFromDisk(std::string meshPath);
 
-	//Upload Vertices to GPU, called by XIIRenderer
+	//Upload Vertices to GPU, called by GriseoRenderer
 	void UploadVertices();
 
 	//DX12 Resources

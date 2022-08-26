@@ -93,7 +93,7 @@
     <ClInclude Include="Renderer\SphereCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\XIIRenderer.h">
+    <ClInclude Include="Renderer\GriseoRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Interface\ComponentBase.h">
@@ -236,9 +236,6 @@
     <ClCompile Include="Renderer\SphereCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\XIIRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Interface\ComponentBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -300,6 +297,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Editor\EditorUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\GriseoRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
