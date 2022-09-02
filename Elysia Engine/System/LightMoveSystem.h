@@ -8,7 +8,7 @@
 class LightMoveSystem : public SystemBase {
 public:
 	virtual void Tick() {
-		auto light = Entity::entities["eLight"];
+		auto light = Entity::GetEntity("eLight");
 		auto pos = light->translation.position;
 		pos.x += moveSpeed;
 		if (pos.x > 10 || pos.x < -10) {

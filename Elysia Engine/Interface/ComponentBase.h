@@ -13,6 +13,7 @@ class ComponentBase
 {
 public:
 	ComponentBase(Entity* entity);
+
 	virtual void DrawEditorUI() {
 		return;
 		//Log::Error("Base");

@@ -19,6 +19,22 @@ cbuffer cbPerPass : register(b1)
 
 	float3 lightPos;
 	float pad4;
+
+	float3 lightColor;
+	float lightPower;
+}
+
+cbuffer cbPerMaterial : register(b2)
+{
+	float4 diffuseAlbedo;
+
+	float3 fresnelR0;
+	float  roughness;
+}
+
+cbuffer cbPerLight : register(b3)
+{
+
 }
 
 struct VertexIn
@@ -31,29 +47,45 @@ struct VertexIn
 struct VertexOut
 {
 	float4 PosH  : SV_POSITION;
-	float3 Normal : NORMAL;
-	float4 Color : COLOR;
+	float4 PosW  : POSITION;
+	float3 ViewDirW : POSITION1;
+	float3 NormalW : NORMAL;
 };
 
 VertexOut VS(VertexIn vin)
 {
 	VertexOut vout;
+	
 
 	float4x4 mvp = mul(gWorld, gViewProj);
-	vout.PosH = mul(float4(vin.PosL, 1.0f), mvp);
-	float4 normalWorld = mul(float4(vin.Normal, 1), gWorld);
-	vout.Normal = normalize(normalWorld);
-	vout.Color = float4(-viewDir, 1);
+	vout.PosH = mul(float4(vin.PosL, 1), mvp);
+	vout.PosW = mul(float4(vin.PosL, 1), gWorld);
+	vout.NormalW = normalize(mul(float4(vin.Normal, 0), gWorld));
+	vout.ViewDirW = normalize(viewPos - vout.PosW);
 
 	return vout;
 }
 
 float4 PS(VertexOut pin) : SV_Target
 {
-	float c = max(dot(pin.Normal, normalize(-lightDir)), 0);
-	c = min(c, 1);
-	c = pow(c, 5);
-	float strength = 5;
-	float4 color =  0.9 * float4(strength * c, strength * c, strength * c, 1) + 0.1;
-	return color;
+	float lightStrength = lightPower;
+	float3 lightPass = max(dot(normalize(-lightDir), pin.NormalW), 0) * lightStrength * lightColor;
+
+	float3 halfwayNormal = normalize(pin.ViewDirW - normalize(lightDir));
+
+	float m = 10;
+
+	float3 rf0 = float3(0.95, 0.93, 0.88);
+	float3 rf = rf0 + (1 - rf0) * pow(1-dot(normalize(-lightDir), halfwayNormal), 5);
+	
+	float3 diffuse = lightPass;
+	float3 ambient = float3(0.0f, 0.0f, 0.0f);
+	float3 specular = lightPass * rf * ((m + 8) / 8) * pow(dot(halfwayNormal, pin.NormalW), m);
+
+	float3 color = 0.7*diffuse + ambient + specular;
+	float p = pow(max(dot(halfwayNormal, pin.NormalW), 0), m) * (m+8) / m;
+	float d = dot(normalize(-lightDir), halfwayNormal);
+
+	float4 debug = float4(color, 1);
+	return debug;
 }

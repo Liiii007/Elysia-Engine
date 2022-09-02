@@ -19,12 +19,12 @@ bool WorldManager::Init() {
 			auto name = entity["Name"].GetString();
 			Entity::New(name);
 
-			if (Entity::entities[name] == nullptr) {
+			if (Entity::GetEntity(name) == nullptr) {
 				Log::Error("Entity not exist");
-				return false;
+				continue;
 			}
 
-			Entity& e = *(Entity::entities[name]);
+			Entity& e = *(Entity::GetEntity(name));
 
 			//Translation
 			const Value& locationValue = entity["Location"];

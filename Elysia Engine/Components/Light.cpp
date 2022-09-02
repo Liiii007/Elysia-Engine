@@ -25,6 +25,9 @@ void Light::Parse(Entity& entity, const rapidjson::Value& parm) {
 
 void Light::DrawEditorUI() {
 	ImGui::Text(componentName.c_str());
+	ImGui::SliderFloat("Power", &mLightPower, 0, 10);
+	ImGui::SetColorEditOptions(ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_PickerHueWheel);
+	ImGui::ColorPicker3("##MyColor##6", &mLightColor.x, ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoAlpha);
 	ImGui::Spacing();
 }
 
@@ -52,4 +55,12 @@ XMFLOAT3 Light::GetPosition() {
 XMFLOAT3 Light::GetDirection() {
 	XMFLOAT3 direction{ mTarget.x - mPosition.x, mTarget.y - mPosition.y, mTarget.z - mPosition.z};
 	return direction;
+}
+
+XMFLOAT3 Light::GetColor() {
+	return mLightColor;
+}
+
+float Light::GetPower() {
+	return mLightPower;
 }

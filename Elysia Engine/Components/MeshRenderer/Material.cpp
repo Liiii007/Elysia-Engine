@@ -3,9 +3,12 @@
 #include "../../World/Entity.h"
 
 std::string Material::componentName = "Material";
+int Material::materialCount{0};
+std::unordered_map<std::string, Material*> Material::materials{};
 
 Material::Material(Entity* entity) : ComponentBase(entity) {
-
+	matCBIndex = materialCount;
+	materialCount++;
 }
 
 void Material::Bind() {
@@ -13,10 +16,18 @@ void Material::Bind() {
 }
 
 void Material::Parse(Entity& entity, const rapidjson::Value& parm) {
-	std::string componentInitParm = parm.GetString();
+	std::string shaderName = parm["Shader"].GetString();
+	std::string materialName = parm["Name"].GetString();
 	entity.AppendComponent<Material>()
 		.GetComponent<Material>()
-		->SetShader(Shader::shaders[componentInitParm]);
+		->Init(materialName, shaderName);
+}
+
+void Material::Init(std::string name, std::string shader) {
+	this->name = name;
+	this->shader = Shader::shaders[shader];
+	enabled = true;
+	materials[name] = this;
 }
 
 void Material::DrawEditorUI() {

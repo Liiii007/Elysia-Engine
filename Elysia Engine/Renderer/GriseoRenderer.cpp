@@ -38,6 +38,10 @@ bool GriseoRenderer::Init(HINSTANCE hInstance) {
 		it.second->Build();
 	}
 
+	for (auto it : Material::materials) {
+		CreateMaterialConstantBuffer(it.second->matCBIndex.value_or<int>(0));	
+	}
+
 	// Execute the initialization commands.
 	ThrowIfFailed(mCommandList->Close());
 	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
@@ -85,8 +89,6 @@ bool GriseoRenderer::InitWindow() {
 		MessageBox(0, L"CreateWindow Failed.", 0, 0);
 		return false;
 	}
-
-	
 
 	return true;
 }
@@ -196,52 +198,62 @@ void GriseoRenderer::CreateSwapChain() {
 }
 
 void GriseoRenderer::CreateDescHeaps() {
-	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
-	rtvHeapDesc.NumDescriptors = mSwapChainBufferCount;
-	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	rtvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
-		&rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf())));
-
-	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
-
-	dsvHeapDesc.NumDescriptors = 1;
-	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	dsvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
-		&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
-
+	//RTV
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
+		rtvHeapDesc.NumDescriptors = mSwapChainBufferCount;
+		rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+		rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		rtvHeapDesc.NodeMask = 0;
+		ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
+			&rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf())));
+	}
 	
-	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc{};
-	srvHeapDesc.NumDescriptors = 1;
-	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	srvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&srvHeapDesc,
-		IID_PPV_ARGS(&mSrvHeap)));
+	//DSV
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
+		dsvHeapDesc.NumDescriptors = 1;
+		dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+		dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		dsvHeapDesc.NodeMask = 0;
+		ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
+			&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
+	}
 
-	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-	cbvHeapDesc.NumDescriptors = 100;
-	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	cbvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&cbvHeapDesc,
-		IID_PPV_ARGS(&mCbvHeap)));
+	//SRV
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc{};
+		srvHeapDesc.NumDescriptors = 1;
+		srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		srvHeapDesc.NodeMask = 0;
+		ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
+			&srvHeapDesc, IID_PPV_ARGS(&mSrvHeap)));
+	}
+	
+	//CBV
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
+		cbvHeapDesc.NumDescriptors = 100;
+		cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		cbvHeapDesc.NodeMask = 0;
+		ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
+			&cbvHeapDesc, IID_PPV_ARGS(&mCbvHeap)));
 
+		mPassCB = std::make_unique<UploadBuffer<PassConstants>>(md3dDevice.Get(), mPassCBCount, true);
+		mMaterialCB = std::make_unique<UploadBuffer<MaterialConstants>>(md3dDevice.Get(), mMaterialCBCount, true);
+		mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 100, true);
+	}
 
 }
 
 void GriseoRenderer::CreatePassConstantBuffer() {
-	mPassCB = std::make_unique<UploadBuffer<PassConstants>>(md3dDevice.Get(), 1, true);
-	mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 100, true);
-
+	
 	UINT passCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
 
 	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mPassCB->Resource()->GetGPUVirtualAddress();
 
-	//handle for offset
 	UINT heapIndex = 0;
 	auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 	handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
@@ -249,6 +261,28 @@ void GriseoRenderer::CreatePassConstantBuffer() {
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
 	cbvDesc.BufferLocation = cbAddress;
 	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
+
+	md3dDevice->CreateConstantBufferView(
+		&cbvDesc,
+		handle);
+}
+
+void GriseoRenderer::CreateMaterialConstantBuffer(int materialIndex) {
+
+	UINT matCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(MaterialConstants));
+
+	//GPU offset
+	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mMaterialCB->Resource()->GetGPUVirtualAddress();
+	cbAddress += matCBByteSize * materialIndex;
+
+	//CPU offset
+	int heapIndex = mPassCBCount + materialIndex;
+	auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+	handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
+
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+	cbvDesc.BufferLocation = cbAddress;
+	cbvDesc.SizeInBytes = matCBByteSize;
 
 	md3dDevice->CreateConstantBufferView(
 		&cbvDesc,
@@ -264,7 +298,7 @@ void GriseoRenderer::CreateObjectConstantBuffer(int objectIndex) {
 	cbAddress += objCBByteSize * objectIndex;
 
 	//CPU offset
-	int heapIndex = 1 + objectIndex;
+	int heapIndex = mPassCBCount + mMaterialCBCount + objectIndex;
 	auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 	handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
 
@@ -276,6 +310,8 @@ void GriseoRenderer::CreateObjectConstantBuffer(int objectIndex) {
 		&cbvDesc,
 		handle);
 }
+
+
 
 void GriseoRenderer::OnResize() {
 	assert(md3dDevice);
@@ -372,9 +408,6 @@ void GriseoRenderer::OnResize() {
 
 	mScissorRect = { 0, 0, mClientWidth, mClientHeight };
 
-	// The window resized, so update the aspect ratio and recompute the projection matrix.
-	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, mClientWidth / mClientHeight, 1.0f, 1000.0f);
-	XMStoreFloat4x4(&mProj, P);
 }
 
 void GriseoRenderer::FlushCommandQueue()
@@ -446,9 +479,9 @@ void GriseoRenderer::Update() {
 
 void GriseoRenderer::UploadPassCB() {
 	XMMATRIX view = mCamera.getViewMatrix();
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+	XMMATRIX proj = XMMatrixPerspectiveFovLH(0.3f * MathHelper::Pi, (FLOAT)mClientWidth / (FLOAT)mClientHeight, 1.0f, 1000.0f);
 	XMMATRIX viewProj = view * proj;
-	auto light = Entity::entities["eLight"]->GetComponent<Light>();
+	auto light = Entity::GetEntity("eLight")->GetComponent<Light>();
 
 	PassConstants pcb{};
 
@@ -457,6 +490,8 @@ void GriseoRenderer::UploadPassCB() {
 	pcb.viewDir = mCamera.GetDirection();
 	pcb.lightPos = light->GetPosition();
 	pcb.lightDir = light->GetDirection();
+	pcb.lightColor = light->GetColor();
+	pcb.lightPower = light->GetPower();
 
 	mPassCB->CopyData(0, pcb);
 }
@@ -478,7 +513,7 @@ void GriseoRenderer::UploadObjectCB(Mesh* mesh) {
 void GriseoRenderer::RenderItem(Mesh* mesh) {
 
 	//set object CB
-	int objectCbvIndex = mesh->mObjectIndex + 1;
+	int objectCbvIndex = mPassCBCount + mMaterialCBCount + mesh->mObjectIndex;
 	auto objectCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 	objectCbvHandle.Offset(objectCbvIndex, mCbvSrvUavDescriptorSize);
 	

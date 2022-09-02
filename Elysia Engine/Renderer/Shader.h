@@ -40,6 +40,18 @@ struct PassConstants {
 	DirectX::XMFLOAT3 lightPos;
 	float pad4;
 
+	DirectX::XMFLOAT3 lightColor;
+	float lightPower;
+
+};
+
+struct MaterialConstants {
+	//4byte
+	DirectX::XMFLOAT4 diffuseAlbedo;
+
+	//4byte
+	DirectX::XMFLOAT3 fresnelR0;
+	float roughness;
 };
 
 class Shader {

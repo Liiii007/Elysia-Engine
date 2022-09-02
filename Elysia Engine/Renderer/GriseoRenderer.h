@@ -28,6 +28,7 @@ class Mesh;
 class Shader;
 struct ObjectConstants;
 struct PassConstants;
+struct MaterialConstants;
 
 class GriseoRenderer
 {
@@ -53,6 +54,7 @@ public:
 	void CreateDescHeaps();
 	void CreatePassConstantBuffer();
 	void CreateObjectConstantBuffer(int objectIndex);
+	void CreateMaterialConstantBuffer(int materialIndex);
 	void OnResize();
 	
 	void OnMouseDown(WPARAM btnState, int x, int y);
@@ -72,7 +74,7 @@ public:
 
 	HINSTANCE mHInstance = nullptr;
 	HWND mhMainWnd = nullptr;
-	int mClientWidth{ 800 }, mClientHeight{ 600 };
+	int mClientWidth{ 1920 }, mClientHeight{ 720 };
 	int mRefreshRate{ 60 };
 	std::wstring mMainWndCaption = L"XII Renderer";
 
@@ -115,8 +117,10 @@ public:
 	//Constant Buffer
 	std::unique_ptr<UploadBuffer<ObjectConstants>> mObjectCB = nullptr;
 	std::unique_ptr<UploadBuffer<PassConstants>> mPassCB = nullptr;
+	std::unique_ptr<UploadBuffer<MaterialConstants>> mMaterialCB = nullptr;
 
-	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+	int mPassCBCount{ 1 };
+	int mMaterialCBCount{ 2 };
 
 	POINT mLastMousePos;
 

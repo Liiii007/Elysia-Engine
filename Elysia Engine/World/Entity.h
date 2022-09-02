@@ -13,48 +13,64 @@ public:
 		this->name = name;
 		entities[name] = this;
 	}
-	~Entity() = default;
+	~Entity() {
+		entities.erase(name);
+	}
 
+	static std::unordered_map<std::string, Entity*>::iterator EntitiesIterator;
+
+	//Entity Manage Relate
 	static Entity& New(std::string name) {
 		Entity* newEntity = new Entity(name);
 		return *newEntity;
 	}
+	static auto begin() {
+		return entities.begin();
+	}
+	static auto end() {
+		return entities.end();
+	}
+	static Entity* GetEntity(std::string name) {
+		if (entities.contains(name)) {
+			return entities[name];
+		}
+		else {
+			return nullptr;
+		}
+	}
 
+	//Translation Relate
 	Entity& SetLocation(float x, float y, float z) {
 		translation.position = XMFLOAT3{ x,y,z };
 		return *this;
 	}
-
 	Entity& SetLocation(const XMFLOAT3& position) {
 		translation.position = position;
 		return *this;
 	}
-
 	Entity& SetRotation(float x, float y, float z) {
 		translation.rotation = XMFLOAT3{ x,y,z };
 		return *this;
 	}
-
 	Entity& SetRotation(const XMFLOAT3& rotation) {
 		translation.rotation = rotation;
 		return *this;
 	}
-
 	Entity& SetUniformScale(float scale) {
 		translation.scale = XMFLOAT3{ scale,scale,scale };
 		return *this;
 	}
-
 	Entity& SetScale(float x, float y, float z) {
 		translation.scale = XMFLOAT3{ x,y,z };
 		return *this;
 	}
-
 	Entity& SetScale(const XMFLOAT3& scale) {
 		translation.scale = scale;
 		return *this;
 	}
 
+
+	//Component Relate
 	template<typename T>
 	Entity& AppendComponent() {
 		auto component = std::make_unique<IComponent>();
@@ -85,6 +101,8 @@ public:
 	std::vector<std::string> tags;
 	std::unordered_map<std::string, std::shared_ptr<IComponent>> components;
 	std::string name;
+
+private:
 
 	static std::unordered_map<std::string, Entity*> entities;
 };

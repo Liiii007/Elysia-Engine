@@ -61,7 +61,7 @@ void EditorUI::Draw() {
 		ImGui::Checkbox("Demo Window", &show_demo_window);
 
 
-		auto light = Entity::entities["eLight"];
+		auto light = Entity::GetEntity("eLight");
 
 		ImGui::SliderFloat("float", &light->translation.position.x, -10, 10);
 		
@@ -73,9 +73,9 @@ void EditorUI::Draw() {
 	{
 		ImGui::Begin("Entities");
 
-		for (auto& entity : Entity::entities) {
-			if (ImGui::Selectable(entity.second->name.c_str(), selectedEntity == entity.second))
-				selectedEntity = entity.second;
+		for (auto iter = Entity::begin(); iter != Entity::end(); iter++) {
+			if (ImGui::Selectable(iter->second->name.c_str(), selectedEntity == iter->second))
+				selectedEntity = iter->second;
 		}
 
 		ImGui::End();

@@ -40,12 +40,16 @@ public:
 	Light* SetTarget    (const XMFLOAT3& direction);
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetDirection();
+	XMFLOAT3 GetColor();
+	float GetPower();
 
 	Entity& ReturnParentEntity();
 
 private:
-	XMFLOAT3 mPosition;
-	XMFLOAT3 mTarget;
+	XMFLOAT3 mPosition{};
+	XMFLOAT3 mTarget{};
+	XMFLOAT3 mLightColor{1,1,1};
+	float mLightPower{1};
 	//XMFLOAT3 mDirection;
 };
 
