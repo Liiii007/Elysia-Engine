@@ -1,0 +1,12 @@
+{
+    "METADATA":{
+        "Type":"Material",
+        "Version":"0.1"
+    },
+
+    "Parm":{
+        "diffuseAlbedo":[0,1,0,1],
+        "fresnelR0":[0.95, 0.93, 0.88],
+        "roughness":1
+    }
+}

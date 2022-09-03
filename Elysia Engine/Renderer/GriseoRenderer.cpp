@@ -3,7 +3,7 @@
 #include <Renderer/Shader.h>
 #include <Components/FullComponentHeader.h>
 #include <System/FullSystemHeader.h>
-
+#include <Resources/MaterialData.h>
 #include <Editor/EditorUI.h>
 
 
@@ -38,8 +38,13 @@ bool GriseoRenderer::Init(HINSTANCE hInstance) {
 		it.second->Build();
 	}
 
-	for (auto it : Material::materials) {
-		CreateMaterialConstantBuffer(it.second->matCBIndex.value_or<int>(0));	
+	//Create Material Constant Buffer
+	int matCBCount = 0;
+	for (auto& mat : MaterialData::materialDatas) {
+		mat.second->matCBIndex = matCBCount;
+		CreateMaterialConstantBuffer(matCBCount);
+		UploadMaterialCB(mat.second);
+		matCBCount++;
 	}
 
 	// Execute the initialization commands.
@@ -311,8 +316,6 @@ void GriseoRenderer::CreateObjectConstantBuffer(int objectIndex) {
 		handle);
 }
 
-
-
 void GriseoRenderer::OnResize() {
 	assert(md3dDevice);
 	assert(mSwapChain);
@@ -324,8 +327,10 @@ void GriseoRenderer::OnResize() {
 	ThrowIfFailed(mCommandList->Reset(mCommandAllocator.Get(), nullptr));
 
 	// Release the previous resources we will be recreating.
-	for (int i = 0; i < mSwapChainBufferCount; ++i)
+	for (int i = 0; i < mSwapChainBufferCount; ++i) {
 		mSwapChainBuffer[i].Reset();
+	}
+		
 	mDepthStencilBuffer.Reset();
 
 	// Resize the swap chain.
@@ -437,7 +442,6 @@ void GriseoRenderer::FlushCommandQueue()
 ID3D12Resource* GriseoRenderer::CurrentBackBuffer()const {
 	return mSwapChainBuffer[mCurrentBackBufferCount].Get();
 }
-
 D3D12_CPU_DESCRIPTOR_HANDLE GriseoRenderer::CurrentBackBufferView()const {
 	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
 		mRtvHeap->GetCPUDescriptorHandleForHeapStart(),
@@ -445,7 +449,6 @@ D3D12_CPU_DESCRIPTOR_HANDLE GriseoRenderer::CurrentBackBufferView()const {
 		mRtvDescriptorSize
 	);
 }
-
 D3D12_CPU_DESCRIPTOR_HANDLE GriseoRenderer::DepthStencilView()const {
 	return mDsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
@@ -496,21 +499,22 @@ void GriseoRenderer::UploadPassCB() {
 	mPassCB->CopyData(0, pcb);
 }
 
-void GriseoRenderer::UploadObjectCB(Mesh* mesh) {
+void GriseoRenderer::UploadObjectCB(std::shared_ptr<Mesh> mesh) {
 	XMMATRIX world = mesh->getWorldMatrix();
 
 	ObjectConstants ocb;
 	XMStoreFloat4x4(&ocb.gWorld, XMMatrixTranspose(world));
-	if (mesh->mObjectIndex == 0) {
-		ocb.gColor = XMFLOAT4(1, 1, 0, 1);
-	}
-	else {
-		ocb.gColor = XMFLOAT4(0, 1, 0, 1);
-	}
+
 	mObjectCB->CopyData(mesh->mObjectIndex, ocb);
 }
 
-void GriseoRenderer::RenderItem(Mesh* mesh) {
+void GriseoRenderer::UploadMaterialCB(std::shared_ptr<MaterialData> material) {
+	MaterialConstants mcb{ material->materialConstants };
+	mMaterialCB->CopyData(material->matCBIndex, mcb);
+}
+
+void GriseoRenderer::RenderItem(std::shared_ptr<Mesh> mesh) {
+	
 
 	//set object CB
 	int objectCbvIndex = mPassCBCount + mMaterialCBCount + mesh->mObjectIndex;
@@ -563,16 +567,32 @@ int GriseoRenderer::RenderTick() {
 	passCbvHandle.Offset(passCbvIndex, mCbvSrvUavDescriptorSize);
 	mCommandList->SetGraphicsRootDescriptorTable(1, passCbvHandle);
 
-	for (auto it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
-		Shader* s = (*it)->parentEntity->GetComponent<Material>()->getShader();
-		if (*s != *lastShader) {
-			mCommandList->SetGraphicsRootSignature(s->mRootSignature.Get());
-			mCommandList->SetPipelineState(s->mPSO.Get());
-			lastShader = s;
+
+	for (auto iter = Entity::begin(); iter != Entity::end(); iter++) {
+		if (iter->second->HasComponent<Mesh>() && iter->second->HasComponent<Material>()) {
+			Entity* entity = iter->second;
+
+			//Avoid for switch PSO frequently
+			Shader* currentShader = entity->GetComponent<Material>()->getShader();
+			if (*currentShader != *lastShader) {
+				mCommandList->SetGraphicsRootSignature(currentShader->mRootSignature.Get());
+				mCommandList->SetPipelineState(currentShader->mPSO.Get());
+				lastShader = currentShader;
+			}
+
+			//set material CB
+			int materialCbvIndex = mPassCBCount + entity->GetComponent<Material>()->GetCBIndex();
+			auto materialCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+			materialCbvHandle.Offset(materialCbvIndex, mCbvSrvUavDescriptorSize);
+			mCommandList->SetGraphicsRootDescriptorTable(2, materialCbvHandle);
+
+			UploadObjectCB(entity->GetComponent<Mesh>());
+
+			
+
+			RenderItem(entity->GetComponent<Mesh>());
 		}
 		
-		UploadObjectCB(*it);
-		RenderItem(*it);
 	}
 
 	Singleton<EditorUI>::Get()->Draw();

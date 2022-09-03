@@ -26,20 +26,24 @@ ComPtr<ID3DBlob> Shader::CompileShader(const D3D_SHADER_MACRO* defines, const st
 }
 
 void Shader::BuildRootSig() {
+	const int bCount = 3;
 	auto renderer = Singleton<GriseoRenderer>::Get();
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[bCount];
 
 	//define constant buffer layout
 	CD3DX12_DESCRIPTOR_RANGE cbvTable_b0;
 	cbvTable_b0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
 	CD3DX12_DESCRIPTOR_RANGE cbvTable_b1;
 	cbvTable_b1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
+	CD3DX12_DESCRIPTOR_RANGE cbvTable_b2;
+	cbvTable_b2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 2);
 
 	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable_b0);
 	slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable_b1);
+	slotRootParameter[2].InitAsDescriptorTable(1, &cbvTable_b2);
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter, 0, nullptr,
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(bCount, slotRootParameter, 0, nullptr,
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;

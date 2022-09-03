@@ -32,11 +32,6 @@ cbuffer cbPerMaterial : register(b2)
 	float  roughness;
 }
 
-cbuffer cbPerLight : register(b3)
-{
-
-}
-
 struct VertexIn
 {
 	float3 PosL  : POSITION;
@@ -69,14 +64,13 @@ VertexOut VS(VertexIn vin)
 float4 PS(VertexOut pin) : SV_Target
 {
 	float lightStrength = lightPower;
-	float3 lightPass = max(dot(normalize(-lightDir), pin.NormalW), 0) * lightStrength * lightColor;
+	float3 lightPass = max(dot(normalize(-lightDir), pin.NormalW), 0) * lightStrength * lightColor * diffuseAlbedo;
 
 	float3 halfwayNormal = normalize(pin.ViewDirW - normalize(lightDir));
 
-	float m = 10;
+	float m = roughness * 10;
 
-	float3 rf0 = float3(0.95, 0.93, 0.88);
-	float3 rf = rf0 + (1 - rf0) * pow(1-dot(normalize(-lightDir), halfwayNormal), 5);
+	float3 rf = fresnelR0 + (1 - fresnelR0) * pow(1-dot(normalize(-lightDir), halfwayNormal), 5);
 	
 	float3 diffuse = lightPass;
 	float3 ambient = float3(0.0f, 0.0f, 0.0f);

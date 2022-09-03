@@ -1,14 +1,14 @@
 #include "Material.h"
-#include "../../Renderer/Shader.h"
-#include "../../World/Entity.h"
+#include <Renderer/Shader.h>
+#include <World/Entity.h>
+
 
 std::string Material::componentName = "Material";
 int Material::materialCount{0};
 std::unordered_map<std::string, Material*> Material::materials{};
 
 Material::Material(Entity* entity) : ComponentBase(entity) {
-	matCBIndex = materialCount;
-	materialCount++;
+
 }
 
 void Material::Bind() {
@@ -26,6 +26,7 @@ void Material::Parse(Entity& entity, const rapidjson::Value& parm) {
 void Material::Init(std::string name, std::string shader) {
 	this->name = name;
 	this->shader = Shader::shaders[shader];
+	this->data = MaterialData::materialDatas[name];
 	enabled = true;
 	materials[name] = this;
 }

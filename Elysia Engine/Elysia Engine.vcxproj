@@ -143,6 +143,8 @@
     <ClInclude Include="EditorSystem.h" />
     <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Renderer\ShaderConstantBufferStruct.h" />
+    <ClInclude Include="Resources\MaterialData.h" />
     <ClInclude Include="Renderer\imgui\imconfig.h" />
     <ClInclude Include="Renderer\imgui\imgui.h" />
     <ClInclude Include="Renderer\imgui\imgui_impl_dx12.h" />
@@ -194,6 +196,7 @@
     <ClCompile Include="EditorSystem.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Elysia Engine.cpp" />
+    <ClCompile Include="Resources\MaterialData.cpp" />
     <ClCompile Include="Renderer\GriseoRenderer.cpp" />
     <ClCompile Include="Renderer\imgui\imgui.cpp" />
     <ClCompile Include="Renderer\imgui\imgui_demo.cpp" />

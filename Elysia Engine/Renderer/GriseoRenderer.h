@@ -24,8 +24,11 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
+//Relative Component
 class Mesh;
 class Shader;
+class Material;
+class MaterialData;
 struct ObjectConstants;
 struct PassConstants;
 struct MaterialConstants;
@@ -36,8 +39,9 @@ public:
 
 	bool Init(HINSTANCE);
 	//Upload
-	void UploadObjectCB(Mesh* mesh);
+	void UploadObjectCB(std::shared_ptr<Mesh>);
 	void UploadPassCB();
+	void UploadMaterialCB(std::shared_ptr<MaterialData> material);
 
 	//Tick
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -64,7 +68,7 @@ public:
 	//Render Tick
 	
 	void ClearForNextFrame();
-	void RenderItem(Mesh* mesh);
+	void RenderItem(std::shared_ptr<Mesh> mesh);
 	void RenderFrame();
 	void FlushCommandQueue();
 	ID3D12Resource* CurrentBackBuffer()const;

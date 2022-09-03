@@ -168,6 +168,12 @@
     <ClInclude Include="Editor\EditorUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\MaterialData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\ShaderConstantBufferStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Elysia Engine.cpp">
@@ -300,6 +306,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\GriseoRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\MaterialData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

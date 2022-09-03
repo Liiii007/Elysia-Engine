@@ -1,4 +1,9 @@
 {
+    "METADATA":{
+        "Type":"Level",
+        "Version":"0.1"
+    },
+
     "Name" : "Level1",
     "Entities" : [
         {
@@ -16,7 +21,7 @@
                     "Type":"Material",
                     "Parm":{
                         "Shader":"initShader", 
-                        "Name" : "Mat1"
+                        "Name" : "Green"
                     }
                 }
             ]
@@ -36,7 +41,7 @@
                     "Type":"Material",
                     "Parm":{
                         "Shader":"initShader", 
-                        "Name" : "Mat2"
+                        "Name" : "Red"
                     }
                 }
             ]

@@ -3,8 +3,7 @@
 #include <optional>
 #include "../../Interface/IComponent.h"
 #include "../../Interface/ComponentBase.h"
-
-#include <DirectXPackedVector.h>
+#include <Resources/MaterialData.h>
 
 class Shader;
 class Entity;
@@ -17,13 +16,8 @@ public:
 	static std::string componentName;
 	bool enabled{ false };
 	std::string name;
-	Shader* shader;
-	std::optional<int> matCBIndex;
-	std::optional<int> diffuseSrvHeapIndex;
 
-	DirectX::XMFLOAT4 diffuseAlbedo{0.2, 0.6, 0.2, 1};
-	DirectX::XMFLOAT3 fresnelR0{0.1, 0.1, 0.1};
-	float roughness{1};
+	Shader* shader;
 
 	void Init(std::string name, std::string shader);
 
@@ -32,7 +26,24 @@ public:
 	//Parse init data from json file
 	static void Parse(Entity& entity, const rapidjson::Value& parm);
 
-	virtual void DrawEditorUI();
+	static Material* GetMaterial(std::string name) {
+		if (materials.contains(name)) {
+			return materials[name];
+		}
+		else {
+			return nullptr;
+		}
+	}
+
+	MaterialConstants& GetMatCB() {
+		return MaterialData::materialDatas[name]->materialConstants;
+	}
+
+	int GetCBIndex() {
+		return data->matCBIndex;
+	}
+
+	virtual void DrawEditorUI() override;
 
 	Shader* getShader();
 	void SetShader(const std::string name);
@@ -40,5 +51,8 @@ public:
 
 	static int materialCount;
 	static std::unordered_map<std::string, Material*> materials;
+
+private:
+	std::shared_ptr<MaterialData> data;
 };
 
