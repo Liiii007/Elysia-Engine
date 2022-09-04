@@ -34,13 +34,18 @@ bool GriseoRenderer::Init(HINSTANCE hInstance) {
 		mRendererItemCount++;
 	}
 
-	for (auto it : Shader::shaders) {
+	for (auto it : Shader::instances) {
 		it.second->Build();
 	}
 
 	//Create Material Constant Buffer
 	int matCBCount = 0;
 	for (auto& mat : MaterialData::materialDatas) {
+		if (mat.second == nullptr) {
+			Log::Error("MaterialData is empty");
+			continue;
+		}
+
 		mat.second->matCBIndex = matCBCount;
 		CreateMaterialConstantBuffer(matCBCount);
 		UploadMaterialCB(mat.second);
@@ -557,7 +562,7 @@ int GriseoRenderer::RenderTick() {
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get(), };
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-	Shader* lastShader = Shader::shaders["initShader"];
+	std::shared_ptr<Shader> lastShader = Shader::instances["initShader"];
 	mCommandList->SetGraphicsRootSignature(lastShader->mRootSignature.Get());
 	mCommandList->SetPipelineState(lastShader->mPSO.Get());
 
@@ -570,10 +575,15 @@ int GriseoRenderer::RenderTick() {
 
 	for (auto iter = Entity::begin(); iter != Entity::end(); iter++) {
 		if (iter->second->HasComponent<Mesh>() && iter->second->HasComponent<Material>()) {
-			Entity* entity = iter->second;
+			std::shared_ptr<Entity> entity = iter->second;
+			//Check Material Component state
+			if (!entity->GetComponent<Material>()->enabled) {
+				Log::Error("Material unenabled:");
+				continue;
+			}
 
-			//Avoid for switch PSO frequently
-			Shader* currentShader = entity->GetComponent<Material>()->getShader();
+			//Set correct Shader, avoiding switching PSO frequently
+			std::shared_ptr<Shader> currentShader = entity->GetComponent<Material>()->getShader();
 			if (*currentShader != *lastShader) {
 				mCommandList->SetGraphicsRootSignature(currentShader->mRootSignature.Get());
 				mCommandList->SetPipelineState(currentShader->mPSO.Get());
@@ -587,8 +597,6 @@ int GriseoRenderer::RenderTick() {
 			mCommandList->SetGraphicsRootDescriptorTable(2, materialCbvHandle);
 
 			UploadObjectCB(entity->GetComponent<Mesh>());
-
-			
 
 			RenderItem(entity->GetComponent<Mesh>());
 		}

@@ -4,69 +4,83 @@
 #include <Renderer/Shader.h>
 
 
-bool WorldManager::Init() {
+bool WorldManager::Init(std::filesystem::path levelJsonPath) {
+	auto d = JSONHandler::load(levelJsonPath);
 
-	JSONHandler hand{};
-	auto d = hand.load("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Level\\Level1.json");
+	//Confirm file type
+	if (!d.HasMember("METADATA") && !d["METADATA"].HasMember("Type") && !(d["METADATA"]["Type"] == "Level")) {
+		return false;
+	}
 
-	if (d.HasMember("Entities")) {
+	if (!d.HasMember("Entities")) {
+		return false;
+	}
 
-		const Value& entities = d["Entities"];
+	const Value& entities = d["Entities"];
+	
+	//Append every entity and components
+	for (auto& entity : entities.GetArray()) {
+		if (!entity.HasMember("Name")) {
+			Log::Error("Entity struct incorrect");
+			continue;
+		}
 
-		for (auto& entity : entities.GetArray()) {
+		auto name = entity["Name"].GetString();
 
-			//Name
-			auto name = entity["Name"].GetString();
-			Entity::New(name);
-
-			if (Entity::GetEntity(name) == nullptr) {
-				Log::Error("Entity not exist");
-				continue;
-			}
-
-			Entity& e = *(Entity::GetEntity(name));
+		try {
+			Entity& e = Entity::New(name);
 
 			//Translation
-			const Value& locationValue = entity["Location"];
-			const Value& rotationValue = entity["Rotation"];
-			const Value& scaleValue = entity["Scale"];
-			const XMFLOAT3 location{
-				locationValue[0].GetFloat(),
-				locationValue[1].GetFloat(),
-				locationValue[2].GetFloat()
-			};
+			{
+				const Value& locationValue = entity["Location"];
+				const Value& rotationValue = entity["Rotation"];
+				const Value& scaleValue = entity["Scale"];
+				const XMFLOAT3 location{
+					locationValue[0].GetFloat(),
+					locationValue[1].GetFloat(),
+					locationValue[2].GetFloat()
+				};
 
-			const XMFLOAT3 rotation{
-				rotationValue[0].GetFloat(),
-				rotationValue[1].GetFloat(),
-				rotationValue[2].GetFloat()
-			};
+				const XMFLOAT3 rotation{
+					rotationValue[0].GetFloat(),
+					rotationValue[1].GetFloat(),
+					rotationValue[2].GetFloat()
+				};
 
-			const XMFLOAT3 scale{
-				scaleValue[0].GetFloat(),
-				scaleValue[1].GetFloat(),
-				scaleValue[2].GetFloat()
-			};
-			
-			e.SetLocation(location)
-			 .SetRotation(rotation)
-			 .SetScale(scale);
+				const XMFLOAT3 scale{
+					scaleValue[0].GetFloat(),
+					scaleValue[1].GetFloat(),
+					scaleValue[2].GetFloat()
+				};
+
+				e.SetLocation(location)
+					.SetRotation(rotation)
+					.SetScale(scale);
+			}
 
 			//Components
-			const Value& components = entity["Components"];
+			{
+				const Value& components = entity["Components"];
 
-			for (auto& component : components.GetArray()) {
-				const std::string componentName = component["Type"].GetString();
-				const Value& parm = component["Parm"];
+				for (auto& component : components.GetArray()) {
+					const std::string componentName = component["Type"].GetString();
+					const Value& parm = component["Parm"];
 
-				if (ComponentBase::initList.find(componentName) == ComponentBase::initList.end()) {
-					Log::Error("Not contain required component");
-				}
-				else {
-					ComponentBase::initList[componentName](e, parm);
+					if (ComponentBase::initList.find(componentName) == ComponentBase::initList.end()) {
+						Log::Error("Not contain required component");
+					}
+					else {
+						ComponentBase::initList[componentName](e, parm);
+					}
 				}
 			}
 		}
+		catch(std::exception exce) {
+			Log::Error("Failed to load entity");
+			Entity::Erase(name);
+		};
+		
+
 	}
 
 	return true;

@@ -21,7 +21,7 @@
                     "Type":"Material",
                     "Parm":{
                         "Shader":"initShader", 
-                        "Name" : "Green"
+                        "Name" : "绿色"
                     }
                 }
             ]

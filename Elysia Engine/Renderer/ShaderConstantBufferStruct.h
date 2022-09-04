@@ -2,13 +2,14 @@
 
 #include <DirectXMath.h>
 
+//4float per group
+
 struct ObjectConstants {
 	DirectX::XMFLOAT4X4 gWorld;
 	DirectX::XMFLOAT4 gColor;
 };
 
 struct PassConstants {
-	//FIXED:HLSL采用4byte打包，意味着每个float3后面都会自动插入一个byte，因此需要手动匹配padding
 	DirectX::XMFLOAT4X4 gViewProj;
 
 	//4Byte

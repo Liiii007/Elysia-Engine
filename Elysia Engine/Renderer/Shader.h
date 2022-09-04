@@ -12,12 +12,13 @@
 #include <unordered_map>
 #include "../Tools/Common/d3dUtil.h"
 #include <Renderer/ShaderConstantBufferStruct.h>
+#include <filesystem>
 
 using Microsoft::WRL::ComPtr;
 
 class Shader {
 public:
-	static std::unordered_map<std::string, Shader*> shaders;
+	static std::unordered_map<std::string, std::shared_ptr<Shader>> instances;
 	std::string name;
 	ComPtr<ID3D12PipelineState> mPSO;
 	ComPtr<ID3D12RootSignature> mRootSignature;
@@ -25,12 +26,12 @@ public:
 	ComPtr<ID3DBlob> mpsByteCode;
 	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
 
-	Shader(const std::wstring& filename, const std::string name) :filename(filename), name(name) {
-		shaders[name] = this;
+	Shader(const std::filesystem::path filename, const std::string name) :filename(filename), name(name) {
+
 	}
 
 	static void New(const std::wstring& filename, const std::string name) {
-		Shader* newShader = new Shader(filename, name);
+		instances[name] = std::make_shared<Shader>(filename, name);
 	}
 
 	void Build();
@@ -70,7 +71,7 @@ public:
 	}
 
 private:
-	std::wstring filename;
+	std::filesystem::path filename;
 	ComPtr<ID3DBlob> CompileShader(const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target);
 
 };

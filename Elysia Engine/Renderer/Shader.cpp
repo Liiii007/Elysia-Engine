@@ -2,7 +2,7 @@
 #include "../Renderer/GriseoRenderer.h"
 #include "../Tools/Singleton.h"
 
-std::unordered_map<std::string, Shader*> Shader::shaders{};
+std::unordered_map<std::string, std::shared_ptr<Shader>> Shader::instances{};
 
 ComPtr<ID3DBlob> Shader::CompileShader(const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target) {
 	UINT compileFlags = 0;

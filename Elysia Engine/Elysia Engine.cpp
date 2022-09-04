@@ -25,7 +25,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         Reflect::Init();
 
         Singleton<ResourceManager>::Get()->Init();
-        Singleton<WorldManager>::Get()->Init();
+        Singleton<WorldManager>::Get()->Init("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Level\\Level1.json");
         Singleton<GriseoRenderer>::Get()->Init(hInstance);
 
 #ifdef EDITOR_ENABLE

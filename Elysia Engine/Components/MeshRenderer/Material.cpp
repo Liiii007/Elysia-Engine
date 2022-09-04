@@ -2,17 +2,10 @@
 #include <Renderer/Shader.h>
 #include <World/Entity.h>
 
-
-std::string Material::componentName = "Material";
-int Material::materialCount{0};
-std::unordered_map<std::string, Material*> Material::materials{};
+ReflectBindComponent(Material);
 
 Material::Material(Entity* entity) : ComponentBase(entity) {
 
-}
-
-void Material::Bind() {
-	ComponentBase::initList[Material::componentName] = &Parse;
 }
 
 void Material::Parse(Entity& entity, const rapidjson::Value& parm) {
@@ -24,11 +17,19 @@ void Material::Parse(Entity& entity, const rapidjson::Value& parm) {
 }
 
 void Material::Init(std::string name, std::string shader) {
-	this->name = name;
-	this->shader = Shader::shaders[shader];
-	this->data = MaterialData::materialDatas[name];
+	this->shader = Shader::instances[shader];
+
+	if (MaterialData::materialDatas.contains(name)) {
+		this->data = MaterialData::materialDatas[name];
+	}
+	else {
+		Log::Error("MaterialData not found");
+		//Fallback to init material;
+
+		return;
+	}
+	
 	enabled = true;
-	materials[name] = this;
 }
 
 void Material::DrawEditorUI() {
@@ -36,14 +37,12 @@ void Material::DrawEditorUI() {
 	ImGui::Spacing();
 }
 
-Shader* Material::getShader() {
+std::shared_ptr<Shader> Material::getShader() {
 	return shader;
 }
 
 void Material::SetShader(const std::string name) {
-	shader = Shader::shaders[name];
+	shader = Shader::instances[name];
 }
 
-void Material::SetShader(Shader* shader) {
-	this->shader = shader;
-}
+

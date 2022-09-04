@@ -9,16 +9,12 @@ class Shader;
 class Entity;
 
 class Material : public ComponentBase {
-
 public:
-	Material(Entity* entity);
-
+	
 	static std::string componentName;
 	bool enabled{ false };
-	std::string name;
 
-	Shader* shader;
-
+	Material(Entity* entity);
 	void Init(std::string name, std::string shader);
 
 	//Regist to reflect
@@ -26,33 +22,25 @@ public:
 	//Parse init data from json file
 	static void Parse(Entity& entity, const rapidjson::Value& parm);
 
-	static Material* GetMaterial(std::string name) {
-		if (materials.contains(name)) {
-			return materials[name];
-		}
-		else {
-			return nullptr;
-		}
-	}
+	virtual void DrawEditorUI() override;
+
+	std::shared_ptr<Shader> getShader();
+	void SetShader(const std::string name);
 
 	MaterialConstants& GetMatCB() {
-		return MaterialData::materialDatas[name]->materialConstants;
+		return data->materialConstants;
 	}
-
 	int GetCBIndex() {
 		return data->matCBIndex;
 	}
 
-	virtual void DrawEditorUI() override;
-
-	Shader* getShader();
-	void SetShader(const std::string name);
-	void SetShader(Shader* shader);
-
-	static int materialCount;
-	static std::unordered_map<std::string, Material*> materials;
+	void SetMaterialData(std::string name) {
+		if (MaterialData::materialDatas.contains(name)) {
+			data = MaterialData::materialDatas[name];
+		}
+	}
 
 private:
 	std::shared_ptr<MaterialData> data;
+	std::shared_ptr<Shader> shader;
 };
-

@@ -6,33 +6,34 @@
 #include <any>
 #include <unordered_map>
 
-class Entity
-{
+class Entity {
 public:
-	Entity(std::string name) {
-		this->name = name;
-		entities[name] = this;
+
+	Entity(std::string name):name(name) {
+		return;
 	}
 	~Entity() {
-		entities.erase(name);
+		return;
 	}
 
-	static std::unordered_map<std::string, Entity*>::iterator EntitiesIterator;
 
 	//Entity Manage Relate
 	static Entity& New(std::string name) {
-		Entity* newEntity = new Entity(name);
-		return *newEntity;
+		instances[name] = std::make_shared<Entity>(name);
+		return *instances[name];
+	}
+	static void Erase(std::string name) {
+		instances.erase(name);
 	}
 	static auto begin() {
-		return entities.begin();
+		return instances.begin();
 	}
 	static auto end() {
-		return entities.end();
+		return instances.end();
 	}
-	static Entity* GetEntity(std::string name) {
-		if (entities.contains(name)) {
-			return entities[name];
+	static std::shared_ptr<Entity> GetEntity(std::string name) {
+		if (instances.contains(name)) {
+			return instances[name];
 		}
 		else {
 			return nullptr;
@@ -73,9 +74,8 @@ public:
 	//Component Relate
 	template<typename T>
 	Entity& AppendComponent() {
-		auto component = std::make_unique<IComponent>();
-		component->make<T>(this);
-		components.insert(std::make_pair(T::componentName, std::move(component)));
+		components[T::componentName] = std::make_shared<IComponent>();
+		components[T::componentName]->make<T>(this);
 		return *this;
 	}
 
@@ -97,6 +97,13 @@ public:
 		return components[T::componentName]->is<T>();
 	}
 
+	template<typename T>
+	void RemoveComponent() {
+		if (components.contains(T::componentName)) {
+			components.erase(T::componentName);
+		}
+	}
+
 	Translation translation;
 	std::vector<std::string> tags;
 	std::unordered_map<std::string, std::shared_ptr<IComponent>> components;
@@ -104,6 +111,6 @@ public:
 
 private:
 
-	static std::unordered_map<std::string, Entity*> entities;
+	static std::unordered_map<std::string, std::shared_ptr<Entity>> instances;
 };
 

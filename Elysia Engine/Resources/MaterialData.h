@@ -5,11 +5,23 @@
 #include <Renderer/ShaderConstantBufferStruct.h>
 #include <Tools/JSONHandler.h>
 #include <Tools/Logger.h>
+#include <filesystem>
 
 class MaterialData {
 public:
 
 	static void Load(std::string name, std::string path) {
+		materialDatas[name] = std::make_shared<MaterialData>(name, path);
+	}
+
+	static void Load(const std::filesystem::path& path) {
+		Document d = JSONHandler::load(path);
+		if(!d.HasMember("METADATA") && !(d["METADATA"]["Type"].GetString() != "Material")) {
+			return;
+		}
+
+		std::string name = d["METADATA"]["Name"].GetString();
+
 		materialDatas[name] = std::make_shared<MaterialData>(name, path);
 	}
 
@@ -19,9 +31,8 @@ public:
 		}
 	}
 
-	MaterialData(std::string name, std::string& path) : name(name) {
-		JSONHandler hand{};
-		auto d = hand.load(path);
+	MaterialData(std::string name, const std::filesystem::path& path) : name(name) {
+		auto d = JSONHandler::load(path);
 
 		const Value& parm = d["Parm"];
 		if (parm.HasMember("diffuseAlbedo")) {
@@ -51,12 +62,10 @@ public:
 		}
 	}
 
-	
-
 	MaterialConstants materialConstants{};
 
 	std::string name;
 	int matCBIndex;
+
 	static std::unordered_map<std::string, std::shared_ptr<MaterialData>> materialDatas;
 };
-

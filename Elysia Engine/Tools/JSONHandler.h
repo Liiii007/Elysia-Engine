@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <fstream>
+#include <filesystem>
 
 #include <rapidjson/writer.h>
 #include <rapidjson/document.h>
@@ -14,15 +15,16 @@ class JSONHandler {
 public:
 
 	//Read json from file
-	Document load(std::string path) {
+	static Document load(const std::filesystem::path& path) {
 		if (path.empty()) {
 			return NULL;
 		}
 
 		Document d;
 		FILE* fp;
+		char buffer[256];
 
-		fp = fopen(path.c_str(), "r");
+		fp = fopen(path.string().c_str(), "rb");
 		if (fp == 0) return d;
 
 		FileReadStream is(fp, buffer, sizeof(buffer));
@@ -33,11 +35,11 @@ public:
 	}
 
 	//write json to file
-	bool save(std::string path, const Document& d) {
+	static bool save(std::string path, const Document& d) {
 		if (path.empty()) return false;
-
 		
 		FILE* fp = fopen(path.c_str(), "w");
+		char buffer[256];
 
 		if (fp == 0) return false;
 
@@ -51,6 +53,5 @@ public:
 		return true;
 	}
 
-	char buffer[65536];
 };
 

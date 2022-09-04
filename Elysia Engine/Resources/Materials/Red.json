@@ -1,7 +1,8 @@
 {
     "METADATA":{
         "Type":"Material",
-        "Version":"0.1"
+        "Version":"0.1",
+        "Name":"Red"
     },
 
     "Parm":{

@@ -47,7 +47,7 @@ namespace Log {
 		std::string _message;
 
 		LogEvent(std::string message, LogLevel level) : _message(message), eventLevel(level) {
-			//FIXED:加入获取时间戳func
+			//FIXED:Add time code
 			_time = "00";
 			
 			std::string NEWmessage = toOneLine();
@@ -74,7 +74,6 @@ namespace Log {
 		Singleton<LogConfig>::Get()->logs.clear();
 	}
 
-	//特定的提示信息构造类
 	static void Error(std::string message) {
 		LogEvent error{ message, LogLevel::LOGERROR };
 	}

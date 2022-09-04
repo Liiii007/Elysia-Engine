@@ -4,7 +4,7 @@
 #include "../../Tools/Singleton.h"
 #include "../../World/Entity.h"
 
-std::string Mesh::componentName = "Mesh";
+ReflectBindComponent(Mesh);
 
 std::vector<Vertex>* Mesh::getVertices() {
 	return &vertices;
@@ -16,10 +16,6 @@ std::vector<uint16_t>* Mesh::getIndices() {
 
 Mesh::Mesh(Entity* entity) :ComponentBase(entity) {
 	this->translation = &parentEntity->translation;
-}
-
-void Mesh::Bind() {
-	ComponentBase::initList["Mesh"] = &Parse;
 }
 
 void Mesh::Parse(Entity& entity, const rapidjson::Value& parm) {
@@ -54,7 +50,7 @@ Entity& Mesh::ReturnParentEntity() {
 }
 
 Mesh::~Mesh() {
-	//BUG:未能抹除当前物体
+	
 }
 
 bool Mesh::LoadFromDisk(std::string meshPath) {

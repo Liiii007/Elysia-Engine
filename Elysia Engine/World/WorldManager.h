@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <filesystem>
+
 #include <Components/Translation.h>
 #include <Interface/ISerializable.h>
 #include <Tools/JSONHandler.h>
@@ -17,7 +19,7 @@ public:
 ;
 	std::vector<Entity> entities;
 
-	bool Init();
+	bool Init(std::filesystem::path levelJsonPath);
 
 	void appendItem();
 	void removeItem();
