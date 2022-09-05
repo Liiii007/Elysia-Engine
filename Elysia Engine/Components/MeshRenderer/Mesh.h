@@ -72,21 +72,21 @@ public:
 	void UploadVertices();
 
 	//DX12 Resources
-	ComPtr<ID3DBlob> VertexBufferCPU;
-	ComPtr<ID3DBlob> IndexBufferCPU;
-	ComPtr<ID3D12Resource> VertexBufferGPU;
-	ComPtr<ID3D12Resource> VertexBufferUploader;
-	ComPtr<ID3D12Resource> IndexBufferGPU;
-	ComPtr<ID3D12Resource> IndexBufferUploader;
+	ComPtr<ID3DBlob> VertexBufferCPU{ nullptr };
+	ComPtr<ID3DBlob> IndexBufferCPU{ nullptr };
+	ComPtr<ID3D12Resource> VertexBufferGPU{ nullptr };
+	ComPtr<ID3D12Resource> VertexBufferUploader{ nullptr };
+	ComPtr<ID3D12Resource> IndexBufferGPU{ nullptr };
+	ComPtr<ID3D12Resource> IndexBufferUploader{ nullptr };
 	D3D12_PRIMITIVE_TOPOLOGY Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	std::string path;
-	UINT mObjectIndex;
+	std::string path{};
+	int mObjectIndex{-1};
 	static std::string componentName;
 
 private:
-	D3D12_VERTEX_BUFFER_VIEW mVBV;
-	D3D12_INDEX_BUFFER_VIEW mIBV;
+	D3D12_VERTEX_BUFFER_VIEW mVBV{};
+	D3D12_INDEX_BUFFER_VIEW mIBV{};
 
 };
 

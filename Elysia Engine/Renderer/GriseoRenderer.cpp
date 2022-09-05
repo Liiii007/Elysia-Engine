@@ -61,8 +61,7 @@ bool GriseoRenderer::Init(HINSTANCE hInstance) {
 	FlushCommandQueue();
 
 	
-	ShowWindow(mhMainWnd, SW_SHOW);
-	UpdateWindow(mhMainWnd);
+	
 	return true;
 }
 
@@ -99,26 +98,29 @@ bool GriseoRenderer::InitWindow() {
 		MessageBox(0, L"CreateWindow Failed.", 0, 0);
 		return false;
 	}
-
+	ShowWindow(mhMainWnd, SW_SHOW);
+	UpdateWindow(mhMainWnd);
 	return true;
 }
 
 bool GriseoRenderer::InitDirect3D() {
 
+	//Enable debug layer
 	ComPtr<ID3D12Debug> debugController;
 	ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
 	debugController->EnableDebugLayer();
 
+	//Create DXGI Factory
 	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&mdxgiFactory)));
 
-	// Try to create hardware device.
-	HRESULT hardwareResult = D3D12CreateDevice(
+	//Create d3d device.
+	HRESULT hr = D3D12CreateDevice(
 		nullptr,             // default adapter
 		D3D_FEATURE_LEVEL_11_0,
 		IID_PPV_ARGS(&md3dDevice));
 
 	// Fallback to WARP device.
-	if (FAILED(hardwareResult))
+	if (FAILED(hr))
 	{
 		ComPtr<IDXGIAdapter> pWarpAdapter;
 		ThrowIfFailed(mdxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&pWarpAdapter)));
@@ -129,9 +131,11 @@ bool GriseoRenderer::InitDirect3D() {
 			IID_PPV_ARGS(&md3dDevice)));
 	}
 
+	//Create Fence
 	ThrowIfFailed(md3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE,
 		IID_PPV_ARGS(&mFence)));
 
+	//Fill Descriptor Size
 	mRtvDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	mDsvDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	mCbvSrvUavDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -158,15 +162,18 @@ bool GriseoRenderer::InitDirect3D() {
 }
 
 void GriseoRenderer::CreateCommandObjects() {
+	//Create Command Queue
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	ThrowIfFailed(md3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&mCommandQueue)));
 
+	//Create Command Allocator
 	ThrowIfFailed(md3dDevice->CreateCommandAllocator(
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
 		IID_PPV_ARGS(mCommandAllocator.GetAddressOf())));
 
+	//Create Command List
 	ThrowIfFailed(md3dDevice->CreateCommandList(
 		0,
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
@@ -244,7 +251,7 @@ void GriseoRenderer::CreateDescHeaps() {
 	//CBV
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-		cbvHeapDesc.NumDescriptors = 100;
+		cbvHeapDesc.NumDescriptors = 1000;
 		cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 		cbvHeapDesc.NodeMask = 0;
@@ -370,7 +377,6 @@ void GriseoRenderer::OnResize() {
 	//   2. DSV Format: DXGI_FORMAT_D24_UNORM_S8_UINT
 	// we need to create the depth buffer resource with a typeless format.  
 	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
-
 	depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
 	depthStencilDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
 	depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
@@ -482,7 +488,21 @@ void GriseoRenderer::ClearForNextFrame() {
 
 
 void GriseoRenderer::Update() {
-	
+	auto is = Singleton<InputSystem>::Get();
+	float speed = 0.1f;
+	if (InputSystem::GetKey(Key::W) == true) {
+		mCamera.pos.x -= speed;
+	}
+	if (InputSystem::GetKey(Key::A) == true) {
+		mCamera.pos.z -= speed;
+	}
+	if (InputSystem::GetKey(Key::S) == true) {
+		mCamera.pos.x += speed;
+	}
+	if (InputSystem::GetKey(Key::D) == true) {
+		mCamera.pos.z += speed;
+	}
+
 }
 
 void GriseoRenderer::UploadPassCB() {

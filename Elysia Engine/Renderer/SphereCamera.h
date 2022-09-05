@@ -1,31 +1,36 @@
 #pragma once
 #include <DirectXColors.h>
+#include <World/Entity.h>
 using namespace DirectX;
 
 class SphereCamera
 {
 public:
-	XMFLOAT3 pos;
+	XMFLOAT3 pos{4,1,0};
+	std::weak_ptr<Entity> targetEntity;
 	XMFLOAT3 target;
 	XMFLOAT3 up;
 
-	float mTheta = 0.0f * XM_PI;
-	float mPhi = 1.0 * XM_PIDIV4;
-	float mRadius = 4.0f;
-
 	XMMATRIX getViewMatrix() {
-		// Convert Spherical to Cartesian coordinates.
-		float x = mRadius * sinf(mPhi) * cosf(mTheta);
-		float z = mRadius * sinf(mPhi) * sinf(mTheta);
-		float y = mRadius * cosf(mPhi);
-
-		pos.x = mRadius;
-		pos.y = 1;
-		pos.z = 0;
 
 		// Build the view matrix.
-		XMVECTOR posV = XMVectorSet(x, y, z, 1.0f);
-		XMVECTOR targetV = XMVectorZero();
+		XMVECTOR posV = XMVectorSet(pos.x, pos.y, pos.z, 1.0f);
+
+		targetEntity = Entity::GetEntity("Sphere");
+
+		XMVECTOR targetV{};
+		if (!targetEntity.expired()) {
+			targetV = XMVectorSet(
+				targetEntity.lock()->GetLocation().x,
+				targetEntity.lock()->GetLocation().y,
+				targetEntity.lock()->GetLocation().z,
+				1
+			);
+		}
+		else {
+			targetV = XMVectorSet(pos.x-1, pos.y, pos.z, 1.0f);
+		}
+		
 		XMVECTOR upV = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 		return XMMatrixLookAtLH(posV, targetV, upV);

@@ -153,6 +153,7 @@
     <ClInclude Include="Renderer\imgui\imstb_rectpack.h" />
     <ClInclude Include="Renderer\imgui\imstb_textedit.h" />
     <ClInclude Include="Renderer\imgui\imstb_truetype.h" />
+    <ClInclude Include="Tools\Action.h" />
     <ClInclude Include="Tools\Reflect.h" />
     <ClInclude Include="Resources\MeshData.h" />
     <ClInclude Include="Resources\ResourceManager.h" />

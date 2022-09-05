@@ -10,7 +10,8 @@
 
 #include "Tools/JSONHandler.h"
 #include "Tools/Reflect.h"
-
+#include <System/InputSystem.h>
+#include <Tools/Action.h>
 
 #define EDITOR_ENABLE
 
@@ -22,8 +23,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     try
     {  
-        Reflect::Init();
 
+        Reflect::Init();
+        Singleton<InputSystem>::Get()->Init();
         Singleton<ResourceManager>::Get()->Init();
         Singleton<WorldManager>::Get()->Init("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Level\\Level1.json");
         Singleton<GriseoRenderer>::Get()->Init(hInstance);

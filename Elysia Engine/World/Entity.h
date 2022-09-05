@@ -70,6 +70,9 @@ public:
 		return *this;
 	}
 
+	XMFLOAT3 GetLocation() {
+		return translation.position;
+	}
 
 	//Component Relate
 	template<typename T>
