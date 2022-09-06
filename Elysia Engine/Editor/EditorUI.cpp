@@ -12,6 +12,8 @@
 #include <Renderer/imgui/imgui_impl_win32.h>
 #include <Renderer/imgui/imgui_impl_dx12.h>
 
+import DXDeviceResource;
+
 void EditorUI::Init() {
 
 	auto renderer = Singleton<GriseoRenderer>::Get();
@@ -27,11 +29,11 @@ void EditorUI::Init() {
 	//ImGui::StyleColorsLight();
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplWin32_Init(renderer->mhMainWnd);
-	ImGui_ImplDX12_Init(renderer->md3dDevice.Get(), renderer->mSwapChainBufferCount,
-		DXGI_FORMAT_R8G8B8A8_UNORM, renderer->mCbvHeap.Get(),
-		renderer->mSrvHeap.Get()->GetCPUDescriptorHandleForHeapStart(),
-		renderer->mSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+	ImGui_ImplWin32_Init(DX::mhMainWnd);
+	ImGui_ImplDX12_Init(DX::md3dDevice.Get(), DX::mSwapChainBufferCount,
+		DXGI_FORMAT_R8G8B8A8_UNORM, DX::mCbvHeap.Get(),
+		DX::mSrvHeap.Get()->GetCPUDescriptorHandleForHeapStart(),
+		DX::mSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
 
 	isInit = true;
 }
@@ -120,7 +122,7 @@ void EditorUI::Draw() {
 
 	ImGui::Render();
 
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), renderer->mCommandList.Get());
+	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), DX::mCommandList.Get());
 }
 
 EditorUI::~EditorUI() {

@@ -5,6 +5,8 @@
 
 ReflectBindComponent(Mesh);
 
+import DXDeviceResource;
+
 std::vector<Vertex>* Mesh::getVertices() {
 	return &vertices;
 }
@@ -175,10 +177,10 @@ void Mesh::UploadVertices() {
 	ThrowIfFailed(D3DCreateBlob(ibByteSize, &IndexBufferCPU));
 	CopyMemory(IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
 
-	VertexBufferGPU = d3dUtil::CreateDefaultBuffer(renderer->md3dDevice.Get(),
-		renderer->mCommandList.Get(), vertices.data(), vbByteSize, VertexBufferUploader);
+	VertexBufferGPU = d3dUtil::CreateDefaultBuffer(DX::md3dDevice.Get(),
+		DX::mCommandList.Get(), vertices.data(), vbByteSize, VertexBufferUploader);
 
-	IndexBufferGPU = d3dUtil::CreateDefaultBuffer(renderer->md3dDevice.Get(),
-		renderer->mCommandList.Get(), indices.data(), ibByteSize, IndexBufferUploader);
+	IndexBufferGPU = d3dUtil::CreateDefaultBuffer(DX::md3dDevice.Get(),
+		DX::mCommandList.Get(), indices.data(), ibByteSize, IndexBufferUploader);
 }
 

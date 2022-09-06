@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include "Shader.h"
 #include "../Renderer/GriseoRenderer.h"
+import DXDeviceResource;
 
 std::unordered_map<std::string, std::shared_ptr<Shader>> Shader::instances{};
 
@@ -56,7 +57,7 @@ void Shader::BuildRootSig() {
 	}
 	ThrowIfFailed(hr);
 
-	ThrowIfFailed(renderer->md3dDevice->CreateRootSignature(
+	ThrowIfFailed(DX::md3dDevice->CreateRootSignature(
 		0,
 		serializedRootSig->GetBufferPointer(),
 		serializedRootSig->GetBufferSize(),
@@ -92,12 +93,12 @@ void Shader::BuildPSO() {
 	psoDesc.SampleMask = UINT_MAX;
 	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	psoDesc.NumRenderTargets = 1;
-	psoDesc.RTVFormats[0] = renderer->mBackBufferFormat;
-	psoDesc.SampleDesc.Count = renderer->m4xMsaaState ? 4 : 1;
-	psoDesc.SampleDesc.Quality = renderer->m4xMsaaState ? (renderer->m4xMsaaQuality - 1) : 0;
-	psoDesc.DSVFormat = renderer->mDepthStencilFormat;
+	psoDesc.RTVFormats[0] = DX::mBackBufferFormat;
+	psoDesc.SampleDesc.Count = DX::m4xMsaaState ? 4 : 1;
+	psoDesc.SampleDesc.Quality = DX::m4xMsaaState ? (DX::m4xMsaaQuality - 1) : 0;
+	psoDesc.DSVFormat = DX::mDepthStencilFormat;
 
-	ThrowIfFailed(renderer->md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO)));
+	ThrowIfFailed(DX::md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO)));
 }
 
 void Shader::SetInputLayout() {
@@ -114,22 +115,4 @@ void Shader::Build() {
 	SetInputLayout();
 	BuildRootSig();
 	BuildPSO();
-}
-
-void Shader::Use(int objectIndex) {
-	auto renderer = Singleton<GriseoRenderer>::Get();
-	renderer->mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
-	renderer->mCommandList->SetPipelineState(mPSO.Get());
-
-	//set object CB
-	int objectCbvIndex = 1 + objectIndex;
-	auto objectCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(renderer->mCbvHeap->GetGPUDescriptorHandleForHeapStart());
-	objectCbvHandle.Offset(objectCbvIndex, renderer->mCbvSrvUavDescriptorSize);
-	renderer->mCommandList->SetGraphicsRootDescriptorTable(0, objectCbvHandle);
-
-	//set pass CB
-	int passCbvIndex = 0;
-	auto passCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(renderer->mCbvHeap->GetGPUDescriptorHandleForHeapStart());
-	passCbvHandle.Offset(passCbvIndex, renderer->mCbvSrvUavDescriptorSize);
-	renderer->mCommandList->SetGraphicsRootDescriptorTable(1, passCbvHandle);
 }

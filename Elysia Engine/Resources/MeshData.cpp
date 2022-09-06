@@ -5,6 +5,8 @@
 #include "Tools/Singleton.h"
 #include "World/Entity.h"
 
+import DXDeviceResource;
+
 std::unordered_map<std::string, MeshData*> MeshData::meshs;
 
 std::vector<Vertex1>* MeshData::getVertices() {
@@ -119,10 +121,10 @@ void MeshData::UploadVertices() {
 	ThrowIfFailed(D3DCreateBlob(ibByteSize, &IndexBufferCPU));
 	CopyMemory(IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
 
-	VertexBufferGPU = d3dUtil::CreateDefaultBuffer(renderer->md3dDevice.Get(),
-		renderer->mCommandList.Get(), vertices.data(), vbByteSize, VertexBufferUploader);
+	VertexBufferGPU = d3dUtil::CreateDefaultBuffer(DX::md3dDevice.Get(),
+		DX::mCommandList.Get(), vertices.data(), vbByteSize, VertexBufferUploader);
 
-	IndexBufferGPU = d3dUtil::CreateDefaultBuffer(renderer->md3dDevice.Get(),
-		renderer->mCommandList.Get(), indices.data(), ibByteSize, IndexBufferUploader);
+	IndexBufferGPU = d3dUtil::CreateDefaultBuffer(DX::md3dDevice.Get(),
+		DX::mCommandList.Get(), indices.data(), ibByteSize, IndexBufferUploader);
 }
 

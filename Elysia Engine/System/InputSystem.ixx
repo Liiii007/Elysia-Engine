@@ -5,6 +5,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #define KeyCodeDefine(Key) Key=#@Key
 export module InputSystem;
 
+import DXDeviceResource;
 
 export enum Key {
 	KeyCodeDefine(A),
@@ -37,8 +38,6 @@ export enum Key {
 
 namespace InputSystem {
 
-	
-
 	bool mWindowMaximized{ false };
 	bool mWindowMinimized{ false };
 	bool mWindowResizing{ false };
@@ -69,8 +68,6 @@ namespace InputSystem {
 		if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
 			return true;
 
-		auto renderer = Singleton<GriseoRenderer>::Get();
-
 		if (msg == WM_KEYDOWN) {
 			if (KeyCode.contains(wParam)) {
 				KeyCode[wParam]->OnValueUpdate(true);
@@ -88,9 +85,9 @@ namespace InputSystem {
 			// WM_SIZE is sent when the user resizes the window.  
 		case WM_SIZE:
 			// Save the new client area dimensions.
-			renderer->mClientWidth = LOWORD(lParam);
-			renderer->mClientHeight = HIWORD(lParam);
-			if (renderer->md3dDevice)
+			DX::mClientWidth = LOWORD(lParam);
+			DX::mClientHeight = HIWORD(lParam);
+			if (DX::md3dDevice)
 			{
 
 				if (wParam == SIZE_MINIMIZED)  //Min Window
@@ -104,7 +101,7 @@ namespace InputSystem {
 					//mAppPaused = false;
 					//mMinimized = false;
 					//mMaximized = true;
-					renderer->OnResize();
+					DX::OnResize();
 				}
 				else if (wParam == SIZE_RESTORED)
 				{
@@ -114,7 +111,7 @@ namespace InputSystem {
 					{
 						//mAppPaused = false;
 						mWindowMinimized = false;
-						renderer->OnResize();
+						DX::OnResize();
 					}
 
 					// Restoring from maximized state?
@@ -122,11 +119,11 @@ namespace InputSystem {
 					{
 						//mAppPaused = false;
 						mWindowMaximized = false;
-						renderer->OnResize();
+						DX::OnResize();
 					}
 					else if (mWindowResizing)
 					{
-						//renderer->OnResize();
+						//DX::OnResize();
 						// If user is dragging the resize bars, we do not resize 
 						// the buffers here because as the user continuously 
 						// drags the resize bars, a stream of WM_SIZE messages are
@@ -138,7 +135,7 @@ namespace InputSystem {
 					}
 					else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
 					{
-						renderer->OnResize();
+						DX::OnResize();
 					}
 				}
 
@@ -158,7 +155,7 @@ namespace InputSystem {
 			//mAppPaused = false;
 			mWindowResizing = false;
 			//mTimer.Start();
-			renderer->OnResize();
+			DX::OnResize();
 			return 0;
 		}
 

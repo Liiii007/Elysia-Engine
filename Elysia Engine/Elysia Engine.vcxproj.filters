@@ -323,7 +323,10 @@
     <ClCompile Include="System\InputSystem.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="System\TestSystem.ixx">
+    <ClCompile Include="Renderer\GriseoRenderer1.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\DeviceResource.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

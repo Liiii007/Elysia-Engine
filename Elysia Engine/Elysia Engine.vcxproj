@@ -202,6 +202,8 @@
     <ClCompile Include="EditorSystem.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Elysia Engine.cpp" />
+    <ClCompile Include="Renderer\DeviceResource.ixx" />
+    <ClCompile Include="Renderer\GriseoRenderer1.ixx" />
     <ClCompile Include="Resources\MaterialData.cpp" />
     <ClCompile Include="Renderer\GriseoRenderer.cpp" />
     <ClCompile Include="Renderer\imgui\imgui.cpp" />
@@ -215,7 +217,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="System\InputSystem.ixx" />
-    <ClCompile Include="System\TestSystem.ixx" />
     <ClCompile Include="Tools\Debug.ixx" />
     <ClCompile Include="Tools\Example.ixx" />
     <ClCompile Include="Tools\Log.ixx" />
