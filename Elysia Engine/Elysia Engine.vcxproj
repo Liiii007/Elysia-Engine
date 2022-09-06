@@ -194,6 +194,7 @@
   <ItemGroup>
     <ClCompile Include="Components\Light\DirectLight.cpp" />
     <ClCompile Include="Components\Light.cpp" />
+    <ClCompile Include="Components\Material.ixx" />
     <ClCompile Include="Components\MeshRenderer\Material.cpp" />
     <ClCompile Include="Components\MeshRenderer\Mesh.cpp" />
     <ClCompile Include="Components\Light\PointLight.cpp" />

@@ -63,8 +63,10 @@ namespace DX {
 
 	export int mRendererItemCount{ 0 };
 	export int mFrameCount{ 0 };
+}
 
-	export void CreateCommandObjects() {
+namespace DX {
+	void CreateCommandObjects() {
 		//Create Command Queue
 		D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -90,7 +92,7 @@ namespace DX {
 		mCommandList->Close();
 	}
 
-	export void CreateSwapChain() {
+	void CreateSwapChain() {
 		mSwapChain.Reset();
 
 		DXGI_SWAP_CHAIN_DESC sd{};
@@ -117,7 +119,7 @@ namespace DX {
 			mSwapChain.GetAddressOf()));
 	}
 
-	export void CreateDescHeaps() {
+	void CreateDescHeaps() {
 		//RTV
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
@@ -358,9 +360,5 @@ namespace DX {
 		mScissorRect = { 0, 0, mClientWidth, mClientHeight };
 
 	}
-
-
-
-	
 }
 

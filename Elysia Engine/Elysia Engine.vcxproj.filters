@@ -329,6 +329,9 @@
     <ClCompile Include="Renderer\DeviceResource.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Components\Material.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Components\AutoComponentGenerater.py" />
