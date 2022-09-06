@@ -8,11 +8,15 @@
     "Entities" : [
         {
             "Name" : "Sphere",
-            "Location" : [0,0,0],
-            "Rotation" : [0,0,0],
-            "Scale" : [1,1,1],
-
             "Components" : [
+                {
+                    "Type":"Translation",
+                    "Parm":{
+                        "Location" : [0,0,0],
+                        "Rotation" : [0,0,0],
+                        "Scale"    : [1,1,1]
+                    }
+                },
                 {
                     "Type":"Mesh",
                     "Parm":"D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Model\\Sphere.fbx"
@@ -28,11 +32,15 @@
         },
         {
             "Name" : "Dawei",
-            "Location" : [2.5,0.1,-0.7],
-            "Rotation" : [-8.2,-3.3,10.9],
-            "Scale" : [1,1,1],
-
             "Components" : [
+                {
+                    "Type":"Translation",
+                    "Parm":{
+                        "Location" : [2.5,0.1,-0.7],
+                        "Rotation" : [-8.2,-3.3,10.9],
+                        "Scale" : [1,1,1]
+                    }
+                },
                 {
                     "Type":"Mesh",
                     "Parm":"D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Model\\dawei.fbx"
@@ -48,11 +56,15 @@
         },
         {
             "Name" : "eLight",
-            "Location" : [3,0,0],
-            "Rotation" : [0,0,0],
-            "Scale" : [1,1,1],
-
             "Components" : [
+                {
+                    "Type":"Translation",
+                    "Parm":{
+                        "Location" : [3,0,0],
+                        "Rotation" : [0,0,0],
+                        "Scale" : [1,1,1]
+                    }
+                },
                 {
                     "Type":"Light",
                     "Parm":[0,0,0]

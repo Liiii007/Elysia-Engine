@@ -1,14 +1,17 @@
 #include <stdafx.h>
-#include <Resources/MaterialData.h>
-#include <Renderer/Shader.h>
 
 export module Material;
 import ECS;
+import Shader;
+import MaterialData;
+import Definition;
+import Log;
 
 namespace Component {
-
+	using namespace Resource;
 	export class Material : public ComponentBase {
 	public:
+		
 		bool enabled{ false };
 
 		Material(Entity* entity);

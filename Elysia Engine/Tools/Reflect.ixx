@@ -5,6 +5,7 @@ export module ReflectSystem;
 import Material;
 import Mesh;
 import Light;
+import Translation;
 import Definition;
 import ECS;
 
@@ -17,6 +18,6 @@ namespace ReflectSystem {
 		Bind(Mesh);
 		Bind(Material);
 		Bind(Light);
-
+		Bind(Translation);
 	}
 }

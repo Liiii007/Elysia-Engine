@@ -1,17 +1,10 @@
-#pragma once
-#include <string>
-#include <fstream>
-#include <filesystem>
-
-#include <rapidjson/writer.h>
-#include <rapidjson/document.h>
-#include "rapidjson/filereadstream.h"
-#include <rapidjson/filewritestream.h>
+#include <stdafx.h>
 #pragma warning(disable:4996)
 
 using namespace rapidjson;
 
-class JSONHandler {
+export module JSONHandler;
+export class JSONHandler {
 public:
 
 	//Read json from file
@@ -37,7 +30,7 @@ public:
 	//write json to file
 	static bool save(std::string path, const Document& d) {
 		if (path.empty()) return false;
-		
+
 		FILE* fp = fopen(path.c_str(), "w");
 		char buffer[256];
 
@@ -54,4 +47,3 @@ public:
 	}
 
 };
-

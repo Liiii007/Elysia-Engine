@@ -1,11 +1,12 @@
 #include <stdafx.h>
 #include <Tools/Common/d3dUtil.h>
-#include <Components/Translation.h>
 
 export module Mesh;
 
 import DXDeviceResource;
 import ECS;
+import Translation;
+import Log;
 
 namespace Component {
 	using Microsoft::WRL::ComPtr;
@@ -198,7 +199,8 @@ namespace Component {
 	}
 
 	XMMATRIX Mesh::getWorldMatrix() {
-		auto r = parentEntity->translation.rotation;
+
+		auto r = parentEntity->GetComponent<Translation>()->rotation;
 		auto rX = XMMatrixRotationX(r.x / 6.28f);
 		auto rY = XMMatrixRotationY(r.y / 6.28f);
 		auto rZ = XMMatrixRotationZ(r.z / 6.28f);
@@ -206,23 +208,23 @@ namespace Component {
 
 		auto rotationMatrix = XMMatrixRotationRollPitchYawFromVector(
 			XMVectorSet(
-				parentEntity->translation.rotation.x,
-				parentEntity->translation.rotation.y,
-				parentEntity->translation.rotation.z,
+				parentEntity->GetComponent<Translation>()->rotation.x,
+				parentEntity->GetComponent<Translation>()->rotation.y,
+				parentEntity->GetComponent<Translation>()->rotation.z,
 				1
 			) / 6.28f);
 		auto scaleMatrix = XMMatrixScalingFromVector(
 			XMVectorSet(
-				parentEntity->translation.scale.x,
-				parentEntity->translation.scale.y,
-				parentEntity->translation.scale.z,
+				parentEntity->GetComponent<Translation>()->scale.x,
+				parentEntity->GetComponent<Translation>()->scale.y,
+				parentEntity->GetComponent<Translation>()->scale.z,
 				1
 			));
 		auto translationMatrix = XMMatrixTranslationFromVector(
 			XMVectorSet(
-				parentEntity->translation.position.x,
-				parentEntity->translation.position.y,
-				parentEntity->translation.position.z,
+				parentEntity->GetComponent<Translation>()->position.x,
+				parentEntity->GetComponent<Translation>()->position.y,
+				parentEntity->GetComponent<Translation>()->position.z,
 				1
 			));
 		return translationMatrix * scaleMatrix * rotationMatrix;

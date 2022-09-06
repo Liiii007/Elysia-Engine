@@ -1,11 +1,73 @@
 #include <stdafx.h>
-#include "Shader.h"
-#include "../Renderer/GriseoRenderer.h"
+#include <Tools/Common/d3dUtil.h>
+export module Shader;
 import DXDeviceResource;
+
+export class Shader {
+public:
+	static std::unordered_map<std::string, std::shared_ptr<Shader>> instances;
+	std::string name;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> mPSO;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
+	Microsoft::WRL::ComPtr<ID3DBlob> mvsByteCode;
+	Microsoft::WRL::ComPtr<ID3DBlob> mpsByteCode;
+	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
+
+	Shader(const std::filesystem::path filename, const std::string name) : filename(filename), name(name) {
+
+	}
+
+	static void New(const std::wstring& filename, const std::string name) {
+		instances[name] = std::make_shared<Shader>(filename, name);
+	}
+
+	void Build();
+	void SetInputLayout();
+	void BuildPSO();
+	void BuildRootSig();
+
+	void Use(int objectIndex);
+
+	Microsoft::WRL::ComPtr<ID3DBlob> GetVertexShader() {
+		return mvsByteCode;
+	}
+
+	Microsoft::WRL::ComPtr<ID3DBlob> GetPixelShader() {
+		return mpsByteCode;
+	}
+
+	auto GetInputLayout() {
+		return mInputLayout;
+	}
+
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> getPSO() {
+		return mPSO;
+	}
+
+	bool operator==(const Shader& other) {
+		if (this->filename == other.filename) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool operator!=(const Shader& other) {
+		return !(*this == other);
+	}
+
+private:
+	std::filesystem::path filename;
+	Microsoft::WRL::ComPtr<ID3DBlob> CompileShader(const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target);
+
+};
+
+
 
 std::unordered_map<std::string, std::shared_ptr<Shader>> Shader::instances{};
 
-ComPtr<ID3DBlob> Shader::CompileShader(const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target) {
+Microsoft::WRL::ComPtr<ID3DBlob> Shader::CompileShader(const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target) {
 	UINT compileFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG)  
 	compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -13,8 +75,8 @@ ComPtr<ID3DBlob> Shader::CompileShader(const D3D_SHADER_MACRO* defines, const st
 
 	HRESULT hr = S_OK;
 
-	ComPtr<ID3DBlob> byteCode = nullptr;
-	ComPtr<ID3DBlob> errors;
+	Microsoft::WRL::ComPtr<ID3DBlob> byteCode = nullptr;
+	Microsoft::WRL::ComPtr<ID3DBlob> errors;
 	hr = D3DCompileFromFile(filename.c_str(), defines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
 		entrypoint.c_str(), target.c_str(), compileFlags, 0, &byteCode, &errors);
 
@@ -28,7 +90,6 @@ ComPtr<ID3DBlob> Shader::CompileShader(const D3D_SHADER_MACRO* defines, const st
 
 void Shader::BuildRootSig() {
 	const int bCount = 3;
-	auto renderer = Singleton<GriseoRenderer>::Get();
 
 	CD3DX12_ROOT_PARAMETER slotRootParameter[bCount];
 
@@ -47,8 +108,8 @@ void Shader::BuildRootSig() {
 	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(bCount, slotRootParameter, 0, nullptr,
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-	ComPtr<ID3DBlob> serializedRootSig = nullptr;
-	ComPtr<ID3DBlob> errorBlob = nullptr;
+	Microsoft::WRL::ComPtr<ID3DBlob> serializedRootSig = nullptr;
+	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
 	HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
 		serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
 
@@ -67,7 +128,6 @@ void Shader::BuildRootSig() {
 }
 
 void Shader::BuildPSO() {
-	auto renderer = Singleton<GriseoRenderer>::Get();
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
@@ -116,3 +176,4 @@ void Shader::Build() {
 	BuildRootSig();
 	BuildPSO();
 }
+

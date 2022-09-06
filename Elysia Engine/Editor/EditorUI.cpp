@@ -1,13 +1,14 @@
 #include <stdafx.h>
 #include "EditorUI.h"
-#include <Renderer/GriseoRenderer.h>
 
 import DXDeviceResource;
 import ECS;
+import Translation;
+import GriseoRenderer;
+import Log;
+using namespace Component;
 
 void EditorUI::Init() {
-
-	auto renderer = Singleton<GriseoRenderer>::Get();
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -33,8 +34,6 @@ void EditorUI::Draw() {
 	//UnInti->don't draw
 	if (!isInit) return;
 
-	auto renderer = Singleton<GriseoRenderer>::Get();
-
 	bool show_demo_window = true;
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -57,7 +56,7 @@ void EditorUI::Draw() {
 
 		auto light = Entity::GetEntity("eLight");
 
-		ImGui::SliderFloat("float", &light->translation.position.x, -10, 10);
+		ImGui::SliderFloat("float", &light->GetComponent<Translation>()->position.x, -10, 10);
 		
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -65,7 +64,7 @@ void EditorUI::Draw() {
 	}
 
 	static std::shared_ptr<Entity> selectedEntity = nullptr;
-	{
+	{//Show Entities List
 		ImGui::Begin("Entities");
 
 		for (auto iter = Entity::begin(); iter != Entity::end(); iter++) {
@@ -76,7 +75,7 @@ void EditorUI::Draw() {
 		ImGui::End();
 	}
 
-	{
+	{//Show Log Data
 		ImGui::Begin("Log Output");
 		if (ImGui::Button("Clear Logs")) {
 			Log::clearLogs();
@@ -92,16 +91,10 @@ void EditorUI::Draw() {
 		ImGui::End();
 	}
 
-	{
+	{//Show Component Data
 		ImGui::Begin("Component");
 
 		if (selectedEntity != nullptr) {
-			//Translation
-			ImGui::DragFloat3("Location", &selectedEntity->translation.position.x, 0.1f);
-			ImGui::DragFloat3("Rotation", &selectedEntity->translation.rotation.x, 0.1f);
-			ImGui::DragFloat3("Scale", &selectedEntity->translation.scale.x, 0.1f);
-			ImGui::Spacing();
-
 			for (auto& ui : selectedEntity->components) {
 				auto base = ui.second->getBase();
 				base.lock()->DrawEditorUI();

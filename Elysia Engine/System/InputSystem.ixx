@@ -1,8 +1,8 @@
 #include <stdafx.h>
 #include <Interface/ICommand.h>
-#include <Renderer/GriseoRenderer.h>
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #define KeyCodeDefine(Key) Key=#@Key
+
 export module InputSystem;
 
 import DXDeviceResource;

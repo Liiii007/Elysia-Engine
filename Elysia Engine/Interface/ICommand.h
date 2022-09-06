@@ -1,6 +1,10 @@
 #pragma once
 #include<stdafx.h>
 
+
+template<typename T>
+using Action = std::function<void(T)>;
+
 template<typename T>
 class ICommand {
 public:

@@ -1,11 +1,11 @@
 #include <stdafx.h>
-export module ECS;
+import Log;
 
-#include "Components/Translation.h"
-#include <typeinfo>
+export module ECS;
 
 export class IComponent;
 
+//Entity Class
 export class Entity {
 public:
 
@@ -39,39 +39,7 @@ public:
 		}
 	}
 
-	//Translation Relate
-	Entity& SetLocation(float x, float y, float z) {
-		translation.position = XMFLOAT3{ x,y,z };
-		return *this;
-	}
-	Entity& SetLocation(const XMFLOAT3& position) {
-		translation.position = position;
-		return *this;
-	}
-	Entity& SetRotation(float x, float y, float z) {
-		translation.rotation = XMFLOAT3{ x,y,z };
-		return *this;
-	}
-	Entity& SetRotation(const XMFLOAT3& rotation) {
-		translation.rotation = rotation;
-		return *this;
-	}
-	Entity& SetUniformScale(float scale) {
-		translation.scale = XMFLOAT3{ scale,scale,scale };
-		return *this;
-	}
-	Entity& SetScale(float x, float y, float z) {
-		translation.scale = XMFLOAT3{ x,y,z };
-		return *this;
-	}
-	Entity& SetScale(const XMFLOAT3& scale) {
-		translation.scale = scale;
-		return *this;
-	}
-
-	XMFLOAT3 GetLocation() {
-		return translation.position;
-	}
+	
 
 	//Component Relate
 	template<typename T>
@@ -109,7 +77,6 @@ public:
 		}
 	}
 
-	Translation translation;
 	std::vector<std::string> tags;
 	std::unordered_map<std::string, std::shared_ptr<IComponent>> components;
 	std::string name;
@@ -119,9 +86,7 @@ private:
 	static std::unordered_map<std::string, std::shared_ptr<Entity>> instances;
 };
 
-export std::unordered_map<std::string, std::shared_ptr<Entity>> Entity::instances;
-
-
+//Component Base Class
 export class ComponentBase {
 public:
 	ComponentBase(Entity* entity) {
@@ -137,9 +102,7 @@ public:
 	static std::unordered_map<std::string, std::function<void(Entity&, const rapidjson::Value&)>> initList;
 };
 
-std::unordered_map<std::string, std::function<void(Entity&, const rapidjson::Value&)>> ComponentBase::initList{};
-
-//Component
+//Component Container
 export class IComponent {
 
 public:
@@ -192,5 +155,39 @@ public:
 	}
 };
 
+//System Base Class
+class SystemBase {
+public:
+	SystemBase() {
+		systems.push_back(this);
+	}
+
+	~SystemBase() {
+		for (auto it = systems.begin(); it != systems.end(); it++) {
+			if (*it == this) {
+				systems.erase(it);
+				return;
+			}
+		}
+
+		Log::Error("Unable to clear up deleted System");
+	}
+
+	virtual void Tick() {
+		Log::Warning("Default Tick");
+	}
+
+	static std::vector<SystemBase*> systems;
+
+	static void SystemTick() {
+		for (auto& system : systems) {
+			system->Tick();
+		}
+	}
+};
 
 
+
+std::unordered_map<std::string, std::shared_ptr<Entity>> Entity::instances;
+std::unordered_map<std::string, std::function<void(Entity&, const rapidjson::Value&)>> ComponentBase::initList{};
+std::vector<SystemBase*> SystemBase::systems{};

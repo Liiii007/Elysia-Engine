@@ -9,11 +9,9 @@
 #include <memory>
 #include <functional>
 #include <algorithm>
+#include <typeinfo>
+#include <fstream>
 
-//Tools
-#include <Tools/Logger.h>
-#include <Tools/Action.h>
-#include <Tools/JSONHandler.h>
 
 //Windows platform
 #ifndef WIN32_LEAN_AND_MEAN
@@ -31,16 +29,20 @@
 #pragma comment(lib, "dxgi.lib")
 
 //3rd party
-#include <Renderer/imgui/imgui.h>
-#include <Renderer/imgui/imgui_impl_win32.h>
-#include <Renderer/imgui/imgui_impl_dx12.h>
+#include <3rd/imgui/imgui.h>
+#include <3rd/imgui/imgui_impl_win32.h>
+#include <3rd/imgui/imgui_impl_dx12.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/LogStream.hpp>
+
+#include <rapidjson/writer.h>
 #include <rapidjson/document.h>
+#include "rapidjson/filereadstream.h"
+#include <rapidjson/filewritestream.h>
 
-#include <Renderer/ShaderConstantBufferStruct.h>
 
+#include <Tools/Singleton.h>

@@ -15,12 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -42,94 +36,46 @@
     <ClInclude Include="Tools\Common\UploadBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tools\Delegate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tools\Logger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tools\Publisher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Tools\Singleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="World\WorldManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\Translation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="System\SystemBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\Skybox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\GriseoRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Interface\ISerializable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="System\FullSystemHeader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\ResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\MeshData.h">
+    <ClInclude Include="3rd\imgui\imconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tools\JSONHandler.h">
+    <ClInclude Include="3rd\imgui\imgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EditorSystem.h">
+    <ClInclude Include="3rd\imgui\imgui_impl_dx12.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\imgui\imconfig.h">
+    <ClInclude Include="3rd\imgui\imgui_impl_win32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\imgui\imgui.h">
+    <ClInclude Include="3rd\imgui\imgui_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\imgui\imgui_impl_dx12.h">
+    <ClInclude Include="3rd\imgui\imstb_rectpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\imgui\imgui_impl_win32.h">
+    <ClInclude Include="3rd\imgui\imstb_textedit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\imgui\imgui_internal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\imgui\imstb_rectpack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\imgui\imstb_textedit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\imgui\imstb_truetype.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\EditorUI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\MaterialData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\ShaderConstantBufferStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tools\Action.h">
+    <ClInclude Include="3rd\imgui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Interface\ICommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\EditorUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -149,31 +95,7 @@
     <ClCompile Include="Tools\Common\MathHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tools\Delegate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tools\Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tools\Publisher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Tools\Singleton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="World\WorldManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Components\Translation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="System\SystemBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\Skybox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Interface\ISerializable.cpp">
@@ -182,46 +104,25 @@
     <ClCompile Include="Resources\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resources\MeshData.cpp">
+    <ClCompile Include="3rd\imgui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tools\JSONHandler.cpp">
+    <ClCompile Include="3rd\imgui\imgui_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tools\Reflect.cpp">
+    <ClCompile Include="3rd\imgui\imgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EditorSystem.cpp">
+    <ClCompile Include="3rd\imgui\imgui_impl_dx12.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\imgui\imgui.cpp">
+    <ClCompile Include="3rd\imgui\imgui_impl_win32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\imgui\imgui_demo.cpp">
+    <ClCompile Include="3rd\imgui\imgui_tables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\imgui\imgui_draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\imgui\imgui_impl_dx12.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\imgui\imgui_impl_win32.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\imgui\imgui_tables.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\imgui\imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\EditorUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\GriseoRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\MaterialData.cpp">
+    <ClCompile Include="3rd\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
@@ -239,10 +140,10 @@
     <ClCompile Include="System\InputSystem.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\GriseoRenderer1.ixx">
+    <ClCompile Include="System\GriseoRenderer.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\DeviceResource.ixx">
+    <ClCompile Include="Common\DeviceResource.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Components\Material.ixx">
@@ -257,7 +158,7 @@
     <ClCompile Include="Components\Camera.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Components\ECS.ixx">
+    <ClCompile Include="World\ECS.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Interface\ICommand.cpp">
@@ -269,8 +170,26 @@
     <ClCompile Include="Tools\Definition.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Resources\Shader.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Translation.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\MaterialData.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\EditorUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\JSONHandler.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="World\WorldManager.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Components\AutoComponentGenerater.py" />
+    <None Include="Tools\AutoComponentGenerater.py" />
   </ItemGroup>
 </Project>

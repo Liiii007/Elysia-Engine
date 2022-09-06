@@ -1,13 +1,14 @@
 #include <stdafx.h>
 #include "ResourceManager.h"
-#include <Renderer/Shader.h>
-#include <Tools/Logger.h>
-#include <Resources/MaterialData.h>
-#include <filesystem>
 
+import Shader;
+import MaterialData;
+import Log;
+
+using namespace Resource;
 
 void ResourceManager::Init() {
-	Shader::New(L"D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Renderer\\Shaders\\normal.hlsl", "initShader");
+	Shader::New(L"D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Shaders\\normal.hlsl", "initShader");
 	Log::Info("ResourceManager Init");
 
 

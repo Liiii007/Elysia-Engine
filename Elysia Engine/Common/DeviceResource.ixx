@@ -1,8 +1,9 @@
 #include <stdafx.h>
-
-
 #include <Tools/Common/UploadBuffer.h>
 #include <Tools/Common/d3dUtil.h>
+
+import Definition;
+
 export module DXDeviceResource;
 
 //Global Varients

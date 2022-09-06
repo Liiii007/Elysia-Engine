@@ -136,68 +136,48 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Components\Translation.h" />
-    <ClInclude Include="EditorSystem.h" />
     <ClInclude Include="Editor\EditorUI.h" />
-    <ClInclude Include="framework.h" />
     <ClInclude Include="Interface\ICommand.h" />
-    <ClInclude Include="Renderer\ShaderConstantBufferStruct.h" />
-    <ClInclude Include="Resources\MaterialData.h" />
-    <ClInclude Include="Renderer\imgui\imconfig.h" />
-    <ClInclude Include="Renderer\imgui\imgui.h" />
-    <ClInclude Include="Renderer\imgui\imgui_impl_dx12.h" />
-    <ClInclude Include="Renderer\imgui\imgui_impl_win32.h" />
-    <ClInclude Include="Renderer\imgui\imgui_internal.h" />
-    <ClInclude Include="Renderer\imgui\imstb_rectpack.h" />
-    <ClInclude Include="Renderer\imgui\imstb_textedit.h" />
-    <ClInclude Include="Renderer\imgui\imstb_truetype.h" />
+    <ClInclude Include="3rd\imgui\imconfig.h" />
+    <ClInclude Include="3rd\imgui\imgui.h" />
+    <ClInclude Include="3rd\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="3rd\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="3rd\imgui\imgui_internal.h" />
+    <ClInclude Include="3rd\imgui\imstb_rectpack.h" />
+    <ClInclude Include="3rd\imgui\imstb_textedit.h" />
+    <ClInclude Include="3rd\imgui\imstb_truetype.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Tools\Action.h" />
-    <ClInclude Include="Resources\MeshData.h" />
     <ClInclude Include="Resources\ResourceManager.h" />
-    <ClInclude Include="System\FullSystemHeader.h" />
     <ClInclude Include="Interface\ISerializable.h" />
-    <ClInclude Include="Renderer\Shader.h" />
-    <ClInclude Include="Renderer\Skybox.h" />
-    <ClInclude Include="Renderer\GriseoRenderer.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="System\SystemBase.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="Tools\Common\d3dUtil.h" />
     <ClInclude Include="Tools\Common\d3dx12.h" />
     <ClInclude Include="Tools\Common\DDSTextureLoader.h" />
     <ClInclude Include="Tools\Common\GameTimer.h" />
     <ClInclude Include="Tools\Common\MathHelper.h" />
     <ClInclude Include="Tools\Common\UploadBuffer.h" />
-    <ClInclude Include="Tools\Delegate.h" />
-    <ClInclude Include="Tools\JSONHandler.h" />
-    <ClInclude Include="Tools\Logger.h" />
-    <ClInclude Include="Tools\Publisher.h" />
     <ClInclude Include="Tools\Singleton.h" />
-    <ClInclude Include="World\WorldManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Components\Camera.ixx" />
-    <ClCompile Include="Components\ECS.ixx" />
+    <ClCompile Include="World\ECS.ixx" />
     <ClCompile Include="Components\Light.ixx" />
     <ClCompile Include="Components\Material.ixx" />
     <ClCompile Include="Components\Mesh.ixx" />
-    <ClCompile Include="Components\Translation.cpp" />
-    <ClCompile Include="EditorSystem.cpp" />
+    <ClCompile Include="Components\Translation.ixx" />
     <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Elysia Engine.cpp" />
     <ClCompile Include="Interface\ICommand.cpp" />
-    <ClCompile Include="Renderer\DeviceResource.ixx" />
-    <ClCompile Include="Renderer\GriseoRenderer1.ixx" />
-    <ClCompile Include="Resources\MaterialData.cpp" />
-    <ClCompile Include="Renderer\GriseoRenderer.cpp" />
-    <ClCompile Include="Renderer\imgui\imgui.cpp" />
-    <ClCompile Include="Renderer\imgui\imgui_demo.cpp" />
-    <ClCompile Include="Renderer\imgui\imgui_draw.cpp" />
-    <ClCompile Include="Renderer\imgui\imgui_impl_dx12.cpp" />
-    <ClCompile Include="Renderer\imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="Renderer\imgui\imgui_tables.cpp" />
-    <ClCompile Include="Renderer\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Common\DeviceResource.ixx" />
+    <ClCompile Include="System\GriseoRenderer.ixx" />
+    <ClCompile Include="3rd\imgui\imgui.cpp" />
+    <ClCompile Include="3rd\imgui\imgui_demo.cpp" />
+    <ClCompile Include="3rd\imgui\imgui_draw.cpp" />
+    <ClCompile Include="3rd\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="3rd\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="3rd\imgui\imgui_tables.cpp" />
+    <ClCompile Include="3rd\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Resources\Shader.ixx" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -205,28 +185,21 @@
     <ClCompile Include="Tools\Debug.ixx" />
     <ClCompile Include="Tools\Definition.ixx" />
     <ClCompile Include="Tools\Example.ixx" />
+    <ClCompile Include="Tools\JSONHandler.ixx" />
     <ClCompile Include="Tools\Log.ixx" />
-    <ClCompile Include="Tools\Reflect.cpp" />
-    <ClCompile Include="Resources\MeshData.cpp" />
     <ClCompile Include="Resources\ResourceManager.cpp" />
     <ClCompile Include="Interface\ISerializable.cpp" />
-    <ClCompile Include="Renderer\Shader.cpp" />
-    <ClCompile Include="Renderer\Skybox.cpp" />
-    <ClCompile Include="System\SystemBase.cpp" />
     <ClCompile Include="Tools\Common\d3dUtil.cpp" />
     <ClCompile Include="Tools\Common\DDSTextureLoader.cpp" />
     <ClCompile Include="Tools\Common\GameTimer.cpp" />
     <ClCompile Include="Tools\Common\MathHelper.cpp" />
-    <ClCompile Include="Tools\Delegate.cpp" />
-    <ClCompile Include="Tools\JSONHandler.cpp" />
-    <ClCompile Include="Tools\Logger.cpp" />
-    <ClCompile Include="Tools\Publisher.cpp" />
+    <ClCompile Include="Resources\MaterialData.ixx" />
     <ClCompile Include="Tools\Reflect.ixx" />
     <ClCompile Include="Tools\Singleton.cpp" />
-    <ClCompile Include="World\WorldManager.cpp" />
+    <ClCompile Include="World\WorldManager.ixx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Components\AutoComponentGenerater.py" />
+    <None Include="Tools\AutoComponentGenerater.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,7 +1,7 @@
 # Component
 
 ## 组件列表
-- Translation->Entity的内置组件，用途甚广，因此不需要单独添加
+- T->Entity的内置组件，用途甚广，因此不需要单独添加
 - Mesh->用以处理与保存模型数据，同时存有顶点/索引缓冲区等信息供渲染系统调用
 - Material->与Shader联动，存有物体的材质信息（待扩展）
 - Light->场景中的灯光定义，目前为平行光
@@ -10,72 +10,49 @@
 
 ## 使用 `AutoComponentGenerater.py` 脚本自动创建组件
 
-运行后输入组件名字即可
+运行后输入组件名字即可(暂时还没写)
 
 ## 手动创建组件
 
 假设组件名为T
 
-对于 `T.h`
+对于 `T.ixx` 模块文件
 ```c++
-//required
-#pragma once
-#include <string>
-#include "../../Interface/IComponent.h"
-#include "../../Interface/ComponentBase.h"
+#include <stdafx.h>
+import ECS;
 
-class Entity;
-//Define "class X;" here
+//import depenency
 
-class T : public ComponentBase {
+export module T;
+namespace Component {
 
-public:
-    
-	T(Entity* entity);
-	static std::string componentName;
-	std::string name;
+	export class T final : public ComponentBase {
+	public:
+		T(Entity* entity) : ComponentBase(entity) {};
+		static void Parse(Entity& entity, const rapidjson::Value& parm);
+		virtual void DrawEditorUI() override;
 
-	//Regist to reflect
-	static void Bind();
-	//Parse init data from json file
-	static void Parse(Entity& entity, const rapidjson::Value& parm);
-	
-    //optional
-    ReturnType GetValue();
-    T* SetValue(value);//Return the pointer for Chain calls
-    Entity& ReturnParentEntity();//Same as above
+		T* someFunction(){
+			//code
+			return this;//for continue call
+		}
 
-    //Some Data Member
-};
-```
+		Entity& ReturnParentEntity() {
+			return *parentEntity;
+		}
 
-对于 `T.cpp`
-```c++
-//Note:For dependent component, include X.h here, define "class X;" in T.h
+		//some data member
+	};
 
-//Required
-#include "T.h"
-#include "../../World/Entity.h"
+	void T::Parse(Entity& entity, const rapidjson::Value& parm) {
+		//Prepare data for component init
 
-std::string T::componentName = "T";
-T::T(Entity* entity) : ComponentBase(entity) {}
+		//AppendComponent to entity
+		entity.AppendComponent<T>()
+			.GetComponent<T>();
+	}
 
-void T::Bind() {
-	ComponentBase::initList[componentName] = &Parse;
-}
-
-void T::Parse(Entity& entity, const rapidjson::Value& parm) {
-	//Parse logic
-}
-
-//Optional
-T* T::SetValue(value) {
-	mValue = value
-	return this;
-}
-
-Entity& T::ReturnParentEntity() {
-	return *parentEntity;//Define in ComponentBase.h
+	//ImGui Relate
+	void T::DrawEditorUI(){}
 }
 ```
-随后手动include或是加入 `FullComponentClass.h` 和 `FullComponentHeader.h` 进行自动include即可使用

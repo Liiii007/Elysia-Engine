@@ -1,19 +1,15 @@
 #include <stdafx.h>
-#include "framework.h"
-#include "Renderer/GriseoRenderer.h"
-#include "World/WorldManager.h"
 #include "Resources/ResourceManager.h"
-#include "Tools/Logger.h"
 #include <Editor/EditorUI.h>
-#include "Tools/JSONHandler.h"
-#include <Tools/Action.h>
+#include <Tools/Common/d3dUtil.h>
 
-#define EDITOR_ENABLE
 
-import Debug;
 import InputSystem;
 import ReflectSystem;
 import Mesh;
+import GriseoRenderer;
+import WorldManager;
+import Log;
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,_In_ int nCmdShow) {
@@ -27,7 +23,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         InputSystem::Init();
         Singleton<ResourceManager>::Get()->Init();
         Singleton<WorldManager>::Get()->Init("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Level\\Level1.json");
-        Singleton<GriseoRenderer>::Get()->Init(hInstance);
+        GriseoRenderer::Init(hInstance);
 
 #ifdef EDITOR_ENABLE
         Singleton<EditorUI>::Get()->Init();
@@ -48,7 +44,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             if (done)
                 break;
             //SystemBase::SystemTick();
-            Singleton<GriseoRenderer>::Get()->RenderTick();
+            GriseoRenderer::RenderTick();
         }
 
         //Shutdown
