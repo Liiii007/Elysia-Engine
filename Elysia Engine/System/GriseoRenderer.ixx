@@ -37,11 +37,6 @@ namespace GriseoRenderer {
 	//Tick
 	int RenderTick();
 	void Update();
-
-	
-
-
-	//Render Tick
 	void ClearForNextFrame();
 	void RenderItem(std::shared_ptr<Mesh> mesh);
 	void RenderFrame();
