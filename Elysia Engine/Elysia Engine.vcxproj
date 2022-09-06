@@ -136,18 +136,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Components\Light\DirectLight.h" />
-    <ClInclude Include="Components\FullComponentClass.h" />
-    <ClInclude Include="Components\FullComponentHeader.h" />
-    <ClInclude Include="Components\Light.h" />
-    <ClInclude Include="Components\MeshRenderer\Material.h" />
-    <ClInclude Include="Components\MeshRenderer\Mesh.h" />
-    <ClInclude Include="Components\Light\PointLight.h" />
-    <ClInclude Include="Components\Light\SpotLight.h" />
     <ClInclude Include="Components\Translation.h" />
     <ClInclude Include="EditorSystem.h" />
     <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Interface\ICommand.h" />
     <ClInclude Include="Renderer\ShaderConstantBufferStruct.h" />
     <ClInclude Include="Resources\MaterialData.h" />
     <ClInclude Include="Renderer\imgui\imconfig.h" />
@@ -160,21 +153,14 @@
     <ClInclude Include="Renderer\imgui\imstb_truetype.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Tools\Action.h" />
-    <ClInclude Include="Tools\Reflect.h" />
     <ClInclude Include="Resources\MeshData.h" />
     <ClInclude Include="Resources\ResourceManager.h" />
     <ClInclude Include="System\FullSystemHeader.h" />
-    <ClInclude Include="Interface\ComponentBase.h" />
-    <ClInclude Include="Interface\ICommand.h" />
-    <ClInclude Include="Interface\IComponent.h" />
     <ClInclude Include="Interface\ISerializable.h" />
     <ClInclude Include="Renderer\Shader.h" />
     <ClInclude Include="Renderer\Skybox.h" />
-    <ClInclude Include="Renderer\SphereCamera.h" />
     <ClInclude Include="Renderer\GriseoRenderer.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="System\LightMoveSystem.h" />
-    <ClInclude Include="System\MeshRenderer.h" />
     <ClInclude Include="System\SystemBase.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tools\Common\d3dUtil.h" />
@@ -188,21 +174,19 @@
     <ClInclude Include="Tools\Logger.h" />
     <ClInclude Include="Tools\Publisher.h" />
     <ClInclude Include="Tools\Singleton.h" />
-    <ClInclude Include="World\Entity.h" />
     <ClInclude Include="World\WorldManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Components\Light\DirectLight.cpp" />
-    <ClCompile Include="Components\Light.cpp" />
+    <ClCompile Include="Components\Camera.ixx" />
+    <ClCompile Include="Components\ECS.ixx" />
+    <ClCompile Include="Components\Light.ixx" />
     <ClCompile Include="Components\Material.ixx" />
-    <ClCompile Include="Components\MeshRenderer\Material.cpp" />
-    <ClCompile Include="Components\MeshRenderer\Mesh.cpp" />
-    <ClCompile Include="Components\Light\PointLight.cpp" />
-    <ClCompile Include="Components\Light\SpotLight.cpp" />
+    <ClCompile Include="Components\Mesh.ixx" />
     <ClCompile Include="Components\Translation.cpp" />
     <ClCompile Include="EditorSystem.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Elysia Engine.cpp" />
+    <ClCompile Include="Interface\ICommand.cpp" />
     <ClCompile Include="Renderer\DeviceResource.ixx" />
     <ClCompile Include="Renderer\GriseoRenderer1.ixx" />
     <ClCompile Include="Resources\MaterialData.cpp" />
@@ -219,20 +203,15 @@
     </ClCompile>
     <ClCompile Include="System\InputSystem.ixx" />
     <ClCompile Include="Tools\Debug.ixx" />
+    <ClCompile Include="Tools\Definition.ixx" />
     <ClCompile Include="Tools\Example.ixx" />
     <ClCompile Include="Tools\Log.ixx" />
     <ClCompile Include="Tools\Reflect.cpp" />
     <ClCompile Include="Resources\MeshData.cpp" />
     <ClCompile Include="Resources\ResourceManager.cpp" />
-    <ClCompile Include="Interface\ComponentBase.cpp" />
-    <ClCompile Include="Interface\ICommand.cpp" />
-    <ClCompile Include="Interface\IComponent.cpp" />
     <ClCompile Include="Interface\ISerializable.cpp" />
     <ClCompile Include="Renderer\Shader.cpp" />
     <ClCompile Include="Renderer\Skybox.cpp" />
-    <ClCompile Include="Renderer\SphereCamera.cpp" />
-    <ClCompile Include="System\LightMoveSystem.cpp" />
-    <ClCompile Include="System\MeshRenderer.cpp" />
     <ClCompile Include="System\SystemBase.cpp" />
     <ClCompile Include="Tools\Common\d3dUtil.cpp" />
     <ClCompile Include="Tools\Common\DDSTextureLoader.cpp" />
@@ -242,8 +221,8 @@
     <ClCompile Include="Tools\JSONHandler.cpp" />
     <ClCompile Include="Tools\Logger.cpp" />
     <ClCompile Include="Tools\Publisher.cpp" />
+    <ClCompile Include="Tools\Reflect.ixx" />
     <ClCompile Include="Tools\Singleton.cpp" />
-    <ClCompile Include="World\Entity.cpp" />
     <ClCompile Include="World\WorldManager.cpp" />
   </ItemGroup>
   <ItemGroup>

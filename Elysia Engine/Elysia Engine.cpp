@@ -3,21 +3,17 @@
 #include "Renderer/GriseoRenderer.h"
 #include "World/WorldManager.h"
 #include "Resources/ResourceManager.h"
-
 #include "Tools/Logger.h"
-#include "System/LightMoveSystem.h"
-
 #include <Editor/EditorUI.h>
-
 #include "Tools/JSONHandler.h"
-#include "Tools/Reflect.h"
 #include <Tools/Action.h>
 
 #define EDITOR_ENABLE
 
-import Example;
 import Debug;
 import InputSystem;
+import ReflectSystem;
+import Mesh;
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,_In_ int nCmdShow) {
@@ -27,11 +23,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     try
     {  
-        auto a = Example_NS::f();
-        Debug::Debug("heee");
-        Debug::isDebug = true;
-        Reflect::Init();
-        //Singleton<InputSystem>::Get()->Init();
+        ReflectSystem::Init();
         InputSystem::Init();
         Singleton<ResourceManager>::Get()->Init();
         Singleton<WorldManager>::Get()->Init("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Level\\Level1.json");
@@ -41,8 +33,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         Singleton<EditorUI>::Get()->Init();
 #endif // EDITOR_ENABLE
 
-        //System Test
-        LightMoveSystem system1;
 
         bool done = false;
         //Main Tick
@@ -57,7 +47,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             }
             if (done)
                 break;
-            SystemBase::SystemTick();
+            //SystemBase::SystemTick();
             Singleton<GriseoRenderer>::Get()->RenderTick();
         }
 

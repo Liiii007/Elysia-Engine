@@ -6,23 +6,17 @@
 
 #include <Tools/Common/d3dUtil.h>
 #include <Tools/Common/UploadBuffer.h>
-#include "../Renderer/SphereCamera.h"
-
-using namespace DirectX;
-using Microsoft::WRL::ComPtr;
-
-import DXDeviceResource;
-
-using namespace DX;
 
 //Relative Component
-class Mesh;
 class Shader;
-class Material;
 class MaterialData;
 struct ObjectConstants;
 struct PassConstants;
 struct MaterialConstants;
+
+import Mesh;
+import Camera;
+using namespace Component;
 
 class GriseoRenderer
 {

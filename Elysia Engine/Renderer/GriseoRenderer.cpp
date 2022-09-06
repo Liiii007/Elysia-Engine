@@ -1,11 +1,19 @@
 #include <stdafx.h>
 #include "GriseoRenderer.h"
 #include <Renderer/Shader.h>
-
 #include <Resources/MaterialData.h>
 #include <Editor/EditorUI.h>
 
 import InputSystem;
+import DXDeviceResource;
+import Material;
+import Mesh;
+import ECS;
+import Light;
+
+using namespace DX;
+using namespace Component;
+using namespace DirectX;
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -29,7 +37,8 @@ bool GriseoRenderer::Init(HINSTANCE hInstance) {
 
 	CreatePassConstantBuffer();
 
-	for (auto& it = MeshRenderer::getMeshList()->begin(); it != MeshRenderer::getMeshList()->end(); it++) {
+
+	for (auto& it = meshs.begin(); it != meshs.end(); it++) {
 		(*it)->UploadVertices();
 		(*it)->mObjectIndex = mRendererItemCount;
 		CreateObjectConstantBuffer((*it)->mObjectIndex);
@@ -42,6 +51,7 @@ bool GriseoRenderer::Init(HINSTANCE hInstance) {
 
 	//Create Material Constant Buffer
 	int matCBCount = 0;
+
 	for (auto& mat : MaterialData::materialDatas) {
 		if (mat.second == nullptr) {
 			Log::Error("MaterialData is empty");
@@ -305,6 +315,7 @@ int GriseoRenderer::RenderTick() {
 				Log::Error("Material unenabled:");
 				continue;
 			}
+
 
 			//Set correct Shader, avoiding switching PSO frequently
 			std::shared_ptr<Shader> currentShader = entity->GetComponent<Material>()->getShader();

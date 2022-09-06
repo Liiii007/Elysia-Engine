@@ -1,9 +1,7 @@
 #include <stdafx.h>
 #include "WorldManager.h"
-
-#include <Components/FullComponentHeader.h>
 #include <Renderer/Shader.h>
-
+import ECS;
 
 bool WorldManager::Init(std::filesystem::path levelJsonPath) {
 	auto d = JSONHandler::load(levelJsonPath);
@@ -66,7 +64,7 @@ bool WorldManager::Init(std::filesystem::path levelJsonPath) {
 				for (auto& component : components.GetArray()) {
 					const std::string componentName = component["Type"].GetString();
 					const Value& parm = component["Parm"];
-
+					auto deb = ComponentBase::initList;
 					if (ComponentBase::initList.find(componentName) == ComponentBase::initList.end()) {
 						Log::Error("Not contain required component");
 					}

@@ -1,18 +1,9 @@
 #include <stdafx.h>
 #include "EditorUI.h"
 #include <Renderer/GriseoRenderer.h>
-#include <Tools/Singleton.h>
-#include <World/Entity.h>
-#include <Components/FullComponentHeader.h>
-#include <System/FullSystemHeader.h>
-#include <Tools/Logger.h>
-
-//imgui
-#include <Renderer/imgui/imgui.h>
-#include <Renderer/imgui/imgui_impl_win32.h>
-#include <Renderer/imgui/imgui_impl_dx12.h>
 
 import DXDeviceResource;
+import ECS;
 
 void EditorUI::Init() {
 

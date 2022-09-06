@@ -1,23 +1,19 @@
 #include <stdafx.h>
-#include <Interface/IComponent.h>
-#include <Interface/ComponentBase.h>
 #include <Resources/MaterialData.h>
 #include <Renderer/Shader.h>
 
 export module Material;
+import ECS;
 
 namespace Component {
-	class Material : public ComponentBase {
-	public:
 
-		static std::string componentName;
+	export class Material : public ComponentBase {
+	public:
 		bool enabled{ false };
 
 		Material(Entity* entity);
 		void Init(std::string name, std::string shader);
 
-		//Regist to reflect
-		static void Bind();
 		//Parse init data from json file
 		static void Parse(Entity& entity, const rapidjson::Value& parm);
 
@@ -44,10 +40,8 @@ namespace Component {
 		std::shared_ptr<Shader> shader;
 	};
 
-	ReflectBindComponent(Material);
-
 	Material::Material(Entity* entity) : ComponentBase(entity) {
-
+		
 	}
 
 	void Material::Parse(Entity& entity, const rapidjson::Value& parm) {
@@ -75,7 +69,7 @@ namespace Component {
 	}
 
 	void Material::DrawEditorUI() {
-		ImGui::Text(componentName.c_str());
+		ImGui::Text("Material");
 		ImGui::Spacing();
 	}
 
@@ -86,4 +80,5 @@ namespace Component {
 	void Material::SetShader(const std::string name) {
 		shader = Shader::instances[name];
 	}
+
 }

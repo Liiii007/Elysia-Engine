@@ -1,17 +1,20 @@
-#pragma once
-#include "Components/Translation.h"
-#include <Interface/IComponent.h>
+#include <stdafx.h>
+export module ECS;
 
-class Entity {
+#include "Components/Translation.h"
+#include <typeinfo>
+
+export class IComponent;
+
+export class Entity {
 public:
 
-	Entity(std::string name):name(name) {
+	Entity(std::string name) :name(name) {
 		return;
 	}
 	~Entity() {
 		return;
 	}
-
 
 	//Entity Manage Relate
 	static Entity& New(std::string name) {
@@ -73,14 +76,16 @@ public:
 	//Component Relate
 	template<typename T>
 	Entity& AppendComponent() {
-		components[T::componentName] = std::make_shared<IComponent>();
-		components[T::componentName]->make<T>(this);
+		std::string tn = typeid(T).name();
+		components[tn] = std::make_shared<IComponent>();
+		components[tn]->make<T>(this);
 		return *this;
 	}
 
 	template<typename T>
 	std::shared_ptr<T> GetComponent() {
-		std::shared_ptr<T> r = components[T::componentName]->get<T>();
+		std::string tn = typeid(T).name();
+		std::shared_ptr<T> r = components[tn]->get<T>();
 		if (r != nullptr) {
 			return r;
 		}
@@ -93,7 +98,8 @@ public:
 
 	template<typename T>
 	bool HasComponent() {
-		return components[T::componentName]->is<T>();
+		std::string tn = typeid(T).name();
+		return components.contains(tn);
 	}
 
 	template<typename T>
@@ -112,4 +118,79 @@ private:
 
 	static std::unordered_map<std::string, std::shared_ptr<Entity>> instances;
 };
+
+export std::unordered_map<std::string, std::shared_ptr<Entity>> Entity::instances;
+
+
+export class ComponentBase {
+public:
+	ComponentBase(Entity* entity) {
+		this->parentEntity = entity;
+	}
+
+	virtual void DrawEditorUI() {
+		return;
+		//Log::Error("Base");
+	}
+
+	Entity* parentEntity;
+	static std::unordered_map<std::string, std::function<void(Entity&, const rapidjson::Value&)>> initList;
+};
+
+std::unordered_map<std::string, std::function<void(Entity&, const rapidjson::Value&)>> ComponentBase::initList{};
+
+//Component
+export class IComponent {
+
+public:
+	std::any component;
+	std::shared_ptr<ComponentBase> basePtr;
+	bool enabled{ true };
+	std::string name;
+	Entity* parentEntity;
+
+	IComponent() {
+
+	}
+
+	template<typename T>
+	void make(Entity* parentEntity) {
+		this->parentEntity = parentEntity;
+		std::shared_ptr<T> raw = std::make_shared<T>(parentEntity);
+		std::shared_ptr<ComponentBase> base{ raw.get() };
+		basePtr = std::move(base);
+		component = std::move(raw);
+	}
+
+	template<typename T>
+	std::shared_ptr<T> get() {
+		std::shared_ptr<T> returnComponent{ nullptr };
+		try {
+			returnComponent = std::any_cast<std::shared_ptr<T>>(component);
+		}
+		catch (const std::bad_any_cast& e) {
+			Log::Error("Not contain this component");
+			return nullptr;
+		}
+
+		return returnComponent;
+	}
+
+	std::weak_ptr<ComponentBase> getBase() {
+		return basePtr;
+	}
+
+	template<typename T>
+	bool is() {
+		try {
+			std::any_cast<std::shared_ptr<T>>(component);
+			return true;
+		}
+		catch (const std::bad_any_cast& e) {
+			return false;
+		}
+	}
+};
+
+
 

@@ -7,7 +7,7 @@
 #include <Interface/ISerializable.h>
 #include <Tools/JSONHandler.h>
 
-
+class Entity;
 
 class WorldManager : public ISerializable
 {

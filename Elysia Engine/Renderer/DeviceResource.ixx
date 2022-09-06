@@ -1,19 +1,18 @@
 #include <stdafx.h>
 
-#pragma comment(lib, "d3dcompiler.lib")
-#pragma comment(lib, "D3D12.lib")
-#pragma comment(lib, "dxgi.lib")
+
 #include <Tools/Common/UploadBuffer.h>
 #include <Tools/Common/d3dUtil.h>
 export module DXDeviceResource;
 
+//Global Varients
 namespace DX {
 	using namespace DirectX;
 
 	//device
-	ComPtr<IDXGIFactory4> mdxgiFactory;
-	export ComPtr<IDXGISwapChain> mSwapChain;
-	export ComPtr<ID3D12Device> md3dDevice;
+	Microsoft::WRL::ComPtr<IDXGIFactory4> mdxgiFactory;
+	export Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;
+	export Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
 	export bool      m4xMsaaState = false;    // 4X MSAA enabled
 	export UINT      m4xMsaaQuality = 0;      // quality level of 4X MSAA
 
@@ -22,17 +21,17 @@ namespace DX {
 	export DXGI_FORMAT mDepthStencilFormat{ DXGI_FORMAT_D24_UNORM_S8_UINT };
 
 	//Command Objects
-	export ComPtr<ID3D12CommandAllocator> mCommandAllocator;
-	export ComPtr<ID3D12CommandQueue> mCommandQueue;
-	export ComPtr<ID3D12GraphicsCommandList> mCommandList;
-	export ComPtr<ID3D12Fence> mFence;
+	export Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mCommandAllocator;
+	export Microsoft::WRL::ComPtr<ID3D12CommandQueue> mCommandQueue;
+	export Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
+	export Microsoft::WRL::ComPtr<ID3D12Fence> mFence;
 	export UINT64 mCurrentFence{ 0 };
 
 	//Descriptor and view
-	export ComPtr<ID3D12DescriptorHeap> mRtvHeap;
-	export ComPtr<ID3D12DescriptorHeap> mDsvHeap;
-	export ComPtr<ID3D12DescriptorHeap> mCbvHeap;
-	export ComPtr<ID3D12DescriptorHeap> mSrvHeap;
+	export Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
+	export Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
+	export Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mCbvHeap;
+	export Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mSrvHeap;
 
 	export UINT mRtvDescriptorSize = 0;
 	export UINT mDsvDescriptorSize = 0;
@@ -65,6 +64,8 @@ namespace DX {
 	export int mFrameCount{ 0 };
 }
 
+
+//Global Functions
 namespace DX {
 	void CreateCommandObjects() {
 		//Create Command Queue
@@ -172,7 +173,7 @@ namespace DX {
 
 	export void InitDX() {
 		//Enable debug layer
-		ComPtr<ID3D12Debug> debugController;
+		Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
 		ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
 		debugController->EnableDebugLayer();
 
@@ -188,7 +189,7 @@ namespace DX {
 		// Fallback to WARP device.
 		if (FAILED(hr))
 		{
-			ComPtr<IDXGIAdapter> pWarpAdapter;
+			Microsoft::WRL::ComPtr<IDXGIAdapter> pWarpAdapter;
 			ThrowIfFailed(mdxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&pWarpAdapter)));
 
 			ThrowIfFailed(D3D12CreateDevice(

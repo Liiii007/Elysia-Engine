@@ -1,12 +1,11 @@
-#pragma once
-#include <DirectXColors.h>
-#include <World/Entity.h>
-using namespace DirectX;
+#include <stdafx.h>
+export module Camera;
 
-class SphereCamera
-{
+import ECS;
+using namespace DirectX;
+export class SphereCamera {
 public:
-	XMFLOAT3 pos{4,1,0};
+	XMFLOAT3 pos{ 4,1,0 };
 	std::weak_ptr<Entity> targetEntity;
 	XMFLOAT3 target;
 	XMFLOAT3 up;
@@ -28,9 +27,9 @@ public:
 			);
 		}
 		else {
-			targetV = XMVectorSet(pos.x-1, pos.y, pos.z, 1.0f);
+			targetV = XMVectorSet(pos.x - 1, pos.y, pos.z, 1.0f);
 		}
-		
+
 		XMVECTOR upV = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 		return XMMatrixLookAtLH(posV, targetV, upV);
@@ -48,6 +47,5 @@ public:
 		direction.z = target.z - pos.z;
 		return direction;
 	}
-	
-};
 
+};
