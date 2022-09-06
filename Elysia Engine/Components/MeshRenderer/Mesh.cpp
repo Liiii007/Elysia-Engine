@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include "Mesh.h"
 #include "../../System/MeshRenderer.h"
 #include "../../Renderer/GriseoRenderer.h"

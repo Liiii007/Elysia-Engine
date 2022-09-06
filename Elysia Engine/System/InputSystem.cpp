@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include "InputSystem.h"
 #include <Renderer/imgui/imgui.h>
 #include <Renderer/imgui/imgui_impl_win32.h>

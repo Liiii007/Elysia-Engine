@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include "ResourceManager.h"
 #include <Renderer/Shader.h>
 #include <Tools/Logger.h>

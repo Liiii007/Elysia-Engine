@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include "framework.h"
 #include "Renderer/GriseoRenderer.h"
 #include "World/WorldManager.h"

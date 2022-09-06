@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include "SystemBase.h"
 #include "../World/Entity.h"
 

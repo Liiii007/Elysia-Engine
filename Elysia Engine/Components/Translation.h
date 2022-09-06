@@ -1,4 +1,5 @@
 #pragma once
+#include <stdafx.h>
 #include "../Interface/ISerializable.h"
 #include <DirectXColors.h>
 #include <vector>

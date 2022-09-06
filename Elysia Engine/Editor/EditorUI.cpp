@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include "EditorUI.h"
 #include <Renderer/GriseoRenderer.h>
 #include <Tools/Singleton.h>

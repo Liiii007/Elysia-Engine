@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include "WorldManager.h"
 
 #include <Components/FullComponentHeader.h>

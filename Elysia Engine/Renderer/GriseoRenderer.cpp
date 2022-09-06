@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include "GriseoRenderer.h"
 #include <World/Entity.h>
 #include <Renderer/Shader.h>

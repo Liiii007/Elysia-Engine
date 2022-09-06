@@ -1,4 +1,4 @@
-//Note:For dependent component, include X.h here, define "class X;" in T.h
+#include <stdafx.h>
 #include "PointLight.h"
 #include <World/Entity.h>
 std::string PointLight::componentName = "PointLight";
