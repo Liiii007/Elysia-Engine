@@ -1,19 +1,6 @@
 #pragma once
 
-#include <wrl.h>
-#include <dxgi1_4.h>
-#include <d3d12.h>
-#include <D3Dcompiler.h>
-#include <string>
-#include <memory>
-#include <algorithm>
-#include <vector>
-#include <array>
-#include <unordered_map>
 #include "../Tools/Common/d3dUtil.h"
-#include <Renderer/ShaderConstantBufferStruct.h>
-#include <filesystem>
-
 using Microsoft::WRL::ComPtr;
 
 class Shader {
@@ -26,7 +13,7 @@ public:
 	ComPtr<ID3DBlob> mpsByteCode;
 	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
 
-	Shader(const std::filesystem::path filename, const std::string name) :filename(filename), name(name) {
+	Shader(const std::filesystem::path filename, const std::string name) : filename(filename), name(name) {
 
 	}
 

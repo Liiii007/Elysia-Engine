@@ -72,9 +72,6 @@
     <ClInclude Include="Components\Translation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="System\InputSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="System\LightMoveSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -227,9 +224,6 @@
     <ClCompile Include="Components\Translation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="System\InputSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="System\LightMoveSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -258,9 +252,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Interface\ISerializable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="System\FullSystemHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resources\ResourceManager.cpp">
@@ -315,6 +306,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resources\MaterialData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Example.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Log.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Debug.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="System\InputSystem.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="System\TestSystem.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

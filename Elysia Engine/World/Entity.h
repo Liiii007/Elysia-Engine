@@ -1,8 +1,6 @@
 #pragma once
 #include "Components/Translation.h"
 #include <Interface/IComponent.h>
-#include <any>
-#include <unordered_map>
 
 class Entity {
 public:

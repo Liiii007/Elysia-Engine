@@ -1,11 +1,5 @@
 #pragma once
-#include <vector>
-#include <Tools/Action.h>
-#include <Tools/Logger.h>
-#include <Tools/Singleton.h>
-#include <unordered_map>
-
-class InputSystem;
+#include<stdafx.h>
 
 template<typename T>
 class ICommand {
@@ -32,7 +26,7 @@ public:
 		}
 	}
 
-	void ListenActive(Action<T> event) {
+	void ListenActive(std::string name, Action<T> event) {
 		OnValueActiveEvent[name] = event;
 	}
 

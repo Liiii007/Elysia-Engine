@@ -106,9 +106,13 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <ConformanceMode>false</ConformanceMode>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,7 +173,6 @@
     <ClInclude Include="Renderer\SphereCamera.h" />
     <ClInclude Include="Renderer\GriseoRenderer.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="System\InputSystem.h" />
     <ClInclude Include="System\LightMoveSystem.h" />
     <ClInclude Include="System\MeshRenderer.h" />
     <ClInclude Include="System\SystemBase.h" />
@@ -208,10 +211,17 @@
     <ClCompile Include="Renderer\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="Renderer\imgui\imgui_tables.cpp" />
     <ClCompile Include="Renderer\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="System\InputSystem.ixx" />
+    <ClCompile Include="System\TestSystem.ixx" />
+    <ClCompile Include="Tools\Debug.ixx" />
+    <ClCompile Include="Tools\Example.ixx" />
+    <ClCompile Include="Tools\Log.ixx" />
     <ClCompile Include="Tools\Reflect.cpp" />
     <ClCompile Include="Resources\MeshData.cpp" />
     <ClCompile Include="Resources\ResourceManager.cpp" />
-    <ClCompile Include="System\FullSystemHeader.cpp" />
     <ClCompile Include="Interface\ComponentBase.cpp" />
     <ClCompile Include="Interface\ICommand.cpp" />
     <ClCompile Include="Interface\IComponent.cpp" />
@@ -219,7 +229,6 @@
     <ClCompile Include="Renderer\Shader.cpp" />
     <ClCompile Include="Renderer\Skybox.cpp" />
     <ClCompile Include="Renderer\SphereCamera.cpp" />
-    <ClCompile Include="System\InputSystem.cpp" />
     <ClCompile Include="System\LightMoveSystem.cpp" />
     <ClCompile Include="System\MeshRenderer.cpp" />
     <ClCompile Include="System\SystemBase.cpp" />

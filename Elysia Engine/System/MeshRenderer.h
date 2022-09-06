@@ -1,12 +1,6 @@
 #pragma once
 
-#include<vector>
-#include<memory>
-#include"../Components/MeshRenderer/Mesh.h"
-//#include"../Components/MeshRenderer/Material.h"
-
-class MeshRenderer
-{
+class MeshRenderer {
 public:
 
 	static std::vector<Mesh*>* getMeshList() {

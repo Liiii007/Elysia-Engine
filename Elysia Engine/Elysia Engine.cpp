@@ -11,10 +11,13 @@
 
 #include "Tools/JSONHandler.h"
 #include "Tools/Reflect.h"
-#include <System/InputSystem.h>
 #include <Tools/Action.h>
 
 #define EDITOR_ENABLE
+
+import Example;
+import Debug;
+import InputSystem;
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,_In_ int nCmdShow) {
@@ -24,9 +27,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     try
     {  
-
+        auto a = Example_NS::f();
+        Debug::Debug("heee");
+        Debug::isDebug = true;
         Reflect::Init();
-        Singleton<InputSystem>::Get()->Init();
+        //Singleton<InputSystem>::Get()->Init();
+        InputSystem::Init();
         Singleton<ResourceManager>::Get()->Init();
         Singleton<WorldManager>::Get()->Init("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Level\\Level1.json");
         Singleton<GriseoRenderer>::Get()->Init(hInstance);

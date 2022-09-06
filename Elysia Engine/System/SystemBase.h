@@ -1,8 +1,4 @@
 #pragma once
-#include <vector>
-#include "../Tools/Logger.h"
-
-class Entity;
 
 class SystemBase {
 public:

@@ -4,21 +4,8 @@
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
 
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
-#include <DirectXColors.h>
-#include <dxgi1_4.h>
-#include <d3d12.h>
-#include <DirectXMath.h>
-#include <DirectXPackedVector.h>
-#include <string>
-#include <memory>
-#include <vector>
-#include <unordered_map>
 #include <Tools/Common/d3dUtil.h>
 #include <Tools/Common/UploadBuffer.h>
-
 #include "../Renderer/SphereCamera.h"
 
 using namespace DirectX;
@@ -44,7 +31,6 @@ public:
 	void UploadMaterialCB(std::shared_ptr<MaterialData> material);
 
 	//Tick
-	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	int RenderTick();
 	void Update();
 
@@ -61,12 +47,7 @@ public:
 	void CreateMaterialConstantBuffer(int materialIndex);
 	void OnResize();
 	
-	void OnMouseDown(WPARAM btnState, int x, int y);
-	void OnMouseUp(WPARAM btnState, int x, int y);
-	void OnMouseMove(WPARAM btnState, int x, int y);
-
 	//Render Tick
-	
 	void ClearForNextFrame();
 	void RenderItem(std::shared_ptr<Mesh> mesh);
 	void RenderFrame();

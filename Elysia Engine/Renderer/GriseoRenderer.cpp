@@ -1,17 +1,17 @@
 #include <stdafx.h>
 #include "GriseoRenderer.h"
-#include <World/Entity.h>
 #include <Renderer/Shader.h>
-#include <Components/FullComponentHeader.h>
-#include <System/FullSystemHeader.h>
+
 #include <Resources/MaterialData.h>
 #include <Editor/EditorUI.h>
 
+import InputSystem;
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	return Singleton<InputSystem>::Get()->MsgProc(hwnd, msg, wParam, lParam);
+	return InputSystem::MsgProc(hwnd, msg, wParam, lParam);
+	//return Singleton<InputSystem>::Get()->MsgProc(hwnd, msg, wParam, lParam);
 }
 
 bool GriseoRenderer::Init(HINSTANCE hInstance) {
@@ -489,18 +489,18 @@ void GriseoRenderer::ClearForNextFrame() {
 
 
 void GriseoRenderer::Update() {
-	auto is = Singleton<InputSystem>::Get();
+
 	float speed = 0.1f;
 	if (InputSystem::GetKey(Key::W) == true) {
 		mCamera.pos.x -= speed;
 	}
-	if (InputSystem::GetKey(Key::A) == true) {
+	if (InputSystem::GetKey('A') == true) {
 		mCamera.pos.z -= speed;
 	}
-	if (InputSystem::GetKey(Key::S) == true) {
+	if (InputSystem::GetKey('S') == true) {
 		mCamera.pos.x += speed;
 	}
-	if (InputSystem::GetKey(Key::D) == true) {
+	if (InputSystem::GetKey('D') == true) {
 		mCamera.pos.z += speed;
 	}
 
@@ -629,145 +629,4 @@ int GriseoRenderer::RenderTick() {
 	RenderFrame();
 	mFrameCount++;
 	return 0;
-}
-
-LRESULT GriseoRenderer::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch (msg)
-	{
-		// WM_ACTIVATE is sent when the window is activated or deactivated.  
-		// We pause the game when the window is deactivated and unpause it 
-		// when it becomes active.  
-	case WM_ACTIVATE:
-		if (LOWORD(wParam) == WA_INACTIVE)
-		{
-			//mAppPaused = true;
-			//mTimer.Stop();
-		}
-		else
-		{
-			//mAppPaused = false;
-			//mTimer.Start();
-		}
-		return 0;
-
-		// WM_SIZE is sent when the user resizes the window.  
-	case WM_SIZE:
-		// Save the new client area dimensions.
-		mClientWidth = LOWORD(lParam);
-		mClientHeight = HIWORD(lParam);
-		if (md3dDevice)
-		{
-			if (wParam == SIZE_MINIMIZED)
-			{
-				//mAppPaused = true;
-				//mMinimized = true;
-				//mMaximized = false;
-			}
-			else if (wParam == SIZE_MAXIMIZED)
-			{
-				//mAppPaused = false;
-				//mMinimized = false;
-				//mMaximized = true;
-				OnResize();
-			}
-			else if (wParam == SIZE_RESTORED)
-			{
-
-
-			}
-		}
-		return 0;
-
-		// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
-	case WM_ENTERSIZEMOVE:
-
-		return 0;
-
-		// WM_EXITSIZEMOVE is sent when the user releases the resize bars.
-		// Here we reset everything based on the new window dimensions.
-	case WM_EXITSIZEMOVE:
-
-		return 0;
-
-		// WM_DESTROY is sent when the window is being destroyed.
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
-
-		// The WM_MENUCHAR message is sent when a menu is active and the user presses 
-		// a key that does not correspond to any mnemonic or accelerator key. 
-	case WM_MENUCHAR:
-		// Don't beep when we alt-enter.
-		return MAKELRESULT(0, MNC_CLOSE);
-
-		// Catch this message so to prevent the window from becoming too small.
-	case WM_GETMINMAXINFO:
-		((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
-		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
-		return 0;
-
-	case WM_LBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-		OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		return 0;
-	case WM_LBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_RBUTTONUP:
-		OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		return 0;
-	case WM_MOUSEMOVE:
-		OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		return 0;
-	case WM_KEYUP:
-		return 0;
-	}
-
-	return DefWindowProc(hwnd, msg, wParam, lParam);
-}
-
-void GriseoRenderer::OnMouseDown(WPARAM btnState, int x, int y)
-{
-	mLastMousePos.x = x;
-	mLastMousePos.y = y;
-
-	SetCapture(mhMainWnd);
-}
-
-void GriseoRenderer::OnMouseUp(WPARAM btnState, int x, int y)
-{
-	ReleaseCapture();
-}
-
-void GriseoRenderer::OnMouseMove(WPARAM btnState, int x, int y)
-{
-	if ((btnState & MK_LBUTTON) != 0)
-	{
-		// Make each pixel correspond to a quarter of a degree.
-		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
-		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
-
-		// Update angles based on input to orbit camera around box.
-		//mTheta += dx;
-		//mPhi += dy;
-
-		// Restrict the angle mPhi.
-		//mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
-	}
-	else if ((btnState & MK_RBUTTON) != 0)
-	{
-		// Make each pixel correspond to 0.005 unit in the scene.
-		float dx = 0.005f * static_cast<float>(x - mLastMousePos.x);
-		float dy = 0.005f * static_cast<float>(y - mLastMousePos.y);
-
-		// Update the camera radius based on input.
-		//mRadius += dx - dy;
-
-		// Restrict the radius.
-		//mRadius = MathHelper::Clamp(mRadius, 3.0f, 15.0f);
-	}
-
-	mLastMousePos.x = x;
-	mLastMousePos.y = y;
 }

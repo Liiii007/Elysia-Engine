@@ -6,7 +6,7 @@
 #include <Components/Translation.h>
 #include <Interface/ISerializable.h>
 #include <Tools/JSONHandler.h>
-#include "Entity.h"
+
 
 
 class WorldManager : public ISerializable

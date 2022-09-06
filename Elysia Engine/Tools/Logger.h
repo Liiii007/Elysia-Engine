@@ -1,9 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <chrono>
 #include <Tools/Singleton.h>
 
 namespace Log {
@@ -30,7 +26,7 @@ namespace Log {
 
 	static void writeToConsole(std::string message) {
 		if (Singleton<LogConfig>::Get()->consoleBit) {
-			std::cerr << message << std::endl;
+
 		}
 	}
 
@@ -89,5 +85,3 @@ namespace Log {
 	}
 	static bool ShowInfo{ true };
 }
-
-

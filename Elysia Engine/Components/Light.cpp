@@ -1,11 +1,10 @@
 #include <stdafx.h>
 #include "Light.h"
-#include "World/Entity.h"
 
 std::string Light::componentName = "Light";
 
 Light::Light(Entity* entity) : ComponentBase(entity) {
-
+	Log::Info("Catch");
 }
 
 void Light::Bind() {

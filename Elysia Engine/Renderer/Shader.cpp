@@ -1,7 +1,6 @@
 #include <stdafx.h>
 #include "Shader.h"
 #include "../Renderer/GriseoRenderer.h"
-#include "../Tools/Singleton.h"
 
 std::unordered_map<std::string, std::shared_ptr<Shader>> Shader::instances{};
 

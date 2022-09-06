@@ -1,9 +1,7 @@
 #include <stdafx.h>
+#include <System/MeshRenderer.h>
+#include <Renderer/GriseoRenderer.h>
 #include "Mesh.h"
-#include "../../System/MeshRenderer.h"
-#include "../../Renderer/GriseoRenderer.h"
-#include "../../Tools/Singleton.h"
-#include "../../World/Entity.h"
 
 ReflectBindComponent(Mesh);
 
