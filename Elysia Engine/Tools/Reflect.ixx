@@ -7,6 +7,7 @@ import Mesh;
 import Light;
 import Translation;
 import Definition;
+import Camera;
 import ECS;
 
 #define Bind(T)\
@@ -19,5 +20,6 @@ namespace ReflectSystem {
 		Bind(Material);
 		Bind(Light);
 		Bind(Translation);
+		Bind(Camera);
 	}
 }

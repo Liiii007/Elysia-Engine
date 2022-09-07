@@ -7,6 +7,50 @@
     "Name" : "Level1",
     "Entities" : [
         {
+            "Name" : "cam",
+            "Components" : [
+                {
+                    "Type":"Translation",
+                    "Parm":{
+                        "Location" : [4,1,0],
+                        "Rotation" : [0,0,0],
+                        "Scale"    : [1,1,1]
+                    }
+                },
+                {
+                    "Type":"Camera",
+                    "Parm":{
+                        "TargetEntity":"Sphere1",
+                        "TargetDirection":[0,0,0],
+                        "Up":[0,1,0],
+                        "Priority":1
+                    }
+                }
+            ]
+        },
+        {
+            "Name" : "cam1",
+            "Components" : [
+                {
+                    "Type":"Translation",
+                    "Parm":{
+                        "Location" : [10,1,0],
+                        "Rotation" : [0,0,0],
+                        "Scale"    : [1,1,1]
+                    }
+                },
+                {
+                    "Type":"Camera",
+                    "Parm":{
+                        "TargetEntity":"Sphere",
+                        "TargetDirection":[0,0,0],
+                        "Up":[0,1,0],
+                        "Priority":0
+                    }
+                }
+            ]
+        },
+        {
             "Name" : "Sphere",
             "Components" : [
                 {

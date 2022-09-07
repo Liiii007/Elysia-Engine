@@ -1,15 +1,15 @@
 #include <stdafx.h>
-#include "Resources/ResourceManager.h"
-#include <Editor/EditorUI.h>
 #include <Tools/Common/d3dUtil.h>
-
 
 import InputSystem;
 import ReflectSystem;
 import Mesh;
 import GriseoRenderer;
 import WorldManager;
+import ResourceManager;
 import Log;
+import Profiler;
+import Timer;
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,_In_ int nCmdShow) {
@@ -21,14 +21,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     {  
         ReflectSystem::Init();
         InputSystem::Init();
-        Singleton<ResourceManager>::Get()->Init();
-        Singleton<WorldManager>::Get()->Init("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Level\\Level1.json");
+        ResourceManager::Init();
+        WorldManager::Init("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Level\\Level1.json");
         GriseoRenderer::Init(hInstance);
-
-#ifdef EDITOR_ENABLE
-        Singleton<EditorUI>::Get()->Init();
-#endif // EDITOR_ENABLE
-
 
         bool done = false;
         //Main Tick
@@ -43,8 +38,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             }
             if (done)
                 break;
+
+            Profiler::NewTick();
+            Timer::Tick();
+
             //SystemBase::SystemTick();
+            Profiler::RecordStart("FrameTime");
             GriseoRenderer::RenderTick();
+            Profiler::RecordStop("FrameTime");
+
         }
 
         //Shutdown

@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <typeinfo>
 #include <fstream>
+#include <map>
+#include <set>
 
 
 //Windows platform
@@ -43,6 +45,3 @@
 #include <rapidjson/document.h>
 #include "rapidjson/filereadstream.h"
 #include <rapidjson/filewritestream.h>
-
-
-#include <Tools/Singleton.h>

@@ -1,7 +1,6 @@
 #include <stdafx.h>
 #include <Tools/Common/d3dUtil.h>
 #include <Tools/Common/UploadBuffer.h>
-#include <Editor/EditorUI.h>
 
 import Mesh;
 import Camera;
@@ -14,6 +13,9 @@ import Light;
 import Definition;
 import MaterialData;
 import Log;
+import Editor.UI;
+import Translation;
+import Profiler;
 
 export module GriseoRenderer;
 namespace GriseoRenderer {
@@ -24,7 +26,7 @@ namespace GriseoRenderer {
 
 	//Init
 	export bool Init(HINSTANCE);
-	
+	std::string ProfilerEvent{ "Render Tick" };
 	bool InitWindow();
 	void CreatePassConstantBuffer();
 	void CreateObjectConstantBuffer(int objectIndex);
@@ -40,11 +42,9 @@ namespace GriseoRenderer {
 	void ClearForNextFrame();
 	void RenderItem(std::shared_ptr<Mesh> mesh);
 	void RenderFrame();
-
+	
 
 	std::wstring mMainWndCaption = L"XII Renderer";
-
-	Camera mCamera;
 
 	//function
 	LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -58,7 +58,7 @@ namespace GriseoRenderer {
 
 		if (!InitWindow()) { return false; }
 		DX::InitDX();
-		Singleton<EditorUI>::Get()->Init();
+		Editor::UI::Init();
 
 		// Do the initial resize code.
 		OnResize();
@@ -229,24 +229,26 @@ namespace GriseoRenderer {
 	}
 
 	void Update() {
+		auto mCamera = Entity::GetEntity("cam")->GetComponent<Translation>();
 
 		float speed = 0.1f;
 		if (InputSystem::GetKey(Key::W) == true) {
-			mCamera.pos.x -= speed;
+			mCamera->position.x -= speed;
 		}
 		if (InputSystem::GetKey('A') == true) {
-			mCamera.pos.z -= speed;
+			mCamera->position.z -= speed;
 		}
 		if (InputSystem::GetKey('S') == true) {
-			mCamera.pos.x += speed;
+			mCamera->position.x += speed;
 		}
 		if (InputSystem::GetKey('D') == true) {
-			mCamera.pos.z += speed;
+			mCamera->position.z += speed;
 		}
 
 	}
 	void UploadPassCB() {
-		XMMATRIX view = mCamera.getViewMatrix();
+		auto mCamera = Entity::GetEntity("cam")->GetComponent<Camera>();
+		XMMATRIX view = mCamera->getViewMatrix();
 		XMMATRIX proj = XMMatrixPerspectiveFovLH(0.3f * MathHelper::Pi, (FLOAT)mClientWidth / (FLOAT)mClientHeight, 1.0f, 1000.0f);
 		XMMATRIX viewProj = view * proj;
 		auto light = Entity::GetEntity("eLight")->GetComponent<Light>();
@@ -254,8 +256,8 @@ namespace GriseoRenderer {
 		PassConstants pcb{};
 
 		XMStoreFloat4x4(&pcb.gViewProj, XMMatrixTranspose(viewProj));
-		pcb.viewPos = mCamera.GetPosition();
-		pcb.viewDir = mCamera.GetDirection();
+		pcb.viewPos = mCamera->GetPosition();
+		pcb.viewDir = mCamera->GetDirection();
 		pcb.lightPos = light->GetPosition();
 		pcb.lightDir = light->GetDirection();
 		pcb.lightColor = light->GetColor();
@@ -306,10 +308,14 @@ namespace GriseoRenderer {
 		ThrowIfFailed(mSwapChain->Present(0, 0));
 		mCurrentBackBufferCount = (mCurrentBackBufferCount + 1) % mSwapChainBufferCount;
 
-		FlushCommandQueue();
+		
 	}
 
 	export int RenderTick() {
+	{
+		Profiler::Auto _(ProfilerEvent);
+
+
 		ClearForNextFrame();
 		Update();
 		UploadPassCB();
@@ -360,10 +366,13 @@ namespace GriseoRenderer {
 
 		}
 
-		Singleton<EditorUI>::Get()->Draw();
+		Editor::UI::Draw();
 
 		RenderFrame();
 		mFrameCount++;
+
+	}
+		FlushCommandQueue();
 		return 0;
 	}
 

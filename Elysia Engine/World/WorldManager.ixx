@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <Interface/ISerializable.h>
+
 import JSONHandler;
 import ECS;
 import Log;
@@ -7,14 +7,15 @@ import Log;
 using namespace rapidjson;
 
 export module WorldManager;
-export class WorldManager : public ISerializable
-{
-public:
+
+
+
+namespace WorldManager {
+
 	Document config;
 
 	std::string path;
 	std::string outputPath{ "Resources\\json\\test1.json" };
-	;
 	std::vector<Entity> entities;
 
 	bool Init(std::filesystem::path levelJsonPath);
@@ -23,98 +24,100 @@ public:
 	void removeItem();
 	void changeItem(std::string name, int value);
 
-
 	int GetInt(std::string name);
 
-	virtual bool load(std::string path);
-	virtual bool save(std::string path);
-};
+	bool load(std::string path);
+	bool save(std::string path);
 
-bool WorldManager::Init(std::filesystem::path levelJsonPath) {
-	auto d = JSONHandler::load(levelJsonPath);
+	//function
+	export bool WorldManager::Init(std::filesystem::path levelJsonPath) {
+		auto d = JSONHandler::load(levelJsonPath);
 
-	//Confirm file type
-	if (!d.HasMember("METADATA") && !d["METADATA"].HasMember("Type") && !(d["METADATA"]["Type"] == "Level")) {
-		return false;
-	}
-
-	if (!d.HasMember("Entities")) {
-		return false;
-	}
-
-	const Value& entities = d["Entities"];
-
-	//Append every entity and components
-	for (auto& entity : entities.GetArray()) {
-		if (!entity.HasMember("Name")) {
-			Log::Error("Entity struct incorrect");
-			continue;
+		//Confirm file type
+		if (!d.HasMember("METADATA") && !d["METADATA"].HasMember("Type") && !(d["METADATA"]["Type"] == "Level")) {
+			return false;
 		}
 
-		auto entityName = entity["Name"].GetString();
+		if (!d.HasMember("Entities")) {
+			return false;
+		}
 
-		try {
-			//Create New Entity
-			Entity& e = Entity::New(entityName);
+		const Value& entities = d["Entities"];
 
-			//Load Components
-			const Value& components = entity["Components"];
+		//Append every entity and components
+		for (auto& entity : entities.GetArray()) {
+			if (!entity.HasMember("Name")) {
+				Log::Error("Entity struct incorrect");
+				continue;
+			}
 
-			for (auto& component : components.GetArray()) {
-				const std::string componentName = component["Type"].GetString();
-				const Value& parm = component["Parm"];
-				auto deb = ComponentBase::initList;
-				if (ComponentBase::initList.find(componentName) == ComponentBase::initList.end()) {
-					Log::Error("Not contain required component");
-				}
-				else {
-					ComponentBase::initList[componentName](e, parm);
+			auto entityName = entity["Name"].GetString();
+
+			try {
+				//Create New Entity
+				Entity& e = Entity::New(entityName);
+
+				//Load Components
+				const Value& components = entity["Components"];
+
+				for (auto& component : components.GetArray()) {
+					const std::string componentName = component["Type"].GetString();
+					const Value& parm = component["Parm"];
+					auto deb = ComponentBase::initList;
+					if (ComponentBase::initList.find(componentName) == ComponentBase::initList.end()) {
+						Log::Error("Not contain required component");
+					}
+					else {
+						ComponentBase::initList[componentName](e, parm);
+					}
 				}
 			}
+			catch (std::exception exce) {
+				Log::Error("Failed to load entity");
+				Entity::Erase(entityName);
+			};
+
+
 		}
-		catch (std::exception exce) {
-			Log::Error("Failed to load entity");
-			Entity::Erase(entityName);
-		};
 
-
+		return true;
 	}
 
-	return true;
-}
-
-inline void WorldManager::appendItem() {
-	//FIXED
-}
-
-inline void WorldManager::removeItem() {
-	//FIXED
-}
-
-bool WorldManager::load(std::string path) {
-	JSONHandler handler;
-	config = handler.load(path);
-
-	//check if load success
-	if (config.IsNull()) {
-
-		return false;
+	void WorldManager::appendItem() {
+		//FIXED
 	}
 
-	return true;
-}
-bool WorldManager::save(std::string path) {
-	JSONHandler handler;
+	void WorldManager::removeItem() {
+		//FIXED
+	}
 
-	return handler.save(path, config);;
+	bool WorldManager::load(std::string path) {
+		JSONHandler handler;
+		config = handler.load(path);
+
+		//check if load success
+		if (config.IsNull()) {
+
+			return false;
+		}
+
+		return true;
+	}
+	bool WorldManager::save(std::string path) {
+		JSONHandler handler;
+
+		return handler.save(path, config);;
+	}
+
+	void WorldManager::changeItem(std::string name, int value) {
+		Value& s = config[name.c_str()];
+		s.SetInt(value);
+		save(outputPath);
+	}
+
+	int WorldManager::GetInt(std::string name) {
+		return config[name.c_str()].GetInt();
+	}
 }
 
-void WorldManager::changeItem(std::string name, int value) {
-	Value& s = config[name.c_str()];
-	s.SetInt(value);
-	save(outputPath);
-}
 
-int WorldManager::GetInt(std::string name) {
-	return config[name.c_str()].GetInt();
-}

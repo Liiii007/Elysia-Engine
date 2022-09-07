@@ -136,7 +136,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="Interface\ICommand.h" />
     <ClInclude Include="3rd\imgui\imconfig.h" />
     <ClInclude Include="3rd\imgui\imgui.h" />
@@ -147,25 +146,25 @@
     <ClInclude Include="3rd\imgui\imstb_textedit.h" />
     <ClInclude Include="3rd\imgui\imstb_truetype.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Resources\ResourceManager.h" />
-    <ClInclude Include="Interface\ISerializable.h" />
-    <ClInclude Include="Resource.h" />
     <ClInclude Include="Tools\Common\d3dUtil.h" />
     <ClInclude Include="Tools\Common\d3dx12.h" />
     <ClInclude Include="Tools\Common\DDSTextureLoader.h" />
     <ClInclude Include="Tools\Common\GameTimer.h" />
     <ClInclude Include="Tools\Common\MathHelper.h" />
     <ClInclude Include="Tools\Common\UploadBuffer.h" />
-    <ClInclude Include="Tools\Singleton.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Components\Camera.ixx" />
+    <ClCompile Include="Editor\EditorUI.ixx" />
+    <ClCompile Include="Resources\ResourceManager.ixx" />
+    <ClCompile Include="System\CameraSystem.ixx" />
+    <ClCompile Include="System\Profiler.ixx" />
+    <ClCompile Include="System\Timer.ixx" />
     <ClCompile Include="World\ECS.ixx" />
     <ClCompile Include="Components\Light.ixx" />
     <ClCompile Include="Components\Material.ixx" />
     <ClCompile Include="Components\Mesh.ixx" />
     <ClCompile Include="Components\Translation.ixx" />
-    <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Elysia Engine.cpp" />
     <ClCompile Include="Interface\ICommand.cpp" />
     <ClCompile Include="Common\DeviceResource.ixx" />
@@ -184,18 +183,14 @@
     <ClCompile Include="System\InputSystem.ixx" />
     <ClCompile Include="Tools\Debug.ixx" />
     <ClCompile Include="Tools\Definition.ixx" />
-    <ClCompile Include="Tools\Example.ixx" />
     <ClCompile Include="Tools\JSONHandler.ixx" />
     <ClCompile Include="Tools\Log.ixx" />
-    <ClCompile Include="Resources\ResourceManager.cpp" />
-    <ClCompile Include="Interface\ISerializable.cpp" />
     <ClCompile Include="Tools\Common\d3dUtil.cpp" />
     <ClCompile Include="Tools\Common\DDSTextureLoader.cpp" />
     <ClCompile Include="Tools\Common\GameTimer.cpp" />
     <ClCompile Include="Tools\Common\MathHelper.cpp" />
     <ClCompile Include="Resources\MaterialData.ixx" />
     <ClCompile Include="Tools\Reflect.ixx" />
-    <ClCompile Include="Tools\Singleton.cpp" />
     <ClCompile Include="World\WorldManager.ixx" />
   </ItemGroup>
   <ItemGroup>
