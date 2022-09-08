@@ -2,7 +2,7 @@
 #include <Tools/Common/UploadBuffer.h>
 #include <Tools/Common/d3dUtil.h>
 #include <Interface/ICommand.h>
-
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 import Definition;
 import Log;
@@ -90,9 +90,9 @@ namespace Device {
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 
-		/*if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
+		if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
 			return true;
-		}*/
+		}
 			
 
 		if (msg == WM_KEYDOWN) {

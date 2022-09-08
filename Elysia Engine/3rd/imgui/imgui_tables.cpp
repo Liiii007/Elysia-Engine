@@ -1,3 +1,4 @@
+#include <stdafx.h>
 // dear imgui, v1.89 WIP
 // (tables and columns code)
 
@@ -183,7 +184,7 @@ Index of this file:
 //-----------------------------------------------------------------------------
 // [SECTION] Header mess
 //-----------------------------------------------------------------------------
-#include <stdafx.h>
+
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -1718,7 +1719,7 @@ void ImGui::TableBeginRow(ImGuiTable* table)
     table->RowIndentOffsetX = window->DC.Indent.x - table->HostIndentX; // Lock indent
     window->DC.PrevLineTextBaseOffset = 0.0f;
     window->DC.CurrLineSize = ImVec2(0.0f, 0.0f);
-    window->DC.IsSameLine = false;
+    window->DC.IsSameLine = window->DC.IsSetPos = false;
     window->DC.CursorMaxPos.y = next_y1;
 
     // Making the header BG color non-transparent will allow us to overlay it multiple times when handling smooth dragging.
@@ -1999,6 +2000,9 @@ void ImGui::TableEndCell(ImGuiTable* table)
 {
     ImGuiTableColumn* column = &table->Columns[table->CurrentColumn];
     ImGuiWindow* window = table->InnerWindow;
+
+    if (window->DC.IsSetPos)
+        ErrorCheckUsingSetCursorPosToExtendParentBoundaries();
 
     // Report maximum position so we can infer content size per column.
     float* p_max_pos_x;
@@ -2994,7 +2998,7 @@ void ImGui::TableHeader(const char* label)
     RenderTextEllipsis(window->DrawList, label_pos, ImVec2(ellipsis_max, label_pos.y + label_height + g.Style.FramePadding.y), ellipsis_max, ellipsis_max, label, label_end, &label_size);
 
     const bool text_clipped = label_size.x > (ellipsis_max - label_pos.x);
-    if (text_clipped && hovered && g.HoveredIdNotActiveTimer > g.TooltipSlowDelay)
+    if (text_clipped && hovered && g.ActiveId == 0 && IsItemHovered(ImGuiHoveredFlags_DelayNormal))
         SetTooltip("%.*s", (int)(label_end - label), label);
 
     // We don't use BeginPopupContextItem() because we want the popup to stay up even after the column is hidden

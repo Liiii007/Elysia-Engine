@@ -3,7 +3,8 @@
 
 // Implemented features:
 //  [X] Renderer: User texture binding. Use 'D3D12_GPU_DESCRIPTOR_HANDLE' as ImTextureID. Read the FAQ about ImTextureID!
-//  [X] Renderer: Support for large meshes (64k+ vertices) with 16-bit indices.
+//  [X] Renderer: Multi-viewport support (multiple windows). Enable with 'io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable'.
+//  [X] Renderer: Large meshes support (64k+ vertices) with 16-bit indices.
 
 // Important: to compile on 32-bit systems, this backend requires code to be compiled with '#define ImTextureID ImU64'.
 // See imgui_impl_dx12.cpp file for details.
@@ -14,7 +15,7 @@
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 
 #pragma once
-#include "imgui.h"     // IMGUI_IMPL_API
+#include "imgui.h"      // IMGUI_IMPL_API
 #include <dxgiformat.h> // DXGI_FORMAT
 
 struct ID3D12Device;

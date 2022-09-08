@@ -24,10 +24,10 @@ public:
 	static void Erase(std::string name) {
 		instances.erase(name);
 	}
-	static auto begin() {
+	static std::unordered_map<std::string, std::shared_ptr<Entity>>::iterator begin() {
 		return instances.begin();
 	}
-	static auto end() {
+	static std::unordered_map<std::string, std::shared_ptr<Entity>>::iterator end() {
 		return instances.end();
 	}
 	static std::shared_ptr<Entity> GetEntity(std::string name) {
@@ -38,8 +38,6 @@ public:
 			return nullptr;
 		}
 	}
-
-	
 
 	//Component Relate
 	template<typename T>

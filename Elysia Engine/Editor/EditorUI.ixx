@@ -1,5 +1,10 @@
 #include <stdafx.h>
 
+#include <3rd/imgui/imgui_impl_dx12.h>
+#include <3rd/imgui/imgui_impl_win32.h>
+
+
+
 import DXDeviceResource;
 import ECS;
 import Log;
@@ -10,11 +15,17 @@ export module Editor.UI;
 
 namespace Editor {
 	namespace UI {
+
+		export std::vector<std::function<void(void)>> systemUI;
 		
 		bool isInit{ false };
 		bool show_demo_window = false;
 		bool show_profiler = false;
 		bool show_another_window = false;
+
+		export bool IsInit() {
+			return isInit;
+		}
 
 		export void Init() {
 			if (isInit) {
@@ -24,6 +35,8 @@ namespace Editor {
 			IMGUI_CHECKVERSION();
 			ImGui::CreateContext();
 			ImGuiIO& io = ImGui::GetIO(); (void)io;
+			io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+			//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 			//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 			//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
@@ -44,17 +57,12 @@ namespace Editor {
 		export void Draw() {
 			//UnInti->don't draw
 			if (!isInit) return;
-
 			
 			ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 			// Start the Dear ImGui frame
 			ImGui_ImplDX12_NewFrame();
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
-
-			// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-			if (show_demo_window)
-				ImGui::ShowDemoWindow(&show_demo_window);
 
 			static std::shared_ptr<Entity> selectedEntity = nullptr;
 			{//Show Entities List
@@ -98,6 +106,12 @@ namespace Editor {
 				}
 
 				ImGui::End();
+			}
+
+			{
+				for (auto& sys : systemUI) {
+					sys();
+				}
 			}
 
 			{

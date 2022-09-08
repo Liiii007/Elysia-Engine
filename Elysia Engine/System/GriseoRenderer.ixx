@@ -16,6 +16,7 @@ import Log;
 import Editor.UI;
 import Translation;
 import Profiler;
+import CameraSystem;
 
 export module GriseoRenderer;
 namespace GriseoRenderer {
@@ -41,7 +42,7 @@ namespace GriseoRenderer {
 	void ClearForNextFrame();
 	void RenderItem(std::shared_ptr<Mesh> mesh);
 	void RenderFrame();
-	
+	void DrawEditorUI();
 
 	
 
@@ -51,7 +52,7 @@ namespace GriseoRenderer {
 	bool Init(HINSTANCE hInstance) {
 		mHInstance = hInstance;
 
-		Editor::UI::Init();
+		Editor::UI::systemUI.emplace_back(DrawEditorUI);
 
 		// Do the initial resize code.
 		OnResize();
@@ -204,7 +205,7 @@ namespace GriseoRenderer {
 
 	}
 	void UploadPassCB() {
-		auto mCamera = Entity::GetEntity("cam")->GetComponent<Camera>();
+		auto mCamera = CameraSystem::activeCamera.lock();
 		XMMATRIX view = mCamera->getViewMatrix();
 		XMMATRIX proj = XMMatrixPerspectiveFovLH(0.3f * MathHelper::Pi, (FLOAT)mClientWidth / (FLOAT)mClientHeight, 1.0f, 1000.0f);
 		XMMATRIX viewProj = view * proj;
@@ -270,6 +271,7 @@ namespace GriseoRenderer {
 
 	export int RenderTick() {
 	{
+
 		Profiler::Auto _(ProfilerEvent);
 
 		//Tick1
@@ -335,6 +337,17 @@ namespace GriseoRenderer {
 	}
 		FlushCommandQueue();
 		return 0;
+	}
+
+	export void DrawEditorUI() {
+		if (Editor::UI::IsInit()) {
+			ImGui::Begin("Renderer Info");
+			std::string camera = "ActiveCamera:" + CameraSystem::activeCamera.lock()->parentEntity->name;
+
+			ImGui::Text(camera.c_str());
+
+			ImGui::End();
+		}
 	}
 
 }

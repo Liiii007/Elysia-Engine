@@ -14,14 +14,13 @@ namespace Component {
 		};
 
 		static void Parse(Entity& entity, const rapidjson::Value& parm);
-		static Camera* activeCamera;
-		static int activePriority;
 		virtual void DrawEditorUI() override;
 
 		std::string targetEntityName;
 		DirectX::XMFLOAT3 targetDirection;
 		DirectX::XMFLOAT3 up;
 		int priority{ 0 };
+		bool isActive{ false };
 
 		DirectX::XMMATRIX getViewMatrix() {
 			auto targetEntity = Entity::GetEntity(targetEntityName);
@@ -63,11 +62,6 @@ namespace Component {
 			return this;
 		}
 		Camera* SetPriority(int p) {
-			if (p > activePriority) {
-				activePriority = p;
-				activeCamera = this;
-			}
-
 			this->priority = p;
 			return this;
 		}
@@ -136,7 +130,7 @@ namespace Component {
 
 	//ImGui Relate
 	void Camera::DrawEditorUI() {
-		if (this == activeCamera) {
+		if (isActive) {
 			ImGui::TextColored(ImVec4(0, 1, 0, 1), "Active Camera");
 		}
 
@@ -153,7 +147,4 @@ namespace Component {
 		ImGui::DragInt("Priority", &priority);
 		SetPriority(priority);
 	}
-
-	Camera* Camera::activeCamera{ nullptr };
-	int Camera::activePriority{ INT_MIN };
 }

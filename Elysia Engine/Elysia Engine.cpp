@@ -11,6 +11,8 @@ import DXDeviceResource;
 import Log;
 import Profiler;
 import Timer;
+import CameraSystem;
+import Editor.UI;
 
 // Entrypoint
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,_In_ int nCmdShow) {
@@ -25,6 +27,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         InputSystem::Init();
         ResourceManager::Init();
         WorldManager::Init("D:\\Working\\VS Projects\\Elysia Engine\\Elysia Engine\\Resources\\Level\\Level1.json");
+        Editor::UI::Init();
         GriseoRenderer::Init(hInstance);
 
         bool done = false;
@@ -45,9 +48,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             Timer::Tick();
 
             //SystemBase::SystemTick();
-            Profiler::RecordStart("FrameTime");
+            CameraSystem::Tick();
+
+            //Renderer Tick;
             GriseoRenderer::RenderTick();
-            Profiler::RecordStop("FrameTime");
+
+            {
+                std::string Test{ "Test" };
+                Profiler::Auto _(Test);
+
+                for (int i = 0; i < 100; i++) {
+                    Profiler::Auto a("Test1");
+                }
+            }
 
         }
 
