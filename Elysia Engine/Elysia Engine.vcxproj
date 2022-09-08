@@ -157,11 +157,12 @@
     <ClCompile Include="Components\Camera.ixx" />
     <ClCompile Include="Editor\EditorUI.ixx" />
     <ClCompile Include="Resources\ResourceManager.ixx" />
+    <ClCompile Include="Resources\ShadowMap.ixx" />
     <ClCompile Include="System\CameraSystem.ixx" />
     <ClCompile Include="System\Profiler.ixx" />
     <ClCompile Include="System\Timer.ixx" />
     <ClCompile Include="World\ECS.ixx" />
-    <ClCompile Include="Components\Light.ixx" />
+    <ClCompile Include="Components\DirectLight.ixx" />
     <ClCompile Include="Components\Material.ixx" />
     <ClCompile Include="Components\Mesh.ixx" />
     <ClCompile Include="Components\Translation.ixx" />

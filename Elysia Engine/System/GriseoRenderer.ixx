@@ -9,7 +9,7 @@ import DXDeviceResource;
 import Material;
 import Shader;
 import ECS;
-import Light;
+import DirectLight;
 import Definition;
 import MaterialData;
 import Log;
@@ -19,7 +19,7 @@ import Profiler;
 
 export module GriseoRenderer;
 namespace GriseoRenderer {
-	using namespace DX;
+	using namespace Device;
 	using namespace Component;
 	using namespace Resource;
 	using namespace DirectX;
@@ -27,7 +27,6 @@ namespace GriseoRenderer {
 	//Init
 	export bool Init(HINSTANCE);
 	std::string ProfilerEvent{ "Render Tick" };
-	bool InitWindow();
 	void CreatePassConstantBuffer();
 	void CreateObjectConstantBuffer(int objectIndex);
 	void CreateMaterialConstantBuffer(int materialIndex);
@@ -44,27 +43,21 @@ namespace GriseoRenderer {
 	void RenderFrame();
 	
 
-	std::wstring mMainWndCaption = L"XII Renderer";
+	
 
 	//function
-	LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-	{
-		return InputSystem::MsgProc(hwnd, msg, wParam, lParam);
-		//return Singleton<InputSystem>::Get()->MsgProc(hwnd, msg, wParam, lParam);
-	}
+	
 
 	bool Init(HINSTANCE hInstance) {
 		mHInstance = hInstance;
 
-		if (!InitWindow()) { return false; }
-		DX::InitDX();
 		Editor::UI::Init();
 
 		// Do the initial resize code.
 		OnResize();
 
 		// Reset the command list to prep for initialization commands.
-		ThrowIfFailed(DX::mCommandList->Reset(DX::mCommandAllocator.Get(), nullptr));
+		ThrowIfFailed(Device::mCommandList->Reset(Device::mCommandAllocator.Get(), nullptr));
 
 		CreatePassConstantBuffer();
 
@@ -95,9 +88,9 @@ namespace GriseoRenderer {
 		}
 
 		// Execute the initialization commands.
-		ThrowIfFailed(DX::mCommandList->Close());
-		ID3D12CommandList* cmdsLists[] = { DX::mCommandList.Get() };
-		DX::mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+		ThrowIfFailed(Device::mCommandList->Close());
+		ID3D12CommandList* cmdsLists[] = { Device::mCommandList.Get() };
+		Device::mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 		// Wait until initialization is complete.
 		FlushCommandQueue();
@@ -105,43 +98,7 @@ namespace GriseoRenderer {
 		return true;
 	}
 
-	bool InitWindow() {
-		WNDCLASS wc;
-		wc.style = CS_HREDRAW | CS_VREDRAW;
-		wc.lpfnWndProc = MainWndProc;
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = 0;
-		wc.hInstance = mHInstance;
-		wc.hIcon = LoadIcon(0, IDI_APPLICATION);
-		wc.hCursor = LoadCursor(0, IDC_ARROW);
-		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-		wc.lpszMenuName = 0;
-		wc.lpszClassName = L"MainWnd";
-
-		if (!RegisterClass(&wc))
-		{
-			MessageBox(0, L"RegisterClass Failed.", 0, 0);
-			return false;
-		}
-
-		//Window Size
-		RECT R = { 0, 0, mClientWidth, mClientHeight };
-		AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
-		int width = R.right - R.left;
-		int height = R.bottom - R.top;
-
-		mhMainWnd = CreateWindow(L"MainWnd", mMainWndCaption.c_str(),
-			WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, mHInstance, 0);
-		if (!mhMainWnd)
-		{
-			Log::Error("CreateWindow Failed.");
-			MessageBox(0, L"CreateWindow Failed.", 0, 0);
-			return false;
-		}
-		ShowWindow(mhMainWnd, SW_SHOW);
-		UpdateWindow(mhMainWnd);
-		return true;
-	}
+	
 
 	void CreatePassConstantBuffer() {
 
@@ -150,14 +107,14 @@ namespace GriseoRenderer {
 		D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mPassCB->Resource()->GetGPUVirtualAddress();
 
 		UINT heapIndex = 0;
-		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(DX::mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(Device::mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 		handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
 
 		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
 		cbvDesc.BufferLocation = cbAddress;
 		cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
 
-		DX::md3dDevice->CreateConstantBufferView(
+		Device::md3dDevice->CreateConstantBufferView(
 			&cbvDesc,
 			handle);
 	}
@@ -172,14 +129,14 @@ namespace GriseoRenderer {
 
 		//CPU offset
 		int heapIndex = mPassCBCount + materialIndex;
-		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(DX::mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(Device::mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 		handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
 
 		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
 		cbvDesc.BufferLocation = cbAddress;
 		cbvDesc.SizeInBytes = matCBByteSize;
 
-		DX::md3dDevice->CreateConstantBufferView(
+		Device::md3dDevice->CreateConstantBufferView(
 			&cbvDesc,
 			handle);
 	}
@@ -194,14 +151,14 @@ namespace GriseoRenderer {
 
 		//CPU offset
 		int heapIndex = mPassCBCount + mMaterialCBCount + objectIndex;
-		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(DX::mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(Device::mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 		handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
 
 		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
 		cbvDesc.BufferLocation = cbAddress;
 		cbvDesc.SizeInBytes = objCBByteSize;
 
-		DX::md3dDevice->CreateConstantBufferView(
+		Device::md3dDevice->CreateConstantBufferView(
 			&cbvDesc,
 			handle);
 	}
@@ -211,21 +168,21 @@ namespace GriseoRenderer {
 
 		// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 		// Reusing the command list reuses memory.
-		ThrowIfFailed(DX::mCommandList->Reset(mCommandAllocator.Get(), nullptr));
+		ThrowIfFailed(Device::mCommandList->Reset(mCommandAllocator.Get(), nullptr));
 
-		DX::mCommandList->RSSetViewports(1, &mScreenViewport);
-		DX::mCommandList->RSSetScissorRects(1, &mScissorRect);
+		Device::mCommandList->RSSetViewports(1, &mScreenViewport);
+		Device::mCommandList->RSSetScissorRects(1, &mScissorRect);
 
 		// Indicate a state transition on the resource usage.
-		DX::mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+		Device::mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
 		// Clear the back buffer and depth buffer.
-		DX::mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::Black, 0, nullptr);
-		DX::mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+		Device::mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::Black, 0, nullptr);
+		Device::mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 		// Specify the buffers we are going to render to.
-		DX::mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
+		Device::mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
 	}
 
 	void Update() {
@@ -251,7 +208,7 @@ namespace GriseoRenderer {
 		XMMATRIX view = mCamera->getViewMatrix();
 		XMMATRIX proj = XMMatrixPerspectiveFovLH(0.3f * MathHelper::Pi, (FLOAT)mClientWidth / (FLOAT)mClientHeight, 1.0f, 1000.0f);
 		XMMATRIX viewProj = view * proj;
-		auto light = Entity::GetEntity("eLight")->GetComponent<Light>();
+		auto light = Entity::GetEntity("eLight")->GetComponent<DirectLight>();
 
 		PassConstants pcb{};
 
@@ -282,28 +239,28 @@ namespace GriseoRenderer {
 
 		//set object CB
 		int objectCbvIndex = mPassCBCount + mMaterialCBCount + mesh->mObjectIndex;
-		auto objectCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(DX::mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+		auto objectCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(Device::mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 		objectCbvHandle.Offset(objectCbvIndex, mCbvSrvUavDescriptorSize);
 
 		//Set by mesh
-		DX::mCommandList->IASetVertexBuffers(0, 2, mesh->VertexBufferView());
-		DX::mCommandList->IASetIndexBuffer(mesh->IndexBufferView());
-		DX::mCommandList->IASetPrimitiveTopology(mesh->Topology);
-		DX::mCommandList->SetGraphicsRootDescriptorTable(0, objectCbvHandle);
+		Device::mCommandList->IASetVertexBuffers(0, 2, mesh->VertexBufferView());
+		Device::mCommandList->IASetIndexBuffer(mesh->IndexBufferView());
+		Device::mCommandList->IASetPrimitiveTopology(mesh->Topology);
+		Device::mCommandList->SetGraphicsRootDescriptorTable(0, objectCbvHandle);
 
 		//FIXED:GPU Instancing
-		DX::mCommandList->DrawIndexedInstanced(
+		Device::mCommandList->DrawIndexedInstanced(
 			mesh->getIndices()->size(),
 			1, 0, 0, 0);
 	}
 	void RenderFrame() {
-		DX::mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+		Device::mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
-		ThrowIfFailed(DX::mCommandList->Close());
+		ThrowIfFailed(Device::mCommandList->Close());
 
-		ID3D12CommandList* cmdsLists[] = { DX::mCommandList.Get() };
-		DX::mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+		ID3D12CommandList* cmdsLists[] = { Device::mCommandList.Get() };
+		Device::mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 		ThrowIfFailed(mSwapChain->Present(0, 0));
 		mCurrentBackBufferCount = (mCurrentBackBufferCount + 1) % mSwapChainBufferCount;
@@ -315,24 +272,28 @@ namespace GriseoRenderer {
 	{
 		Profiler::Auto _(ProfilerEvent);
 
+		//Tick1
 
+
+
+		//Tick2
 		ClearForNextFrame();
 		Update();
 		UploadPassCB();
 
 		//Render Item
-		ID3D12DescriptorHeap* descriptorHeaps[] = { DX::mCbvHeap.Get(), };
-		DX::mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+		ID3D12DescriptorHeap* descriptorHeaps[] = { Device::mCbvHeap.Get(), };
+		Device::mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 		std::shared_ptr<Shader> lastShader = Shader::instances["initShader"];
-		DX::mCommandList->SetGraphicsRootSignature(lastShader->mRootSignature.Get());
-		DX::mCommandList->SetPipelineState(lastShader->mPSO.Get());
+		Device::mCommandList->SetGraphicsRootSignature(lastShader->mRootSignature.Get());
+		Device::mCommandList->SetPipelineState(lastShader->mPSO.Get());
 
 		//set pass CB
 		int passCbvIndex = 0;
-		auto passCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(DX::mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+		auto passCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(Device::mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 		passCbvHandle.Offset(passCbvIndex, mCbvSrvUavDescriptorSize);
-		DX::mCommandList->SetGraphicsRootDescriptorTable(1, passCbvHandle);
+		Device::mCommandList->SetGraphicsRootDescriptorTable(1, passCbvHandle);
 
 
 		for (auto iter = Entity::begin(); iter != Entity::end(); iter++) {
@@ -348,16 +309,16 @@ namespace GriseoRenderer {
 				//Set correct Shader, avoiding switching PSO frequently
 				std::shared_ptr<Shader> currentShader = entity->GetComponent<Material>()->getShader();
 				if (*currentShader != *lastShader) {
-					DX::mCommandList->SetGraphicsRootSignature(currentShader->mRootSignature.Get());
-					DX::mCommandList->SetPipelineState(currentShader->mPSO.Get());
+					Device::mCommandList->SetGraphicsRootSignature(currentShader->mRootSignature.Get());
+					Device::mCommandList->SetPipelineState(currentShader->mPSO.Get());
 					lastShader = currentShader;
 				}
 
 				//set material CB
 				int materialCbvIndex = mPassCBCount + entity->GetComponent<Material>()->GetCBIndex();
-				auto materialCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(DX::mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+				auto materialCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(Device::mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 				materialCbvHandle.Offset(materialCbvIndex, mCbvSrvUavDescriptorSize);
-				DX::mCommandList->SetGraphicsRootDescriptorTable(2, materialCbvHandle);
+				Device::mCommandList->SetGraphicsRootDescriptorTable(2, materialCbvHandle);
 
 				UploadObjectCB(entity->GetComponent<Mesh>());
 

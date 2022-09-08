@@ -1,13 +1,16 @@
 #include <stdafx.h>
 #include <Tools/Common/UploadBuffer.h>
 #include <Tools/Common/d3dUtil.h>
+#include <Interface/ICommand.h>
+
 
 import Definition;
+import Log;
 
 export module DXDeviceResource;
 
 //Global Varients
-namespace DX {
+namespace Device {
 	using namespace DirectX;
 
 	//device
@@ -63,11 +66,167 @@ namespace DX {
 
 	export int mRendererItemCount{ 0 };
 	export int mFrameCount{ 0 };
+
+	std::wstring mMainWndCaption = L"XII Renderer";
+
+	//Input System Resource
+	bool mWindowMaximized{ false };
+	bool mWindowMinimized{ false };
+	bool mWindowResizing{ false };
+	export std::unordered_map<int, std::shared_ptr<ICommand<bool>>> KeyCode{};
 }
 
 
 //Global Functions
-namespace DX {
+namespace Device {
+	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	export void InitDX();
+	bool InitWindow();
+	void CreateCommandObjects();
+	void CreateSwapChain();
+	export void FlushCommandQueue();
+	export void OnResize();
+
+	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	{
+
+		/*if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
+			return true;
+		}*/
+			
+
+		if (msg == WM_KEYDOWN) {
+			if (KeyCode.contains(wParam)) {
+				KeyCode[wParam]->OnValueUpdate(true);
+			}
+		}
+
+		if (msg == WM_KEYUP) {
+			if (KeyCode.contains(wParam)) {
+				KeyCode[wParam]->OnValueUpdate(false);
+			}
+		}
+
+		switch (msg) {
+
+			// WM_SIZE is sent when the user resizes the window.  
+		case WM_SIZE:
+			// Save the new client area dimensions.
+			Device::mClientWidth = LOWORD(lParam);
+			Device::mClientHeight = HIWORD(lParam);
+			if (Device::md3dDevice)
+			{
+
+				if (wParam == SIZE_MINIMIZED)  //Min Window
+				{
+					//mAppPaused = true;
+					//mMinimized = true;
+					//mMaximized = false;
+				}
+				else if (wParam == SIZE_MAXIMIZED)//Max Window
+				{
+					//mAppPaused = false;
+					//mMinimized = false;
+					//mMaximized = true;
+					Device::OnResize();
+				}
+				else if (wParam == SIZE_RESTORED)
+				{
+
+					// Restoring from minimized state?
+					if (mWindowMinimized)
+					{
+						//mAppPaused = false;
+						mWindowMinimized = false;
+						Device::OnResize();
+					}
+
+					// Restoring from maximized state?
+					else if (mWindowMaximized)
+					{
+						//mAppPaused = false;
+						mWindowMaximized = false;
+						Device::OnResize();
+					}
+					else if (mWindowResizing)
+					{
+						//DX::OnResize();
+						// If user is dragging the resize bars, we do not resize 
+						// the buffers here because as the user continuously 
+						// drags the resize bars, a stream of WM_SIZE messages are
+						// sent to the window, and it would be pointless (and slow)
+						// to resize for each WM_SIZE message received from dragging
+						// the resize bars.  So instead, we reset after the user is 
+						// done resizing the window and releases the resize bars, which 
+						// sends a WM_EXITSIZEMOVE message.
+					}
+					else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
+					{
+						Device::OnResize();
+					}
+				}
+
+
+			}
+			return 0;
+
+		case WM_ENTERSIZEMOVE:
+			//mAppPaused = true;
+			mWindowResizing = true;
+			//mTimer.Stop();
+			return 0;
+
+			// WM_EXITSIZEMOVE is sent when the user releases the resize bars.
+			// Here we reset everything based on the new window dimensions.
+		case WM_EXITSIZEMOVE:
+			//mAppPaused = false;
+			mWindowResizing = false;
+			//mTimer.Start();
+			Device::OnResize();
+			return 0;
+		}
+
+		return DefWindowProc(hwnd, msg, wParam, lParam);
+	}
+
+	bool InitWindow() {
+		WNDCLASS wc;
+		wc.style = CS_HREDRAW | CS_VREDRAW;
+		wc.lpfnWndProc = MsgProc;
+		wc.cbClsExtra = 0;
+		wc.cbWndExtra = 0;
+		wc.hInstance = mHInstance;
+		wc.hIcon = LoadIcon(0, IDI_APPLICATION);
+		wc.hCursor = LoadCursor(0, IDC_ARROW);
+		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
+		wc.lpszMenuName = 0;
+		wc.lpszClassName = L"MainWnd";
+
+		if (!RegisterClass(&wc))
+		{
+			MessageBox(0, L"RegisterClass Failed.", 0, 0);
+			return false;
+		}
+
+		//Window Size
+		RECT R = { 0, 0, mClientWidth, mClientHeight };
+		AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
+		int width = R.right - R.left;
+		int height = R.bottom - R.top;
+
+		mhMainWnd = CreateWindow(L"MainWnd", mMainWndCaption.c_str(),
+			WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, mHInstance, 0);
+		if (!mhMainWnd)
+		{
+			Log::Error("CreateWindow Failed.");
+			MessageBox(0, L"CreateWindow Failed.", 0, 0);
+			return false;
+		}
+		ShowWindow(mhMainWnd, SW_SHOW);
+		UpdateWindow(mhMainWnd);
+		return true;
+	}
+
 	void CreateCommandObjects() {
 		//Create Command Queue
 		D3D12_COMMAND_QUEUE_DESC queueDesc = {};
@@ -173,6 +332,8 @@ namespace DX {
 	}
 
 	export void InitDX() {
+		InitWindow();
+
 		//Enable debug layer
 		Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
 		ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));

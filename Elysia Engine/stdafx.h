@@ -26,6 +26,7 @@
 #include <d3d12.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
+#include <Tools/Common/d3dx12.h>
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -34,6 +35,7 @@
 #include <3rd/imgui/imgui.h>
 #include <3rd/imgui/imgui_impl_win32.h>
 #include <3rd/imgui/imgui_impl_dx12.h>
+#include <3rd/imgui/imgui_impl_win32.cpp>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>

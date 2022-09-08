@@ -4,7 +4,7 @@ export module ReflectSystem;
 
 import Material;
 import Mesh;
-import Light;
+import DirectLight;
 import Translation;
 import Definition;
 import Camera;
@@ -18,7 +18,7 @@ namespace ReflectSystem {
 		using namespace Component;
 		Bind(Mesh);
 		Bind(Material);
-		Bind(Light);
+		Bind(DirectLight);
 		Bind(Translation);
 		Bind(Camera);
 	}

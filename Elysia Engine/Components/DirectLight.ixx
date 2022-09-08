@@ -1,23 +1,26 @@
 #include <stdafx.h>
-export module Light;
+export module DirectLight;
 import ECS;
 import Translation;
+import ShadowMap;
 
 namespace Component {
-	export class Light : public ComponentBase {
+	export class DirectLight : public ComponentBase {
 
 	public:
 		std::string name;
 
+		ShadowMap mShadowMap;
+
 		virtual void DrawEditorUI();
 
-		Light(Entity* entity);
+		DirectLight(Entity* entity);
 
 		//Parse init data from json file
 		static void Parse(Entity& entity, const rapidjson::Value& parm);
 
-		Light* SetPosition(const DirectX::XMFLOAT3& position);
-		Light* SetTarget(const DirectX::XMFLOAT3& direction);
+		DirectLight* SetPosition(const DirectX::XMFLOAT3& position);
+		DirectLight* SetTarget(const DirectX::XMFLOAT3& direction);
 		DirectX::XMFLOAT3 GetPosition();
 		DirectX::XMFLOAT3 GetDirection();
 		DirectX::XMFLOAT3 GetColor();
@@ -33,23 +36,23 @@ namespace Component {
 		//DirectX::XMFLOAT3 mDirection;
 	};
 
-	Light::Light(Entity* entity) : ComponentBase(entity) {
+	DirectLight::DirectLight(Entity* entity) : ComponentBase(entity) {
 		
 	}
 
-	void Light::Parse(Entity& entity, const rapidjson::Value& parm) {
+	void DirectLight::Parse(Entity& entity, const rapidjson::Value& parm) {
 		const DirectX::XMFLOAT3 target{
 			parm[0].GetFloat(),
 			parm[1].GetFloat(),
 			parm[2].GetFloat(),
 		};
 
-		entity.AppendComponent<Light>()
-			.GetComponent<Light>()
+		entity.AppendComponent<DirectLight>()
+			.GetComponent<DirectLight>()
 			->SetTarget(target);
 	}
 
-	void Light::DrawEditorUI() {
+	void DirectLight::DrawEditorUI() {
 		ImGui::Text("Light");
 		ImGui::SliderFloat("Power", &mLightPower, 0, 10);
 		ImGui::SetColorEditOptions(ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_PickerHueWheel);
@@ -57,36 +60,36 @@ namespace Component {
 		ImGui::Spacing();
 	}
 
-	Light* Light::SetPosition(const DirectX::XMFLOAT3& position) {
+	DirectLight* DirectLight::SetPosition(const DirectX::XMFLOAT3& position) {
 		mPosition = position;
 		return this;
 	}
 
-	Light* Light::SetTarget(const DirectX::XMFLOAT3& target) {
+	DirectLight* DirectLight::SetTarget(const DirectX::XMFLOAT3& target) {
 		mTarget = target;
 		return this;
 	}
 
-	Entity& Light::ReturnParentEntity() {
+	Entity& DirectLight::ReturnParentEntity() {
 		return *parentEntity;
 	}
 
-	DirectX::XMFLOAT3 Light::GetPosition() {
+	DirectX::XMFLOAT3 DirectLight::GetPosition() {
 		//XMVECTOR pos = parentEntity->translation.position;
 		mPosition = parentEntity->GetComponent<Translation>()->position;
 		return mPosition;
 	}
 
-	DirectX::XMFLOAT3 Light::GetDirection() {
+	DirectX::XMFLOAT3 DirectLight::GetDirection() {
 		DirectX::XMFLOAT3 direction{ mTarget.x - mPosition.x, mTarget.y - mPosition.y, mTarget.z - mPosition.z };
 		return direction;
 	}
 
-	DirectX::XMFLOAT3 Light::GetColor() {
+	DirectX::XMFLOAT3 DirectLight::GetColor() {
 		return mLightColor;
 	}
 
-	float Light::GetPower() {
+	float DirectLight::GetPower() {
 		return mLightPower;
 	}
 }

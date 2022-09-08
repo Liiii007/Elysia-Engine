@@ -32,11 +32,11 @@ namespace Editor {
 			//ImGui::StyleColorsLight();
 
 			// Setup Platform/Renderer backends
-			ImGui_ImplWin32_Init(DX::mhMainWnd);
-			ImGui_ImplDX12_Init(DX::md3dDevice.Get(), DX::mSwapChainBufferCount,
-				DXGI_FORMAT_R8G8B8A8_UNORM, DX::mCbvHeap.Get(),
-				DX::mSrvHeap.Get()->GetCPUDescriptorHandleForHeapStart(),
-				DX::mSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+			ImGui_ImplWin32_Init(Device::mhMainWnd);
+			ImGui_ImplDX12_Init(Device::md3dDevice.Get(), Device::mSwapChainBufferCount,
+				DXGI_FORMAT_R8G8B8A8_UNORM, Device::mCbvHeap.Get(),
+				Device::mSrvHeap.Get()->GetCPUDescriptorHandleForHeapStart(),
+				Device::mSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
 
 			isInit = true;
 		}
@@ -131,7 +131,7 @@ namespace Editor {
 
 			ImGui::Render();
 
-			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), DX::mCommandList.Get());
+			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Device::mCommandList.Get());
 		}
 
 		export void Shutdown() {

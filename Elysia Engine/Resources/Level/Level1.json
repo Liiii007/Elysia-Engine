@@ -110,7 +110,7 @@
                     }
                 },
                 {
-                    "Type":"Light",
+                    "Type":"DirectLight",
                     "Parm":[0,0,0]
                 }
             ]

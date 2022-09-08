@@ -241,11 +241,11 @@ namespace Component {
 		ThrowIfFailed(D3DCreateBlob(ibByteSize, &IndexBufferCPU));
 		CopyMemory(IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
 
-		VertexBufferGPU = d3dUtil::CreateDefaultBuffer(DX::md3dDevice.Get(),
-			DX::mCommandList.Get(), vertices.data(), vbByteSize, VertexBufferUploader);
+		VertexBufferGPU = d3dUtil::CreateDefaultBuffer(Device::md3dDevice.Get(),
+			Device::mCommandList.Get(), vertices.data(), vbByteSize, VertexBufferUploader);
 
-		IndexBufferGPU = d3dUtil::CreateDefaultBuffer(DX::md3dDevice.Get(),
-			DX::mCommandList.Get(), indices.data(), ibByteSize, IndexBufferUploader);
+		IndexBufferGPU = d3dUtil::CreateDefaultBuffer(Device::md3dDevice.Get(),
+			Device::mCommandList.Get(), indices.data(), ibByteSize, IndexBufferUploader);
 	}
 
 	

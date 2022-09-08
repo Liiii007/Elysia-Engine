@@ -7,6 +7,7 @@ import Mesh;
 import GriseoRenderer;
 import WorldManager;
 import ResourceManager;
+import DXDeviceResource;
 import Log;
 import Profiler;
 import Timer;
@@ -19,6 +20,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     try
     {  
+        Device::InitDX();
         ReflectSystem::Init();
         InputSystem::Init();
         ResourceManager::Init();

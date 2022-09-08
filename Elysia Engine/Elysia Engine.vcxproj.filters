@@ -137,7 +137,7 @@
     <ClCompile Include="Interface\ICommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Components\Light.ixx">
+    <ClCompile Include="Components\DirectLight.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Tools\Definition.ixx">
@@ -171,6 +171,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="System\Profiler.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\ShadowMap.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

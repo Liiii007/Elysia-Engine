@@ -118,7 +118,7 @@ void Shader::BuildRootSig() {
 	}
 	ThrowIfFailed(hr);
 
-	ThrowIfFailed(DX::md3dDevice->CreateRootSignature(
+	ThrowIfFailed(Device::md3dDevice->CreateRootSignature(
 		0,
 		serializedRootSig->GetBufferPointer(),
 		serializedRootSig->GetBufferSize(),
@@ -153,12 +153,12 @@ void Shader::BuildPSO() {
 	psoDesc.SampleMask = UINT_MAX;
 	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	psoDesc.NumRenderTargets = 1;
-	psoDesc.RTVFormats[0] = DX::mBackBufferFormat;
-	psoDesc.SampleDesc.Count = DX::m4xMsaaState ? 4 : 1;
-	psoDesc.SampleDesc.Quality = DX::m4xMsaaState ? (DX::m4xMsaaQuality - 1) : 0;
-	psoDesc.DSVFormat = DX::mDepthStencilFormat;
+	psoDesc.RTVFormats[0] = Device::mBackBufferFormat;
+	psoDesc.SampleDesc.Count = Device::m4xMsaaState ? 4 : 1;
+	psoDesc.SampleDesc.Quality = Device::m4xMsaaState ? (Device::m4xMsaaQuality - 1) : 0;
+	psoDesc.DSVFormat = Device::mDepthStencilFormat;
 
-	ThrowIfFailed(DX::md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO)));
+	ThrowIfFailed(Device::md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO)));
 }
 
 void Shader::SetInputLayout() {
