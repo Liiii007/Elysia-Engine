@@ -6,12 +6,29 @@ import Profiler;
 export module CameraSystem;
 
 namespace CameraSystem {
-	std::string profilerEvent{ "CameraSystem" };
+	export bool Tick();
+
+	export class Meta final {
+	public:
+		std::string profilerEvent{ "CameraSystem" };
+		Meta() {
+		}
+		~Meta() {
+
+		}
+
+		void AutoInit() {
+
+		}
+
+	};
+
+	export Meta meta;
 
 	export std::weak_ptr<Component::Camera> activeCamera;
 	int maxPriority{ INT_MIN };
 	export bool Tick() {
-		Profiler::Auto _(profilerEvent);
+		Profiler::Auto _(meta.profilerEvent);
 
 		maxPriority = INT_MIN;
 
@@ -33,5 +50,26 @@ namespace CameraSystem {
 		return true;
 	}
 
+	
+}
 
+namespace System {
+	export class csys : public SystemBase {
+	public:
+		csys():SystemBase(typeid(this).name()) {
+			
+		}
+
+		virtual void Start() {
+
+		};
+
+		virtual void Update() {
+
+		};
+
+		~csys() = default;
+	};
+
+	csys _csys;
 }

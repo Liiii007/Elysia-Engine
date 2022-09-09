@@ -1,14 +1,20 @@
 #include <stdafx.h>
+
 import Log;
 
 export module ECS;
 
 export class IComponent;
+export class MetaData;
+export class SystemBase;
+
+namespace System {
+	export std::unordered_map<std::string, SystemBase*> systemList{};
+}
 
 //Entity Class
 export class Entity {
 public:
-
 	Entity(std::string name) :name(name) {
 		return;
 	}
@@ -42,7 +48,7 @@ public:
 	//Component Relate
 	template<typename T>
 	Entity& AppendComponent() {
-		std::string tn = typeid(T).name();
+		auto tn = typeid(T).name();
 		components[tn] = std::make_shared<IComponent>();
 		components[tn]->make<T>(this);
 		return *this;
@@ -50,32 +56,26 @@ public:
 
 	template<typename T>
 	std::shared_ptr<T> GetComponent() {
-		std::string tn = typeid(T).name();
-		std::shared_ptr<T> r = components[tn]->get<T>();
-		if (r != nullptr) {
-			return r;
-		}
-		else {
-			Log::Error("Unable to get this component");
-			throw std::exception("Unable to get this component");
-			return nullptr;
-		}
+		return components[typeid(T).name()]->get<T>();
 	}
 
 	template<typename T>
 	bool HasComponent() {
-		std::string tn = typeid(T).name();
-		return components.contains(tn);
+		return components.contains(typeid(T).name());
 	}
 
 	template<typename T>
-	void RemoveComponent() {
-		if (components.contains(T::componentName)) {
-			components.erase(T::componentName);
+	bool RemoveComponent() {
+		auto it = components.find(typeid(T).name());
+		if (it != components.end()) { 
+			components.erase(it);
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 
-	std::vector<std::string> tags;
 	std::unordered_map<std::string, std::shared_ptr<IComponent>> components;
 	std::string name;
 
@@ -153,39 +153,42 @@ public:
 	}
 };
 
+export class RAIR {
+	RAIR(std::function<void(void)> start) {
+		start();
+	}
+};
+
 //System Base Class
-class SystemBase {
+export class SystemBase {
 public:
-	SystemBase() {
-		systems.push_back(this);
+	const std::string name;
+	bool enabled{ true };
+	virtual void Start()  {};
+	virtual void Update() {};
+
+	SystemBase(const char* name) : name(name) {
+		System::systemList[name] = this;
 	}
 
 	~SystemBase() {
-		for (auto it = systems.begin(); it != systems.end(); it++) {
-			if (*it == this) {
-				systems.erase(it);
-				return;
-			}
-		}
-
-		Log::Error("Unable to clear up deleted System");
-	}
-
-	virtual void Tick() {
-		Log::Warning("Default Tick");
-	}
-
-	static std::vector<SystemBase*> systems;
-
-	static void SystemTick() {
-		for (auto& system : systems) {
-			system->Tick();
-		}
+		System::systemList.erase(name);
 	}
 };
+
+export class MetaData {
+public:
+	std::string name;
+	MetaData() {};
+	~MetaData() {};
+
+	void Start() {};
+	void Tick() {};
+};
+
+
 
 
 
 std::unordered_map<std::string, std::shared_ptr<Entity>> Entity::instances;
 std::unordered_map<std::string, std::function<void(Entity&, const rapidjson::Value&)>> ComponentBase::initList{};
-std::vector<SystemBase*> SystemBase::systems{};

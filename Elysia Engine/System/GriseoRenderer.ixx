@@ -205,21 +205,28 @@ namespace GriseoRenderer {
 
 	}
 	void UploadPassCB() {
-		auto mCamera = CameraSystem::activeCamera.lock();
-		XMMATRIX view = mCamera->getViewMatrix();
-		XMMATRIX proj = XMMatrixPerspectiveFovLH(0.3f * MathHelper::Pi, (FLOAT)mClientWidth / (FLOAT)mClientHeight, 1.0f, 1000.0f);
-		XMMATRIX viewProj = view * proj;
-		auto light = Entity::GetEntity("eLight")->GetComponent<DirectLight>();
-
 		PassConstants pcb{};
 
-		XMStoreFloat4x4(&pcb.gViewProj, XMMatrixTranspose(viewProj));
-		pcb.viewPos = mCamera->GetPosition();
-		pcb.viewDir = mCamera->GetDirection();
-		pcb.lightPos = light->GetPosition();
-		pcb.lightDir = light->GetDirection();
-		pcb.lightColor = light->GetColor();
-		pcb.lightPower = light->GetPower();
+		auto mCamera = CameraSystem::activeCamera.lock();
+		auto light = Entity::GetEntity("eLight")->GetComponent<DirectLight>();
+
+		if (mCamera) {
+			XMMATRIX view = mCamera->getViewMatrix();
+			XMMATRIX proj = XMMatrixPerspectiveFovLH(0.3f * MathHelper::Pi, (FLOAT)mClientWidth / (FLOAT)mClientHeight, 1.0f, 1000.0f);
+			XMMATRIX viewProj = view * proj;
+
+			XMStoreFloat4x4(&pcb.gViewProj, XMMatrixTranspose(viewProj));
+			pcb.viewPos = mCamera->GetPosition();
+			pcb.viewDir = mCamera->GetDirection();
+		}
+
+		if (light) {
+			pcb.lightPos = light->GetPosition();
+			pcb.lightDir = light->GetDirection();
+			pcb.lightColor = light->GetColor();
+			pcb.lightPower = light->GetPower();
+		}
+
 
 		mPassCB->CopyData(0, pcb);
 	}
@@ -342,7 +349,13 @@ namespace GriseoRenderer {
 	export void DrawEditorUI() {
 		if (Editor::UI::IsInit()) {
 			ImGui::Begin("Renderer Info");
-			std::string camera = "ActiveCamera:" + CameraSystem::activeCamera.lock()->parentEntity->name;
+			std::string camera = "ActiveCamera:";
+			if (!CameraSystem::activeCamera.expired()) {
+				camera += CameraSystem::activeCamera.lock()->parentEntity->name;
+			}
+			else {
+				camera += "No Camera!";
+			}
 
 			ImGui::Text(camera.c_str());
 

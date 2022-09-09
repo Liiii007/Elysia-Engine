@@ -11,6 +11,7 @@ import DXDeviceResource;
 import Log;
 import Profiler;
 import Timer;
+import ECS;
 import CameraSystem;
 import Editor.UI;
 
@@ -30,6 +31,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         Editor::UI::Init();
         GriseoRenderer::Init(hInstance);
 
+
         bool done = false;
         //Main Tick
         while (true) {
@@ -48,19 +50,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             Timer::Tick();
 
             //SystemBase::SystemTick();
-            CameraSystem::Tick();
+
+            for (auto& system : System::systemList) {
+                system.second->Update();
+            }
 
             //Renderer Tick;
             GriseoRenderer::RenderTick();
 
-            {
-                std::string Test{ "Test" };
-                Profiler::Auto _(Test);
-
-                for (int i = 0; i < 100; i++) {
-                    Profiler::Auto a("Test1");
-                }
-            }
 
         }
 
